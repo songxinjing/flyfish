@@ -1,0 +1,37 @@
+.pagination>span {
+	font-size: 18px;
+	padding-left:10px;
+	vertical-align: middle;
+	color: #bdbcbc;
+	line-height: 45px;
+}
+
+.pagination>span a {
+	text-decoration:none;
+	cursor: pointer;
+}
+
+.pagination>span input {
+	width: 30px;
+	height: 30px;
+	line-height:30px;
+	text-align: center;
+}
+
+img.platform-logo {
+	width: 65px;
+	height: 23px;
+}
+
+.margin-bottom {
+	margin-bottom: 15px;	
+}
+
+.panel-more {
+	color: white;
+}
+
+.btn-login {
+    width: 100%;
+}
+    

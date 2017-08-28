@@ -1,0 +1,163 @@
+<div class="row">
+	<div class="col-md-12">
+		<h1 class="page-header">总览</h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-3">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-3">
+						<i class="fa fa-comments fa-5x"></i>
+					</div>
+					<div class="col-xs-9 text-right">
+						<div class="huge">0</div>
+						<div>待授权店铺</div>
+					</div>
+				</div>
+			</div>
+			<a href="#">
+				<div class="panel-footer">
+					<span class="pull-left">查看详情</span>
+					<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+					<div class="clearfix"></div>
+				</div>
+			</a>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="panel panel-green">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-3">
+						<i class="fa fa-tasks fa-5x"></i>
+					</div>
+					<div class="col-xs-9 text-right">
+						<div class="huge">0</div>
+						<div>待合并SKU</div>
+					</div>
+				</div>
+			</div>
+			<a href="#">
+				<div class="panel-footer">
+					<span class="pull-left">查看详情</span>
+					<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+					<div class="clearfix"></div>
+				</div>
+			</a>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="panel panel-yellow">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-3">
+						<i class="fa fa-shopping-cart fa-5x"></i>
+					</div>
+					<div class="col-xs-9 text-right">
+						<div class="huge">0</div>
+						<div>待发货订单</div>
+					</div>
+				</div>
+			</div>
+			<a href="#">
+				<div class="panel-footer">
+					<span class="pull-left">查看详情</span>
+					<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+					<div class="clearfix"></div>
+				</div>
+			</a>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="panel panel-red">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-xs-3">
+						<i class="fa fa-support fa-5x"></i>
+					</div>
+					<div class="col-xs-9 text-right">
+						<div class="huge">0</div>
+						<div>待审核订单</div>
+					</div>
+				</div>
+			</div>
+			<a href="#">
+				<div class="panel-footer">
+					<span class="pull-left">查看详情</span>
+					<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+					<div class="clearfix"></div>
+				</div>
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-8">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				我的店铺
+				<div class="pull-right">
+                    <a href="#"><span class="panel-more">更多</span></a>
+                </div>
+			</div>
+			<div class="panel-body">
+				<div class="table-responsive">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>所属平台</th>
+								<th>店铺名称</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							#if(!$!stores || $!{stores.size()} == 0)
+							<tr>
+								<td colspan="3">
+									<h3>您还没有授权任何店铺！</h3>
+								</td>
+							</tr>
+							#end #foreach($store in $!stores)
+							<tr>
+								<td>
+									#if($!{store.platform} == 1)
+									<img class="platform-logo" src="${rc.contextPath}/resources/image/ebay.jpg" /> #elseif($!{store.platform} == 2)
+									<img class="platform-logo" src="${rc.contextPath}/resources/image/wish.jpg" /> #elseif($!{store.platform} == 3)
+									<img class="platform-logo" src="${rc.contextPath}/resources/image/amazon.jpg" /> #elseif($!{store.platform} == 4)
+									<img class="platform-logo" src="${rc.contextPath}/resources/image/aliexpress.jpg" /> #end
+								</td>
+								<td>$!{store.storeName}</td>
+								<td>
+								<a href="${rc.contextPath}/store/detail.html?storeId=$!{store.storeId}">详情</a>
+								<a href="#">取消授权</a>
+								</td>
+							</tr>
+							#end
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				常用功能
+			</div>
+			<div class="panel-body">
+				<!--
+				<div class="col-xs-6"><button type="button" class="btn btn-success margin-bottom" data-toggle='modal' data-target='#modal'>授权店铺</button></div>
+				-->
+				<div class="col-xs-6"><button type="button" class="btn btn-success margin-bottom">一个功能</button></div>
+				<div class="col-xs-6"><button type="button" class="btn btn-info margin-bottom">一个功能</button></div>
+				<div class="col-xs-6"><button type="button" class="btn btn-warning margin-bottom">一个功能</button></div>
+				<div class="col-xs-6"><button type="button" class="btn btn-danger margin-bottom">一个功能</button></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+#parse("/base/auth.vm")

@@ -1,0 +1,49 @@
+<div class="row">
+	<div class="col-md-12">
+		<h1 class="page-header">全部店铺</h1>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="content-box-header">
+			<div class="panel-title">
+				<button class="btn btn-success" data-toggle='modal' data-target='#modal'>授权新店铺</button>
+			</div>
+		</div>
+		<div class="content-box-large box-with-header">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>所属平台</th>
+						<th>店铺名称</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					#if(!$!stores || $!{stores.size()} == 0)
+					<tr>
+						<td colspan="3">
+							<h3>您还没有授权任何店铺！</h3>
+						</td>
+					</tr>
+					#end #foreach($store in $!stores)
+					<tr>
+						<td>
+							#if($!{store.platform} == 1)
+							<img class="platform-logo" src="${rc.contextPath}/resources/image/ebay.jpg" /> #elseif($!{store.platform} == 2)
+							<img class="platform-logo" src="${rc.contextPath}/resources/image/wish.jpg" /> #elseif($!{store.platform} == 3)
+							<img class="platform-logo" src="${rc.contextPath}/resources/image/amazon.jpg" /> #elseif($!{store.platform} == 4)
+							<img class="platform-logo" src="${rc.contextPath}/resources/image/aliexpress.jpg" /> #end
+						</td>
+						<td>$!{store.storeName}</td>
+						<td><a href="${rc.contextPath}/store/detail.html?storeId=$!{store.storeId}">详情</a></td>
+					</tr>
+					#end
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+#parse("/base/auth.vm")

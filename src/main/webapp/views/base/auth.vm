@@ -1,0 +1,97 @@
+<!-- Modal input store name -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalLabel">授权新店铺</h4>
+      </div>
+      <div class="modal-body">
+        <form id="storeForm">
+          <div class="form-group">
+            <label for="platform">选择平台</label>
+            <input type="hidden" id="platform">
+            <div class="platform-group">
+              <a href="#authorize-ebay" title="授权ebay店铺" data-toggle="tab" class="platform-label active" style="background-image:url(${rc.contextPath}/resources/image/ebay.jpg);"></a>
+              <a href="#authorize-Wish" title="授权Wish店铺" data-toggle="tab" class="platform-label" style="background-image:url(${rc.contextPath}/resources/image/wish.jpg);"></a>
+              <a href="#authorize-Amazon" title="授权Amazon店铺" data-toggle="tab" class="platform-label" style="background-image:url(${rc.contextPath}/resources/image/amazon.jpg);"></a>
+              <a href="#authorize-Aliexpress" title="授权Aliexpress店铺" data-toggle="tab" class="platform-label" style="background-image:url(${rc.contextPath}/resources/image/aliexpress.jpg);"></a>
+            </div>
+            <label for="storeName">店铺昵称</label>
+            <input type="text" class="form-control" id="storeName" placeholder="请自定义一个店铺昵称">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="btnAuth">授权</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirm auth -->
+<div class="modal fade" id="modalAuth" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalLabel">确认ebay授权</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning">
+          如果没有看到授权页，可能是浏览器拦截了弹窗，选择允许即可。
+        </div>
+        <h4>请在新开的页面中完成eBay账户绑定操作！</h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="successAuth">授权成功</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#btnAuth").on("click", function () {
+    $.ajax({
+      type: "post",
+      url: "${rc.contextPath}/ebay/auth.html",
+      async: false,
+      success: function (data) {
+        var json = JSON.parse(data);
+        if (json != "error") {
+          window.open(json);
+          $("#modal").modal('hide');
+          $("#modalAuth").modal('show');
+        } else {
+          base.alert("操作失败！");
+        }
+      },
+      error: function () {
+        base.alert("操作失败！");
+      }
+    });
+  })
+
+  $("#successAuth").on("click", function () {
+    var storeName = $("#storeName").val();
+    $.ajax({
+      type: "post",
+      url: "${rc.contextPath}/ebay/authSuccess.html",
+      async: false,
+      data: {
+        "storeName": storeName
+      },
+      success: function (data) {
+        $("#modalAuth").modal('hide');
+        var json = JSON.parse(data);
+        base.alert(json.msg);
+      },
+      error: function () {
+        base.alert("操作失败！");
+      }
+    });
+  })
+
+</script>

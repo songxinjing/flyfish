@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- 上述3个meta标签*必须*放在前面，任何其他内容都*必须*跟随其后 -->
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <link rel="icon" href="${rc.contextPath}/resources/image/favicon.ico" />
+    <title>飞鱼ERP</title>
+    <link href="${rc.contextPath}/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="${rc.contextPath}/resources/metisMenu/css/metisMenu.min.css" rel="stylesheet" />
+    <link href="${rc.contextPath}/resources/sb-admin-2/css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="${rc.contextPath}/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="${rc.contextPath}/resources/base/css/base.css?v=$!version" rel="stylesheet" />
+    <!-- jQuery文件，务必在bootstrap.min.js 之前引入 -->
+    <script src="${rc.contextPath}/resources/jquery/js/jquery.min.js"></script>
+    <script src="${rc.contextPath}/resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="${rc.contextPath}/resources/metisMenu/js/metisMenu.min.js"></script>
+    <script src="${rc.contextPath}/resources/sb-admin-2/js/sb-admin-2.min.js"></script>
+    <script src="${rc.contextPath}/resources/base/js/base.js?v=$!version"></script>
+</head>
+
+$screen_content   
+
+</html>
