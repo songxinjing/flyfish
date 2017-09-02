@@ -93,7 +93,7 @@
 	<!-- 定义切面，在service包或子包中的任意方法执行有关的hibernate session的事务操作 -->
 	<aop:config>
 		<aop:pointcut id="serviceOperation"
-			expression="execution(* com.songxinjing.base.service..*.*(..))" />
+			expression="execution(* com.songxinjing.flyfish.service..*.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
 	</aop:config>
 

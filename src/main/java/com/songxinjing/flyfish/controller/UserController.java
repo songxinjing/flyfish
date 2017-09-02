@@ -2,10 +2,6 @@ package com.songxinjing.flyfish.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,13 +22,11 @@ import com.songxinjing.flyfish.service.UserService;
 @Controller
 public class UserController extends BaseController {
 
-	private static Logger logger = LoggerFactory.getLogger(UserController.class);
-
 	@Autowired
 	UserService userService;
 
 	@RequestMapping(value = "user/list", method = RequestMethod.GET)
-	public String list(Model model, HttpServletRequest request, Integer page) {
+	public String list(Model model, Integer page) {
 		logger.info("进入用户列表页面");
 
 		if (page == null) {

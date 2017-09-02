@@ -31,6 +31,12 @@ public class User implements Serializable {
 	private String userId;
 
 	/**
+	 * 姓名
+	 */
+	@Column(length = 16)
+	private String name;
+
+	/**
 	 * 邮箱
 	 */
 	@Column(length = 64)
@@ -43,7 +49,7 @@ public class User implements Serializable {
 	private String phone;
 
 	/**
-	 * 密码密文
+	 * 密码签名
 	 */
 	@Column(length = 64)
 	private String password;
@@ -74,6 +80,14 @@ public class User implements Serializable {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getEmail() {

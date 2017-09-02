@@ -1,9 +1,6 @@
 package com.songxinjing.flyfish.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -19,14 +16,13 @@ import com.songxinjing.flyfish.controller.base.BaseController;
 public class HomeController extends BaseController {
 
 	@RequestMapping(value = "index", method = RequestMethod.GET)
-	public String home(Model model, HttpServletRequest request) {
+	public String home() {
 		logger.info("进入主页面");
-		model.addAttribute("menu", "index");
 		return "index";
 	}
 
 	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public String login(Model model, HttpServletRequest request) {
+	public String login() {
 		logger.info("进入登录页面");
 		return "login";
 	}

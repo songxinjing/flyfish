@@ -40,7 +40,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 * @return 主键值
 	 */
 	public Serializable save(final T entity) {
-		Assert.notNull(entity);
+		Assert.notNull(entity, "对象不能为空！");
 		return getHibernateTemplate().save(entity);
 	}
 
@@ -51,7 +51,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 *            实体对象
 	 */
 	public void update(final T entity) {
-		Assert.notNull(entity);
+		Assert.notNull(entity, "对象不能为空！");
 		getHibernateTemplate().update(entity);
 	}
 
@@ -62,7 +62,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 *            实体对象
 	 */
 	public void delete(final T entity) {
-		Assert.notNull(entity);
+		Assert.notNull(entity, "对象不能为空！");
 		getHibernateTemplate().delete(entity);
 	}
 
@@ -73,7 +73,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 *            实体对象List
 	 */
 	public void delete(final Collection<T> entities) {
-		Assert.notNull(entities);
+		Assert.notNull(entities, "对象不能为空！");
 		getHibernateTemplate().deleteAll(entities);
 	}
 
@@ -94,7 +94,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 * @return 实体对象
 	 */
 	public T find(final PK id) {
-		Assert.notNull(id);
+		Assert.notNull(id, "对象不能为空！");
 		return getHibernateTemplate().get(entityClass, id);
 	}
 
@@ -106,7 +106,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 * @return 实体对象List
 	 */
 	public List<T> find(final T entity) {
-		Assert.notNull(entity);
+		Assert.notNull(entity, "对象不能为空！");
 		return getHibernateTemplate().findByExample(entity);
 	}
 
@@ -118,7 +118,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 * @return
 	 */
 	public List<T> findHql(final String hql, final Object... values) {
-		Assert.hasText(hql);
+		Assert.hasText(hql, "对象不能为空！");
 		return createQuery(hql, values).getResultList();
 	}
 
@@ -132,7 +132,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 * @return
 	 */
 	public List<T> findPage(final String hql, final int from, final int size, final Object... values) {
-		Assert.hasText(hql);
+		Assert.hasText(hql, "对象不能为空！");
 		return createQuery(hql, values).setFirstResult(from).setMaxResults(size).getResultList();
 	}
 
@@ -144,7 +144,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 * @return
 	 */
 	public TypedQuery<T> createQuery(String hql, Object... values) {
-		Assert.hasText(hql);
+		Assert.hasText(hql, "对象不能为空！");
 		TypedQuery<T> query = this.currentSession().createQuery(hql, entityClass);
 		if (values != null) {
 			for (int i = 0; i < values.length; i++) {

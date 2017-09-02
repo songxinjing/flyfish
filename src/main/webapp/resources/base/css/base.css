@@ -1,9 +1,13 @@
 .pagination>span {
-	font-size: 18px;
+	font-size: 14px;
 	padding-left:10px;
 	vertical-align: middle;
 	color: #bdbcbc;
 	line-height: 45px;
+}
+
+.pagination-lg>li>a {
+	font-size: 14px;
 }
 
 .pagination>span a {
