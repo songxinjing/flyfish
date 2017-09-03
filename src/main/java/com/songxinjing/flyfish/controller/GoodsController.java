@@ -39,6 +39,7 @@ public class GoodsController extends BaseController {
 		PageModel<Goods> pageModel = new PageModel<Goods>();
 		pageModel.init(page, total);
 		pageModel.setUrl("goods/list.html");
+		pageModel.setPara("?");
 		String hql = "from Goods";
 		List<Goods> goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize());
 		pageModel.setRecList(goodses);

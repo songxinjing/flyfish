@@ -57,6 +57,11 @@ public class PageModel<T> {
 	private String url;
 	
 	/**
+	 * 数据请求参数（?key1=value1&key2=value2&...&）
+	 */
+	private String para;
+	
+	/**
 	 * 当前页第一条记录的游标
 	 */
 	private int recFrom;
@@ -131,6 +136,14 @@ public class PageModel<T> {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	public String getPara() {
+		return para;
+	}
+
+	public void setPara(String para) {
+		this.para = para;
 	}
 
 	public int getRecFrom() {
