@@ -31,12 +31,6 @@ public class Logis implements Serializable {
 	private int id;
 
 	/**
-	 * 物流方式名称
-	 */
-	@Column(length = 32)
-	private String name;
-	
-	/**
 	 * 该物流方式针对发货国家
 	 */
 	@ManyToOne(cascade = CascadeType.ALL)
@@ -44,35 +38,42 @@ public class Logis implements Serializable {
 	private Country country;
 
 	/**
+	 * 该物流方式所属产品
+	 */
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn
+	private LogisProd prod;
+
+	/**
 	 * 计费模式（1：=Ax+B；2：if x < X, =C else =Dx）
 	 */
 	@Column
 	private int method;
-	
+
 	/**
 	 * 计费模式参数A
 	 */
 	@Column(precision = 6, scale = 2)
 	private BigDecimal paraA;
-	
+
 	/**
 	 * 计费模式参数B
 	 */
 	@Column(precision = 6, scale = 2)
 	private BigDecimal paraB;
-	
+
 	/**
 	 * 计费模式参数X
 	 */
 	@Column(precision = 6, scale = 2)
 	private BigDecimal paraX;
-	
+
 	/**
 	 * 计费模式参数C
 	 */
 	@Column(precision = 6, scale = 2)
 	private BigDecimal paraC;
-	
+
 	/**
 	 * 计费模式参数D
 	 */
@@ -96,7 +97,7 @@ public class Logis implements Serializable {
 	 */
 	@Column
 	private Timestamp modifyTm;
-	
+
 	/**
 	 * 100克费用
 	 */
@@ -111,12 +112,12 @@ public class Logis implements Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public LogisProd getProd() {
+		return prod;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setProd(LogisProd prod) {
+		this.prod = prod;
 	}
 
 	public Country getCountry() {

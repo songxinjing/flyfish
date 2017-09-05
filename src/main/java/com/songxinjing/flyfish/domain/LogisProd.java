@@ -1,7 +1,6 @@
 package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -10,51 +9,41 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 /**
- * 平台信息表实体类
+ * 物流产品信息表实体类
  * 
  * @author songxinjing
  *
  */
 @Entity
-public class Platform implements Serializable {
+public class LogisProd implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 平台ID
+	 * 物流产品ID
 	 */
 	@Id
 	@Column
 	private int id;
 
 	/**
-	 * 平台名称
+	 * 物流产品名称
 	 */
 	@Column(length = 32)
 	private String name;
-	
+
 	/**
-	 * 平台排序
+	 * 物流产品排序
 	 */
 	@Column
 	private int orderNum;
 
 	/**
-	 * 平台费率（%）
+	 * 该产品物流方式列表
 	 */
-	@Column(precision = 5, scale = 2)
-	private BigDecimal rate;
-
-	/**
-	 * 该平台权重列表
-	 */
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "platform")
-	@Fetch(FetchMode.SUBSELECT)
-	private List<Weight> weights;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "prod")
+	private List<Logis> logises;
 
 	public int getId() {
 		return id;
@@ -80,20 +69,12 @@ public class Platform implements Serializable {
 		this.orderNum = orderNum;
 	}
 
-	public BigDecimal getRate() {
-		return rate;
+	public List<Logis> getLogises() {
+		return logises;
 	}
 
-	public void setRate(BigDecimal rate) {
-		this.rate = rate;
-	}
-
-	public List<Weight> getWeights() {
-		return weights;
-	}
-
-	public void setWeights(List<Weight> weights) {
-		this.weights = weights;
+	public void setLogises(List<Logis> logises) {
+		this.logises = logises;
 	}
 
 }
