@@ -3,14 +3,14 @@ package com.songxinjing.flyfish.dao;
 import org.springframework.stereotype.Repository;
 
 import com.songxinjing.flyfish.dao.base.BaseDao;
-import com.songxinjing.flyfish.domain.Logis;
+import com.songxinjing.flyfish.domain.Country;
 
 /**
- * 用户信息表Dao类
+ * 国家信息表Dao类
  * @author songxinjing
  *
  */
 @Repository
-public class LogisDao extends BaseDao<Logis, Integer> {
+public class CountryDao extends BaseDao<Country, Integer> {
 
 }

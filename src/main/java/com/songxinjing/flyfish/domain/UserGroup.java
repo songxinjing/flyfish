@@ -31,7 +31,7 @@ public class UserGroup implements Serializable {
 	@Id
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer groupId;
+	private int groupId;
 
 	/**
 	 * 用户组名称

@@ -1,6 +1,7 @@
 package com.songxinjing.flyfish.controller;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Logis;
 import com.songxinjing.flyfish.domain.Weight;
+import com.songxinjing.flyfish.service.CountryService;
+import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.LogisService;
 import com.songxinjing.flyfish.service.PlatformService;
 
@@ -29,6 +32,12 @@ public class LogisController extends BaseController {
 
 	@Autowired
 	LogisService logisService;
+
+	@Autowired
+	LogisProdService logisProdService;
+
+	@Autowired
+	CountryService countryService;
 
 	@Autowired
 	PlatformService platformService;
@@ -70,6 +79,7 @@ public class LogisController extends BaseController {
 			countryWeight.put(weight.getCountry().getId(), weight.getRate());
 		}
 
+		// 物流产品在该平台的加权平均运费
 		Map<String, BigDecimal> mapFee100ByWeight = new HashMap<String, BigDecimal>();
 
 		for (String logisName : map.keySet()) {
@@ -84,7 +94,29 @@ public class LogisController extends BaseController {
 		model.addAttribute("countryWeight", countryWeight);
 		model.addAttribute("mapFee100ByWeight", mapFee100ByWeight);
 
+		model.addAttribute("countries", countryService.find());
+		model.addAttribute("prods", logisProdService.find());
+
 		return "logis/list";
+	}
+
+	@RequestMapping(value = "logis/add", method = RequestMethod.POST)
+	public String add(Model model, int prod, int country, int method, BigDecimal paraA, BigDecimal paraB,
+			BigDecimal paraC, BigDecimal paraX, BigDecimal paraD) {
+		Logis logis = new Logis();
+		logis.setCountry(countryService.find(country));
+		logis.setProd(logisProdService.find(prod));
+		logis.setMethod(method);
+		logis.setParaA(paraA);
+		logis.setParaB(paraB);
+		logis.setParaC(paraC);
+		logis.setParaX(paraX);
+		logis.setParaD(paraD);
+		logis.setModifyId("songxinjing");
+		logis.setModifyer("宋鑫晶");
+		logis.setModifyTm(new Timestamp(System.currentTimeMillis()));
+		logisService.save(logis);
+		return list(model,1);
 	}
 
 }

@@ -3,21 +3,21 @@ package com.songxinjing.flyfish.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.songxinjing.flyfish.dao.RoleDao;
-import com.songxinjing.flyfish.domain.Role;
+import com.songxinjing.flyfish.dao.LogisProdDao;
+import com.songxinjing.flyfish.domain.LogisProd;
 import com.songxinjing.flyfish.service.base.BaseService;
 
 /**
- * 配置信息服务类
+ * 物流产品信息服务类
  * 
  * @author songxinjing
  * 
  */
 @Service
-public class RoleService extends BaseService<Role, String>{
+public class LogisProdService extends BaseService<LogisProd, Integer>{
 
 	@Autowired
-	public void setSuperDao(RoleDao dao) {
+	public void setSuperDao(LogisProdDao dao) {
 		super.setDao(dao);
 	}
 

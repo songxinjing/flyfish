@@ -8,7 +8,7 @@ import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.service.base.BaseService;
 
 /**
- * 配置信息服务类
+ * 用户信息服务类
  * 
  * @author songxinjing
  * 
@@ -17,8 +17,8 @@ import com.songxinjing.flyfish.service.base.BaseService;
 public class UserService extends BaseService<User, String>{
 
 	@Autowired
-	public void setSuperDao(UserDao userDao) {
-		super.setDao(userDao);
+	public void setSuperDao(UserDao dao) {
+		super.setDao(dao);
 	}
 
 }

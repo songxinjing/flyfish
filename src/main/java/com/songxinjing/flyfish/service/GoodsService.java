@@ -17,8 +17,8 @@ import com.songxinjing.flyfish.service.base.BaseService;
 public class GoodsService extends BaseService<Goods, String>{
 
 	@Autowired
-	public void setSuperDao(GoodsDao goodsDao) {
-		super.setDao(goodsDao);
+	public void setSuperDao(GoodsDao dao) {
+		super.setDao(dao);
 	}
 
 }

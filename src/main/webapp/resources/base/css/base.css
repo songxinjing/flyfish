@@ -38,4 +38,9 @@ img.platform-logo {
 .btn-login {
     width: 100%;
 }
+
+.input-para {
+	display:inline;
+	width: 80px;
+}
     

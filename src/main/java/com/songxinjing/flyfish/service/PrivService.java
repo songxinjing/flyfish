@@ -19,8 +19,8 @@ import com.songxinjing.flyfish.service.base.BaseService;
 public class PrivService extends BaseService<Privilege, String>{
 
 	@Autowired
-	public void setSuperDao(PrivDao privDao) {
-		super.setDao(privDao);
+	public void setSuperDao(PrivDao dao) {
+		super.setDao(dao);
 	}
 	
 	/**

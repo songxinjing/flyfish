@@ -14,11 +14,11 @@ import com.songxinjing.flyfish.service.base.BaseService;
  * 
  */
 @Service
-public class LogisService extends BaseService<Logis, String>{
+public class LogisService extends BaseService<Logis, Integer>{
 
 	@Autowired
-	public void setSuperDao(LogisDao logisDao) {
-		super.setDao(logisDao);
+	public void setSuperDao(LogisDao dao) {
+		super.setDao(dao);
 	}
 
 }

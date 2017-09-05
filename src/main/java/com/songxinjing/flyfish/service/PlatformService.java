@@ -17,8 +17,8 @@ import com.songxinjing.flyfish.service.base.BaseService;
 public class PlatformService extends BaseService<Platform, Integer>{
 
 	@Autowired
-	public void setSuperDao(PlatformDao logisDao) {
-		super.setDao(logisDao);
+	public void setSuperDao(PlatformDao dao) {
+		super.setDao(dao);
 	}
 
 }
