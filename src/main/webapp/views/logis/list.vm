@@ -13,26 +13,27 @@
 			<table class="table table-striped table-bordered table-hover">
 	    	  <thead>
 			    <tr>
-			      <th></th>
 			      <th>物流产品</th>
 			      <th>100克加权运费</th>
+			      <th>备注</th>
 			    </tr>
 			  </thead>			  
 			  <tbody>
-				 #foreach($!prod in $!map.entrySet())
+				 #foreach($!member in $!map.entrySet())
 					<tr>
-					  <td></td>
-			          <td>$!prod</td>
-					  <td>$!mapFee100ByWeight.get($!prod)</td>
+			          <td>$!member.key</td>
+					  <td>$!mapFee100ByWeight.get($!member.key)</td>
+					  <td>$!remarkMap.get($!member.key)</td>
 			        </tr>
-					<tr id="$!prod">
-					  <td>
+					<tr id="$!member.key">
+					  <td colspan="3">
 						<table class="table table-striped table-bordered table-hover">
             	    	  <thead>
             			    <tr>
             			      <th>发货国家</th>
             			      <th>计费说明</th>
             			      <th>100克运费</th>
+            			      <th>平台权重</th>
             			      <th>最后更新人</th>
             			      <th>最后更新时间</th>
             				  <th>操作</th>
@@ -40,14 +41,15 @@
             			  </thead>
             			  <tbody>
             				
-            				#foreach($rec in $!map.get($!prod))
+            				#foreach($rec in $!member.value)
             			        <tr>
             			          <td>$!{rec.country.name}</td>
-            			          <td>#if($!{rec.method} == 1) 费用=$!{rec.paraA}*重量 +$!{rec.paraB} 
-            							#elseif($!{rec.method} == 2) 如果重量小于$!{rec.paraX}克，费用=$!{rec.paraC}，否则，费用=$!{rec.paraD}*重量
+            			          <td>#if($!{rec.method} == 1) 运费=$!{rec.paraA} * 重量 + $!{rec.paraB} 
+            							#elseif($!{rec.method} == 2) 起步运费 = $!{rec.paraC}；重量 &gt;= $!{rec.paraX}克，运费 = $!{rec.paraD} * 重量
             								#else 无费用说明 #end
             					  </td>
             			          <td>$!{rec.fee100}</td>
+            			          <td>#if(!$!countryWeight.get($!{rec.country.id})) 0.00% #else $!countryWeight.get($!{rec.country.id})% #end</td>
             			          <td>$!{rec.modifyer}</td>
             			          <td>$!{rec.modifyTime}</td>
             					  <td>修改 删除</td>
@@ -95,19 +97,19 @@
                 <label>选择计费模式</label>
                 <div class="radio">
                     <label>
-                        <input type="radio" name="method" value="1" checked="">模式1：运费=A*重量+B</input>
+                        <input type="radio" name="method" value="1" checked="">模式1：运费 = A * 重量 + B</input>
                     </label>
                 </div>
 				<div>
-					运费=<input name="paraA" class="form-control input-para" placeholder="A">*重量 + <input name="paraB" class="form-control input-para" placeholder="B">
+					运费 = <input name="paraA" class="form-control input-para" placeholder="A"> * 重量 + <input name="paraB" class="form-control input-para" placeholder="B">
                 </div>
 				<div class="radio">
                     <label>
-                        <input type="radio" name="method" value="2">模式2：起步运费=C；重量大于X克，运费=D*重量</input>
+                        <input type="radio" name="method" value="2">模式2：起步运费 = C；重量 &gt;= X克，运费 = D * 重量</input>
                     </label>
                 </div>
 				<div>
-					起步运费=<input name="paraC" class="form-control input-para" placeholder="C">；重量大于<input name="paraX" class="form-control input-para" placeholder="X">克，运费= <input name="paraD" class="form-control input-para" placeholder="D">*重量 
+					起步运费 = <input name="paraC" class="form-control input-para" placeholder="C">；重量 &gt;= <input name="paraX" class="form-control input-para" placeholder="X">克，运费 = <input name="paraD" class="form-control input-para" placeholder="D"> * 重量 
                 </div>
             </div>
             

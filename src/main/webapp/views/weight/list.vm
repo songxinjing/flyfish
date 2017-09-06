@@ -1,0 +1,85 @@
+<div class="row">
+	<div class="col-md-12">
+		<h1 class="page-header">国家权重列表</h1>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<button type="button" class="btn btn-success margin-bottom" data-toggle='modal' data-target='#addModal'>新增</button>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered table-hover">
+	    	  <thead>
+			    <tr>
+			      <th>发货国家</th>
+			      <th>权重</th>
+			      <th>最后更新人</th>
+            	  <th>最后更新时间</th>
+            	  <th>操作</th>
+			    </tr>
+			  </thead>			  
+			  <tbody>
+				 #foreach($rec in $!weights)
+			        <tr>
+			          <td>$!{rec.country.name}</td>
+			          <td>$!{rec.rate}%</td>
+			          <td>$!{rec.modifyer}</td>
+			          <td>$!{rec.modifyTime}</td>
+					  <td>修改 删除</td>
+			        </tr>
+				#end
+					
+			 </tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!-- import Modal-->
+<div id="addModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">新增国家权重</h4>
+      </div>
+      <div class="modal-body">
+         <form id="addForm" action="${rc.contextPath}/weight/add.html" method="post">
+			<div class="form-group">
+                <label>选择发货国家</label>
+                <select name="country" class="form-control">
+					#foreach($!country in $!countries)
+                    <option value="$!{country.id}">$!{country.name}</option>
+					#end
+                </select>
+            </div>
+            <div class="form-group">
+                <label>选择平台</label>
+                <select name="platform" class="form-control">
+					#foreach($!platform in $!platforms)
+                    <option value="$!{platform.id}">$!{platform.name}</option>
+					#end
+                </select>
+            </div>
+           <div class="form-group">
+                <label>平台权重</label>
+                 <input class="form-control  input-para" name="rate">%
+            </div>
+            
+	     </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="confirm-yes btn btn-primary" id="btnAdd">提交</button>
+        <button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $("#btnAdd").on("click", function () {
+     document.getElementById("addForm").submit();
+  })
+</script>

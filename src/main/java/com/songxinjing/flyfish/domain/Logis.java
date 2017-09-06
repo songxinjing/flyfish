@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,6 +30,7 @@ public class Logis implements Serializable {
 	 */
 	@Id
 	@Column
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	/**
@@ -53,7 +56,7 @@ public class Logis implements Serializable {
 	/**
 	 * 计费模式参数A
 	 */
-	@Column(precision = 6, scale = 2)
+	@Column(precision = 6, scale = 4)
 	private BigDecimal paraA;
 
 	/**
@@ -77,7 +80,7 @@ public class Logis implements Serializable {
 	/**
 	 * 计费模式参数D
 	 */
-	@Column(precision = 6, scale = 2)
+	@Column(precision = 6, scale = 4)
 	private BigDecimal paraD;
 
 	/**

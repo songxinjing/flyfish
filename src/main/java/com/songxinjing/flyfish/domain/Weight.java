@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -27,6 +29,7 @@ public class Weight implements Serializable {
 	 */
 	@Id
 	@Column
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	/**
@@ -48,24 +51,24 @@ public class Weight implements Serializable {
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn
 	private Platform platform;
-	
+
 	/**
 	 * 最后修改人ID
 	 */
 	@Column(length = 16)
-	private String modifyUserId;
+	private String modifyId;
 
 	/**
 	 * 最后修改人
 	 */
 	@Column(length = 16)
-	private String modifyUserName;
+	private String modifyer;
 
 	/**
 	 * 最后修改时间
 	 */
 	@Column
-	private Timestamp modifyTime;
+	private Timestamp modifyTm;
 
 	public int getId() {
 		return id;
@@ -99,28 +102,27 @@ public class Weight implements Serializable {
 		this.platform = platform;
 	}
 
-	public String getModifyUserId() {
-		return modifyUserId;
+	public String getModifyId() {
+		return modifyId;
 	}
 
-	public void setModifyUserId(String modifyUserId) {
-		this.modifyUserId = modifyUserId;
+	public void setModifyId(String modifyId) {
+		this.modifyId = modifyId;
 	}
 
-	public String getModifyUserName() {
-		return modifyUserName;
+	public String getModifyer() {
+		return modifyer;
 	}
 
-	public void setModifyUserName(String modifyUserName) {
-		this.modifyUserName = modifyUserName;
+	public void setModifyer(String modifyer) {
+		this.modifyer = modifyer;
 	}
 
-	public Timestamp getModifyTime() {
-		return modifyTime;
+	public Timestamp getModifyTm() {
+		return modifyTm;
 	}
 
-	public void setModifyTime(Timestamp modifyTime) {
-		this.modifyTime = modifyTime;
+	public void setModifyTm(Timestamp modifyTm) {
+		this.modifyTm = modifyTm;
 	}
-
 }

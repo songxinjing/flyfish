@@ -1,6 +1,7 @@
 package com.songxinjing.flyfish.controller;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,10 +56,10 @@ public class LogisController extends BaseController {
 			if (logis.getMethod() == 1) {
 				logis.setFee100(logis.getParaA().multiply(new BigDecimal(100)).add(logis.getParaB()));
 			} else if (logis.getMethod() == 2) {
-				if (logis.getParaX().compareTo(new BigDecimal(100)) < 0) {
+				if (logis.getParaX().compareTo(new BigDecimal(100)) > 0) {
 					logis.setFee100(logis.getParaC());
 				} else {
-					logis.setFee100(logis.getParaD().multiply(new BigDecimal(100)));
+					logis.setFee100(logis.getParaD().multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
 				}
 			}
 
@@ -81,18 +82,37 @@ public class LogisController extends BaseController {
 
 		// 物流产品在该平台的加权平均运费
 		Map<String, BigDecimal> mapFee100ByWeight = new HashMap<String, BigDecimal>();
+		
+		// 物流产品备注
+		Map<String, String> remarkMap = new HashMap<String, String>();
 
 		for (String logisName : map.keySet()) {
 			BigDecimal fee100ByWeight = new BigDecimal(0);
+			BigDecimal allRate = new BigDecimal(0);
 			for (Logis logis : map.get(logisName)) {
-				fee100ByWeight.add(logis.getFee100().multiply(countryWeight.get(logis.getCountry().getId())));
+				BigDecimal weightRate = new BigDecimal(0);
+				if(countryWeight.get(logis.getCountry().getId()) != null){
+					weightRate = countryWeight.get(logis.getCountry().getId());
+				}
+				fee100ByWeight = fee100ByWeight.add(logis.getFee100().multiply(weightRate).divide(new BigDecimal(100)));
+				allRate = allRate.add(weightRate);
 			}
-			mapFee100ByWeight.put(logisName, fee100ByWeight);
+			mapFee100ByWeight.put(logisName, fee100ByWeight.setScale(2, RoundingMode.HALF_UP));
+			String remark = "";
+			if(allRate.compareTo(new BigDecimal(100)) < 0){
+				remark = "<span class='remark-red'>权重合计"+allRate+"%,不足100%!!!</span>";
+			}else if(allRate.compareTo(new BigDecimal(100)) > 0){
+				remark = "<span class='remark-red'>权重合计"+allRate+"%,超过100%!!!</span>";
+			}else {
+				remark = "<span class='remark-gren'>权重合计"+allRate+"%</span>";
+			}
+			remarkMap.put(logisName, remark);
 		}
 
 		model.addAttribute("map", map);
 		model.addAttribute("countryWeight", countryWeight);
 		model.addAttribute("mapFee100ByWeight", mapFee100ByWeight);
+		model.addAttribute("remarkMap", remarkMap);
 
 		model.addAttribute("countries", countryService.find());
 		model.addAttribute("prods", logisProdService.find());

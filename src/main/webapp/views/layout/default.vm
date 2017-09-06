@@ -105,7 +105,7 @@
                                     <a href="${rc.contextPath}/logis/list.html">物流方式列表</a>
                                 </li>
 								<li>
-                                    <a href="${rc.contextPath}/logis/weight.html">国家权重设置</a>
+                                    <a href="${rc.contextPath}/weight/list.html">国家权重设置</a>
                                 </li>
 								<li>
                                     <a href="${rc.contextPath}/logis/tool.html">费用计算器</a>
