@@ -1,6 +1,23 @@
+a:link {
+	text-decoration: none; /* 指正常的未被访问过的链接*/
+}
+
+a:visited {
+	text-decoration: none; /*指已经访问过的链接*/
+}
+
+a:hover {
+	text-decoration: none; /*指鼠标在链接*/
+}
+
+a:active {
+	text-decoration: none; /* 指正在点的链接*/
+}
+
+/* ===== 分页相关 ===== */
 .pagination>span {
 	font-size: 14px;
-	padding-left:10px;
+	padding-left: 10px;
 	vertical-align: middle;
 	color: #bdbcbc;
 	line-height: 45px;
@@ -11,14 +28,14 @@
 }
 
 .pagination>span a {
-	text-decoration:none;
+	text-decoration: none;
 	cursor: pointer;
 }
 
 .pagination>span input {
 	width: 30px;
 	height: 30px;
-	line-height:30px;
+	line-height: 30px;
 	text-align: center;
 }
 
@@ -28,7 +45,7 @@ img.platform-logo {
 }
 
 .margin-bottom {
-	margin-bottom: 15px;	
+	margin-bottom: 15px;
 }
 
 .panel-more {
@@ -36,19 +53,19 @@ img.platform-logo {
 }
 
 .btn-login {
-    width: 100%;
+	width: 100%;
 }
 
+/* ===== 物流相关 ===== */
 .input-para {
-	display:inline;
-	width: 80px;
+	display: inline;
+	width: 70px;
 }
 
 .remark-red {
-	color:red;
+	color: red;
 }
 
-.remark-gren {
-	color:gren;
+.remark-green {
+	color: green;
 }
-    

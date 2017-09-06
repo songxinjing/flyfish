@@ -23,8 +23,11 @@ insert into Country values(20,'其他国家',20);
 
 -- 初始化平台信息
 delete from Platform;
-insert into Platform values(1,'Wish',1,0);
-insert into Platform values(2,'Joom',2,0);
+insert into Platform values(1,'Ebay',1,0);
+insert into Platform values(2,'Amazon',2,0);
+insert into Platform values(3,'AliExpress',3,0);
+insert into Platform values(4,'Wish',4,0);
+insert into Platform values(5,'Joom',5,0);
 
 -- 初始化物流产品信息
 delete from LogisProd;

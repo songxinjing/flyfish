@@ -1,8 +1,16 @@
 <div class="row">
 	<div class="col-md-12">
-		<h1 class="page-header">国家权重列表</h1>
+		<h3 class="page-header">国家权重列表</h3>
 	</div>
 </div>
+
+<ul class="nav nav-tabs">
+	#foreach($plat in $!platforms)
+		<li #if($plat.id == $platId) class="active"  #end>
+			<a href="${rc.contextPath}/weight/list.html?platId=$!plat.id">$!plat.name</a>
+		</li>
+	#end
+</ul>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
@@ -26,7 +34,7 @@
 			          <td>$!{rec.country.name}</td>
 			          <td>$!{rec.rate}%</td>
 			          <td>$!{rec.modifyer}</td>
-			          <td>$!{rec.modifyTime}</td>
+			          <td>$!{rec.modifyTm}</td>
 					  <td>修改 删除</td>
 			        </tr>
 				#end
@@ -46,7 +54,7 @@
         <h4 class="modal-title">新增国家权重</h4>
       </div>
       <div class="modal-body">
-         <form id="addForm" action="${rc.contextPath}/weight/add.html" method="post">
+         <form id="addForm" action="${rc.contextPath}/weight/add.html?platId=$platId" method="post">
 			<div class="form-group">
                 <label>选择发货国家</label>
                 <select name="country" class="form-control">

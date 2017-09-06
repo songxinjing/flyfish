@@ -44,8 +44,12 @@ public class LogisController extends BaseController {
 	PlatformService platformService;
 
 	@RequestMapping(value = "logis/list", method = RequestMethod.GET)
-	public String list(Model model, Integer platid) {
+	public String list(Model model, Integer platId) {
 		logger.info("进入物流方式列表页面");
+
+		if (platId == null || platId == 0) {
+			platId = 1;
+		}
 
 		List<Logis> logises = logisService.find();
 
@@ -54,7 +58,8 @@ public class LogisController extends BaseController {
 		for (Logis logis : logises) {
 
 			if (logis.getMethod() == 1) {
-				logis.setFee100(logis.getParaA().multiply(new BigDecimal(100)).add(logis.getParaB()));
+				logis.setFee100(logis.getParaA().multiply(new BigDecimal(100)).add(logis.getParaB()).setScale(2,
+						RoundingMode.HALF_UP));
 			} else if (logis.getMethod() == 2) {
 				if (logis.getParaX().compareTo(new BigDecimal(100)) > 0) {
 					logis.setFee100(logis.getParaC());
@@ -72,7 +77,7 @@ public class LogisController extends BaseController {
 			}
 		}
 
-		List<Weight> weights = platformService.find(1).getWeights();
+		List<Weight> weights = platformService.find(platId).getWeights();
 
 		Map<Integer, BigDecimal> countryWeight = new HashMap<Integer, BigDecimal>();
 
@@ -82,7 +87,7 @@ public class LogisController extends BaseController {
 
 		// 物流产品在该平台的加权平均运费
 		Map<String, BigDecimal> mapFee100ByWeight = new HashMap<String, BigDecimal>();
-		
+
 		// 物流产品备注
 		Map<String, String> remarkMap = new HashMap<String, String>();
 
@@ -91,7 +96,7 @@ public class LogisController extends BaseController {
 			BigDecimal allRate = new BigDecimal(0);
 			for (Logis logis : map.get(logisName)) {
 				BigDecimal weightRate = new BigDecimal(0);
-				if(countryWeight.get(logis.getCountry().getId()) != null){
+				if (countryWeight.get(logis.getCountry().getId()) != null) {
 					weightRate = countryWeight.get(logis.getCountry().getId());
 				}
 				fee100ByWeight = fee100ByWeight.add(logis.getFee100().multiply(weightRate).divide(new BigDecimal(100)));
@@ -99,12 +104,12 @@ public class LogisController extends BaseController {
 			}
 			mapFee100ByWeight.put(logisName, fee100ByWeight.setScale(2, RoundingMode.HALF_UP));
 			String remark = "";
-			if(allRate.compareTo(new BigDecimal(100)) < 0){
-				remark = "<span class='remark-red'>权重合计"+allRate+"%,不足100%!!!</span>";
-			}else if(allRate.compareTo(new BigDecimal(100)) > 0){
-				remark = "<span class='remark-red'>权重合计"+allRate+"%,超过100%!!!</span>";
-			}else {
-				remark = "<span class='remark-gren'>权重合计"+allRate+"%</span>";
+			if (allRate.compareTo(new BigDecimal(100)) < 0) {
+				remark = "<span class='remark-red'>权重合计" + allRate + "%,不足100%!!!</span>";
+			} else if (allRate.compareTo(new BigDecimal(100)) > 0) {
+				remark = "<span class='remark-red'>权重合计" + allRate + "%,超过100%!!!</span>";
+			} else {
+				remark = "<span class='remark-green'>权重合计" + allRate + "%</span>";
 			}
 			remarkMap.put(logisName, remark);
 		}
@@ -116,13 +121,15 @@ public class LogisController extends BaseController {
 
 		model.addAttribute("countries", countryService.find());
 		model.addAttribute("prods", logisProdService.find());
+		model.addAttribute("platforms", platformService.find());
+		model.addAttribute("platId", platId);
 
 		return "logis/list";
 	}
 
 	@RequestMapping(value = "logis/add", method = RequestMethod.POST)
 	public String add(Model model, int prod, int country, int method, BigDecimal paraA, BigDecimal paraB,
-			BigDecimal paraC, BigDecimal paraX, BigDecimal paraD) {
+			BigDecimal paraC, BigDecimal paraX, BigDecimal paraD,int platId) {
 		Logis logis = new Logis();
 		logis.setCountry(countryService.find(country));
 		logis.setProd(logisProdService.find(prod));
@@ -136,7 +143,7 @@ public class LogisController extends BaseController {
 		logis.setModifyer("宋鑫晶");
 		logis.setModifyTm(new Timestamp(System.currentTimeMillis()));
 		logisService.save(logis);
-		return list(model,1);
+		return list(model, platId);
 	}
 
 }

@@ -1,8 +1,16 @@
 <div class="row">
 	<div class="col-md-12">
-		<h1 class="page-header">物流方式列表</h1>
+		<h3 class="page-header">物流方式列表</h3>
 	</div>
 </div>
+
+<ul class="nav nav-tabs">
+	#foreach($plat in $!platforms)
+		<li #if($plat.id == $platId) class="active"  #end>
+			<a href="${rc.contextPath}/logis/list.html?platId=$!plat.id">$!plat.name</a>
+		</li>
+	#end
+</ul>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
@@ -20,12 +28,12 @@
 			  </thead>			  
 			  <tbody>
 				 #foreach($!member in $!map.entrySet())
-					<tr>
-			          <td>$!member.key</td>
+					<tr id="$!{member.key}">
+			          <td><a id="a-collapse" class="fa fa-plus" data-toggle="collapse" data-parent="#$!{member.key}" href="#$!{member.key}-sub"></a> $!member.key</td>
 					  <td>$!mapFee100ByWeight.get($!member.key)</td>
 					  <td>$!remarkMap.get($!member.key)</td>
 			        </tr>
-					<tr id="$!member.key">
+					<tr id="$!{member.key}-sub" class="panel-collapse collapse">
 					  <td colspan="3">
 						<table class="table table-striped table-bordered table-hover">
             	    	  <thead>
@@ -44,14 +52,14 @@
             				#foreach($rec in $!member.value)
             			        <tr>
             			          <td>$!{rec.country.name}</td>
-            			          <td>#if($!{rec.method} == 1) 运费=$!{rec.paraA} * 重量 + $!{rec.paraB} 
+            			          <td>#if($!{rec.method} == 1) 运费 = $!{rec.paraA} * 重量 + $!{rec.paraB} 
             							#elseif($!{rec.method} == 2) 起步运费 = $!{rec.paraC}；重量 &gt;= $!{rec.paraX}克，运费 = $!{rec.paraD} * 重量
             								#else 无费用说明 #end
             					  </td>
             			          <td>$!{rec.fee100}</td>
             			          <td>#if(!$!countryWeight.get($!{rec.country.id})) 0.00% #else $!countryWeight.get($!{rec.country.id})% #end</td>
             			          <td>$!{rec.modifyer}</td>
-            			          <td>$!{rec.modifyTime}</td>
+            			          <td>$!{rec.modifyTm}</td>
             					  <td>修改 删除</td>
             			        </tr>
             				#end
@@ -76,7 +84,7 @@
         <h4 class="modal-title">新增物流方式</h4>
       </div>
       <div class="modal-body">
-         <form id="addForm" action="${rc.contextPath}/logis/add.html" method="post">
+         <form id="addForm" action="${rc.contextPath}/logis/add.html?platId=$!platId" method="post">
            <div class="form-group">
                 <label>选择物流产品</label>
                 <select name="prod" class="form-control">
@@ -127,4 +135,13 @@
   $("#btnAdd").on("click", function () {
      document.getElementById("addForm").submit();
   })
+  
+  $("#a-collapse").on("click", function () {
+  		if($(this).attr("class") == "fa fa-plus"){
+  			$(this).attr("class", "fa fa-minus");
+  		}else{
+  			$(this).attr("class", "fa fa-plus");
+  		}
+  })
+
 </script>

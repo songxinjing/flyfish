@@ -35,21 +35,27 @@ public class WeightController extends BaseController {
 	WeightService weightService;
 
 	@RequestMapping(value = "weight/list", method = RequestMethod.GET)
-	public String list(Model model, Integer platid) {
-		logger.info("进入物流方式列表页面");
+	public String list(Model model, Integer platId) {
+		logger.info("进入国家权重列表页面");
+		
+		if (platId == null || platId == 0) {
+			platId = 1;
+		}
 
-		List<Weight> weights = platformService.find(1).getWeights();
+		List<Weight> weights = platformService.find(platId).getWeights();
 
 		model.addAttribute("weights", weights);
 
 		model.addAttribute("countries", countryService.find());
 		model.addAttribute("platforms", platformService.find());
+		
+		model.addAttribute("platId", platId);
 
 		return "weight/list";
 	}
 	
 	@RequestMapping(value = "weight/add", method = RequestMethod.POST)
-	public String add(Model model, int country, int platform, BigDecimal rate) {
+	public String add(Model model, int country, int platform, BigDecimal rate,int platId) {
 		Weight weight = new Weight();
 		weight.setCountry(countryService.find(country));
 		weight.setPlatform(platformService.find(platform));
@@ -58,7 +64,7 @@ public class WeightController extends BaseController {
 		weight.setModifyer("宋鑫晶");
 		weight.setModifyTm(new Timestamp(System.currentTimeMillis()));
 		weightService.save(weight);
-		return list(model,1);
+		return list(model,platId);
 	}
 
 }

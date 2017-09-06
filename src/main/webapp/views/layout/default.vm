@@ -14,13 +14,13 @@
     <link href="${rc.contextPath}/resources/metisMenu/css/metisMenu.min.css" rel="stylesheet" />
     <link href="${rc.contextPath}/resources/sb-admin-2/css/sb-admin-2.min.css" rel="stylesheet" />
     <link href="${rc.contextPath}/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="${rc.contextPath}/resources/base/css/base.css?v=$!version" rel="stylesheet" />
+    <link href="${rc.contextPath}/resources/base/css/base.css" rel="stylesheet" />
     <!-- jQuery文件，务必在bootstrap.min.js 之前引入 -->
     <script src="${rc.contextPath}/resources/jquery/js/jquery.min.js"></script>
     <script src="${rc.contextPath}/resources/bootstrap/js/bootstrap.min.js"></script>
     <script src="${rc.contextPath}/resources/metisMenu/js/metisMenu.min.js"></script>
     <script src="${rc.contextPath}/resources/sb-admin-2/js/sb-admin-2.min.js"></script>
-    <script src="${rc.contextPath}/resources/base/js/base.js?v=$!version"></script>
+    <script src="${rc.contextPath}/resources/base/js/base.js"></script>
 </head>
 
 <body>
@@ -106,9 +106,6 @@
                                 </li>
 								<li>
                                     <a href="${rc.contextPath}/weight/list.html">国家权重设置</a>
-                                </li>
-								<li>
-                                    <a href="${rc.contextPath}/logis/tool.html">费用计算器</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
