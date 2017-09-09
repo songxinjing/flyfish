@@ -8,13 +8,14 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -25,13 +26,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSONObject;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.util.ConfigUtil;
+import com.songxinjing.flyfish.util.ReflectionUtil;
 
 /**
  * 主页控制类
@@ -45,38 +46,30 @@ public class ExcelController extends BaseController {
 	@Autowired
 	GoodsService goodsService;
 
-	@RequestMapping(value = "excel/export/flyfish", method = RequestMethod.GET)
+	@RequestMapping(value = "excel/export/common", method = RequestMethod.GET)
 	public void export(HttpServletResponse response) {
-		logger.info("Excel导出飞鱼模版数据");
+		logger.info("Excel导出模版数据");
 
 		List<Goods> goodses = goodsService.find();
 
-		Map<Integer, JSONObject> data = new HashMap<Integer, JSONObject>();
-		int i = 1;
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		for (Goods goods : goodses) {
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
-			map.put("商品SKU", goods.getSku());
-			map.put("商品父SKU", goods.getParentSku());
-			map.put("商品名称", goods.getName());
-			map.put("商品重量（G）", goods.getWeight());
-			map.put("成本价（RMB）", goods.getCostPrice());
-			map.put("中文申报名", goods.getReportNameCn());
-			map.put("英文申报名", goods.getReportNameEn());
-			map.put("业绩归宿人", goods.getBussOwner());
-			map.put("采购员", goods.getBuyer());
-			map.put("网页URL", goods.getUrl());
-			JSONObject jsonObject = (JSONObject) JSONObject.toJSON(map);
-			data.put(i, jsonObject);
-			i++;
+			Map<String, String> map = new HashMap<String, String>();
+			for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
+				if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key))) {
+					Object obj = ReflectionUtil.getFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key));
+					map.put(key, obj.toString());
+				}
+			}
+			data.add(map);
 		}
 
-		String temp = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.FLYFISH;
+		String temp = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.COMMON;
 
 		try {
 			Workbook workbook = ExcelUtil.writeExcel(new FileInputStream(temp), data);
 			response.setContentType("multipart/form-data");
-			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode("商品信息-飞鱼.xlsx", "UTF-8"));
+			response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("商品信息.xls", "UTF-8"));
 			OutputStream os = new BufferedOutputStream(response.getOutputStream());
 			workbook.write(os);
 			os.flush();
@@ -91,17 +84,17 @@ public class ExcelController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "excel/temp/flyfish", method = RequestMethod.GET)
+	@RequestMapping(value = "excel/temp/common", method = RequestMethod.GET)
 	public void temp(HttpServletResponse response) {
-		logger.info("下载模版：商品信息模版-飞鱼.xlsx");
+		logger.info("下载模版：商品信息新增导入模版.xls");
 
-		String temp = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.FLYFISH;
+		String temp = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.COMMON;
 
 		try {
 			Workbook workbook = WorkbookFactory.create(new FileInputStream(temp));
 			response.setContentType("multipart/form-data");
 			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode("商品信息模版-飞鱼.xlsx", "UTF-8"));
+					"attachment;filename=" + URLEncoder.encode("商品信息新增导入模版.xls", "UTF-8"));
 			OutputStream os = new BufferedOutputStream(response.getOutputStream());
 			workbook.write(os);
 			os.flush();
@@ -120,39 +113,30 @@ public class ExcelController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "excel/import/flyfish", method = RequestMethod.POST)
+	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
 	public String load(MultipartFile file, int same) {
-		logger.info("Excel导入飞鱼模版数据");
+		logger.info("Excel导入common模版数据");
 
 		if (!file.isEmpty()) {
 			try {
-				Map<Integer, JSONObject> data = ExcelUtil.readExcel(file.getInputStream());
-				for (JSONObject obj : data.values()) {
-					if (goodsService.find(obj.getString("商品SKU")) == null) {
+				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
+				for (Map<String, String> obj : data) {
+					if (StringUtils.isEmpty(obj.get("SKU")) || goodsService.find(obj.get("SKU")) == null) {
 						Goods goods = new Goods();
-						goods.setSku(obj.getString("商品SKU"));
-						goods.setParentSku(obj.getString("商品父SKU"));
-						goods.setName(obj.getString("商品名称"));
-						goods.setWeight(obj.getIntValue("商品重量（G）"));
-						goods.setCostPrice(obj.getBigDecimal("成本价（RMB）"));
-						goods.setReportNameCn(obj.getString("中文申报名"));
-						goods.setReportNameEn(obj.getString("英文申报名"));
-						goods.setBussOwner(obj.getString("业绩归宿人"));
-						goods.setBuyer(obj.getString("采购员"));
-						goods.setUrl(obj.getString("网页URL"));
-						goods.setModifyTime(new Timestamp(System.currentTimeMillis()));
+						for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
+							if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key))) {
+								ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
+							}
+						}
+						goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
 						goodsService.save(goods);
 					}
-
 				}
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-
 		return "redirect:/goods/list.html";
-
 	}
 
 }
