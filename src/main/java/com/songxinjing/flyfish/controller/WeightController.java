@@ -55,16 +55,37 @@ public class WeightController extends BaseController {
 	}
 	
 	@RequestMapping(value = "weight/add", method = RequestMethod.POST)
-	public String add(Model model, int country, int platform, BigDecimal rate,int platId) {
+	public String add(Model model, int countryId, int platformId, BigDecimal rate) {
 		Weight weight = new Weight();
-		weight.setCountry(countryService.find(country));
-		weight.setPlatform(platformService.find(platform));
+		weight.setCountry(countryService.find(countryId));
+		weight.setPlatform(platformService.find(platformId));
 		weight.setRate(rate);
 		weight.setModifyId("songxinjing");
 		weight.setModifyer("宋鑫晶");
 		weight.setModifyTm(new Timestamp(System.currentTimeMillis()));
 		weightService.save(weight);
-		return list(model,platId);
+		return list(model,platformId);
+	}
+	
+	@RequestMapping(value = "weight/modify", method = RequestMethod.POST)
+	public String modify(Model model, int id, int countryId, int platformId, BigDecimal rate) {
+		Weight weight = weightService.find(id);
+		weight.setCountry(countryService.find(countryId));
+		weight.setPlatform(platformService.find(platformId));
+		weight.setRate(rate);
+		weight.setModifyId("songxinjing");
+		weight.setModifyer("宋鑫晶");
+		weight.setModifyTm(new Timestamp(System.currentTimeMillis()));
+		weightService.update(weight);
+		return list(model,platformId);
+	}
+	
+	@RequestMapping(value = "weight/del", method = RequestMethod.GET)
+	public String del(Model model,int id) {
+		Weight weight = weightService.find(id);
+		int platId = weight.getPlatform().getId();
+		weightService.delete(weight);
+		return list(model, platId);
 	}
 
 }

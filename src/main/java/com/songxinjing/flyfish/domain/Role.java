@@ -5,12 +5,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 /**
  * 角色信息表实体类
@@ -45,8 +41,7 @@ public class Role implements Serializable {
 	/**
 	 * 包含权限列表
 	 */
-	@ManyToMany(fetch = FetchType.EAGER)
-	@Fetch(FetchMode.SUBSELECT)
+	@ManyToMany
 	private List<Privilege> privileges;
 
 	/**

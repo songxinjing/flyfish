@@ -12,9 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 /**
  * 平台信息表实体类
  * 
@@ -56,7 +53,6 @@ public class Platform implements Serializable {
 	 * 该平台权重列表
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "platform")
-	@Fetch(FetchMode.SUBSELECT)
 	private List<Weight> weights;
 
 	public int getId() {

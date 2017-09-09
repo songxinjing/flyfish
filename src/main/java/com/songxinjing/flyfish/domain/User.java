@@ -5,12 +5,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 /**
  * 账户信息表实体类
@@ -63,15 +59,13 @@ public class User implements Serializable {
 	/**
 	 * 用户所属用户组列表
 	 */
-	@ManyToMany(mappedBy = "members", fetch = FetchType.EAGER)
-	@Fetch(FetchMode.SUBSELECT)
+	@ManyToMany(mappedBy = "members")
 	private List<UserGroup> groups;
 
 	/**
 	 * 用户所属角色列表
 	 */
-	@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
-	@Fetch(FetchMode.SUBSELECT)
+	@ManyToMany(mappedBy = "users")
 	private List<Role> roles;
 
 	public String getUserId() {

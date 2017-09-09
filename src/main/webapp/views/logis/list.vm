@@ -1,3 +1,4 @@
+<input type="hidden" id="queryProdId" value="$!queryProdId">
 <div class="row">
 	<div class="col-md-12">
 		<h3 class="page-header">物流方式列表</h3>
@@ -14,11 +15,11 @@
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<button type="button" class="btn btn-success margin-bottom" data-toggle='modal' data-target='#addModal'>新增</button>
+		<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">新增</button>
 	</div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-bordered table-hover">
+			<table class="table table-striped table-bordered">
 	    	  <thead>
 			    <tr>
 			      <th>物流产品</th>
@@ -27,29 +28,29 @@
 			    </tr>
 			  </thead>			  
 			  <tbody>
-				 #foreach($!member in $!map.entrySet())
-					<tr id="$!{member.key}">
-			          <td><a id="a-collapse" class="fa fa-plus" data-toggle="collapse" data-parent="#$!{member.key}" href="#$!{member.key}-sub"></a> $!member.key</td>
-					  <td>$!mapFee100ByWeight.get($!member.key)</td>
-					  <td>$!remarkMap.get($!member.key)</td>
+				 #foreach($!prodForm in $!prodFormList)
+					<tr id="$!{prodForm.logisProd.id}">
+			          <td><a onclick="openSub(this)" class="fa fa-plus" data-toggle="collapse" data-parent="#$!{prodForm.logisProd.id}" href="#$!{prodForm.logisProd.id}-sub"></a> $!prodForm.logisProd.name</td>
+					  <td>$!prodForm.fee100ByWeight</td>
+					  <td>$!prodForm.remark</td>
 			        </tr>
-					<tr id="$!{member.key}-sub" class="panel-collapse collapse">
+					<tr id="$!{prodForm.logisProd.id}-sub" class="panel-collapse collapse">
 					  <td colspan="3">
-						<table class="table table-striped table-bordered table-hover">
+						<table class="table table-condensed">
             	    	  <thead>
             			    <tr>
             			      <th>发货国家</th>
             			      <th>计费说明</th>
             			      <th>100克运费</th>
             			      <th>平台权重</th>
-            			      <th>最后更新人</th>
-            			      <th>最后更新时间</th>
+            			      <th>更新人</th>
+            			      <th>更新时间</th>
             				  <th>操作</th>
             			    </tr>
             			  </thead>
             			  <tbody>
             				
-            				#foreach($rec in $!member.value)
+            				#foreach($rec in $!prodForm.logises)
             			        <tr>
             			          <td>$!{rec.country.name}</td>
             			          <td>#if($!{rec.method} == 1) 运费 = $!{rec.paraA} * 重量 + $!{rec.paraB} 
@@ -57,10 +58,25 @@
             								#else 无费用说明 #end
             					  </td>
             			          <td>$!{rec.fee100}</td>
-            			          <td>#if(!$!countryWeight.get($!{rec.country.id})) 0.00% #else $!countryWeight.get($!{rec.country.id})% #end</td>
+            			          <td>#if(!$!rec.platCountryWeight) 0.00% #else $!{rec.platCountryWeight}% #end</td>
             			          <td>$!{rec.modifyer}</td>
             			          <td>$!{rec.modifyTm}</td>
-            					  <td>修改 删除</td>
+            					  <td>
+            					    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modifyModal" 
+            					    data-id="$!rec.id" 
+            					    data-method="$!rec.method" 
+            					    data-paraa="$!rec.paraA" 
+            					    data-parab="$!rec.paraB"
+            					    data-parac="$!rec.paraC" 
+            					    data-parax="$!rec.paraX" 
+            					    data-parad="$!rec.paraD" 
+            					    data-countryid="$!rec.country.id" 
+            					    data-countryname="$!rec.country.name" 
+            					    data-prodid="$!{prodForm.logisProd.id}"
+            					    data-prodname="$!{prodForm.logisProd.name}"
+            					    >修改</button>
+            					    <button type="button" class="btn btn-danger btn-sm" onclick="window.location.href='${rc.contextPath}/logis/del.html?id=$!rec.id&platId=$!platId'">删除</button>
+            					  </td>
             			        </tr>
             				#end
             			  </tbody>
@@ -75,7 +91,7 @@
 	</div>
 </div>
 
-<!-- import Modal-->
+<!-- add Modal-->
 <div id="addModal" class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -87,7 +103,7 @@
          <form id="addForm" action="${rc.contextPath}/logis/add.html?platId=$!platId" method="post">
            <div class="form-group">
                 <label>选择物流产品</label>
-                <select name="prod" class="form-control">
+                <select name="prodId" class="form-control">
 					#foreach($!prod in $!prods)
                     <option value="$!{prod.id}">$!{prod.name}</option>
 					#end
@@ -95,7 +111,7 @@
             </div>
 			<div class="form-group">
                 <label>选择发货国家</label>
-                <select name="country" class="form-control">
+                <select name="countryId" class="form-control">
 					#foreach($!country in $!countries)
                     <option value="$!{country.id}">$!{country.name}</option>
 					#end
@@ -105,19 +121,19 @@
                 <label>选择计费模式</label>
                 <div class="radio">
                     <label>
-                        <input type="radio" name="method" value="1" checked="">模式1：运费 = A * 重量 + B</input>
+                        <input type="radio" name="method" value="1" checked="" onchange="methodChange('add')">模式1：运费 = A * 重量 + B</input>
                     </label>
                 </div>
-				<div>
-					运费 = <input name="paraA" class="form-control input-para" placeholder="A"> * 重量 + <input name="paraB" class="form-control input-para" placeholder="B">
+				<div id="methodDiv-add1">
+					运费 = <input id="paraA" name="paraA" class="form-control input-para" placeholder="A" number="true" maxlength="6"> * 重量 + <input id="paraB" name="paraB" class="form-control input-para" placeholder="B" number="true" maxlength="6">
                 </div>
 				<div class="radio">
                     <label>
-                        <input type="radio" name="method" value="2">模式2：起步运费 = C；重量 &gt;= X克，运费 = D * 重量</input>
+                        <input type="radio" name="method" value="2" onchange="methodChange('add')">模式2：起步运费 = C；重量 &gt;= X克，运费 = D * 重量</input>
                     </label>
                 </div>
-				<div>
-					起步运费 = <input name="paraC" class="form-control input-para" placeholder="C">；重量 &gt;= <input name="paraX" class="form-control input-para" placeholder="X">克，运费 = <input name="paraD" class="form-control input-para" placeholder="D"> * 重量 
+				<div id="methodDiv-add2">
+					起步运费 = <input id="paraC" name="paraC" class="form-control input-para" placeholder="C" number="true" maxlength="6">；重量 &gt;= <input id="paraX" name="paraX" class="form-control input-para" placeholder="X" number="true" maxlength="6">克，运费 = <input id="paraD" name="paraD" class="form-control input-para" placeholder="D" number="true" maxlength="6"> * 重量 
                 </div>
             </div>
             
@@ -131,17 +147,165 @@
   </div>
 </div>
 
+<!-- modify Modal-->
+<div id="modifyModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">修改物流方式</h4>
+      </div>
+      <div class="modal-body">
+         <form id="modifyForm" action="${rc.contextPath}/logis/modify.html?platId=$!platId" method="post">
+         	<input name="id" type="hidden" id="id"> 
+         	<input name="prodId" type="hidden" id="prodId">
+         	<input name="countryId" type="hidden" id="countryId"> 
+            <div class="form-group">
+                <label>物流产品</label>
+                <p class="form-control-static" id="prodName"></p>
+            </div>
+            <div class="form-group">
+                <label>发货国家</label>
+                <p class="form-control-static" id="countryName"></p>
+            </div>
+			
+           <div class="form-group">
+                <label>选择计费模式</label>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="method" value="1" id="method-1" onchange="methodChange('modify')">模式1：运费 = A * 重量 + B</input>
+                    </label>
+                </div>
+				<div id="methodDiv-modify1">
+					运费 = <input id="paraA" name="paraA" class="form-control input-para" placeholder="A" number="true" maxlength="6"> * 重量 + <input id="paraB" name="paraB" class="form-control input-para" placeholder="B" number="true" maxlength="6">
+                </div>
+				<div class="radio">
+                    <label>
+                        <input type="radio" name="method" value="2" id="method-2" onchange="methodChange('modify')">模式2：起步运费 = C；重量 &gt;= X克，运费 = D * 重量</input>
+                    </label>
+                </div>
+				<div id="methodDiv-modify2">
+					起步运费 = <input id="paraC" name="paraC" class="form-control input-para" placeholder="C" number="true" maxlength="6">；重量 &gt;= <input id="paraX" name="paraX" class="form-control input-para" placeholder="X" number="true" maxlength="6">克，运费 = <input id="paraD" name="paraD" class="form-control input-para" placeholder="D" number="true" maxlength="6"> * 重量 
+                </div>
+            </div>
+	     </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="confirm-yes btn btn-primary" id="btnModify">提交</button>
+        <button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+  
+  $().ready(function() {
+  
+  	var queryProdId = $("#queryProdId").val();
+  	if(queryProdId){
+  	  openSub($("tr#"+queryProdId+" td a"));
+  	  $("tr#"+queryProdId+"-sub").collapse();
+  	}
+  	
+  
+    $("#addForm").validate();
+    $("#modifyForm").validate();
+  });
+
   $("#btnAdd").on("click", function () {
-     document.getElementById("addForm").submit();
+     $("#addForm").submit();
   })
   
-  $("#a-collapse").on("click", function () {
-  		if($(this).attr("class") == "fa fa-plus"){
-  			$(this).attr("class", "fa fa-minus");
-  		}else{
-  			$(this).attr("class", "fa fa-plus");
-  		}
+  $("#btnModify").on("click", function () {
+     $("#modifyForm").submit();
   })
+  
+  function openSub(obj) {
+	$(obj).attr("class", "fa fa-minus");
+	$(obj).attr("onclick", "closeSub(this)");
+  }
+  
+  function closeSub(obj) {
+	$(obj).attr("class", "fa fa-plus");
+	$(obj).attr("onclick", "openSub(this)");
+  }
+  
+  function methodChange(oper) {
+  	if($("#methodDiv-"+oper+"1").is(":hidden")){
+       $("#methodDiv-"+oper+"1").show();
+       $("#methodDiv-"+oper+"1").find("#paraA").attr("required","true");
+       $("#methodDiv-"+oper+"1").find("#paraB").attr("required","true");
+       $("#methodDiv-"+oper+"2").hide();
+       $("#methodDiv-"+oper+"2").find("#paraC").attr("required","false");
+       $("#methodDiv-"+oper+"2").find("#paraX").attr("required","false");
+       $("#methodDiv-"+oper+"2").find("#paraD").attr("required","false");
+	}else{
+	   $("#methodDiv-"+oper+"1").hide();
+	   $("#methodDiv-"+oper+"1").find("#paraA").attr("required","false");
+       $("#methodDiv-"+oper+"1").find("#paraB").attr("required","false");
+	   $("#methodDiv-"+oper+"2").show();
+	   $("#methodDiv-"+oper+"2").find("#paraC").attr("required","true");
+       $("#methodDiv-"+oper+"2").find("#paraX").attr("required","true");
+       $("#methodDiv-"+oper+"2").find("#paraD").attr("required","true");
+	}
+  }
+  
+  $("#addModal").on("show.bs.modal", function (event) {
+    $("#methodDiv-add1").show();
+    $("#methodDiv-add1").find("#paraA").attr("required","true");
+    $("#methodDiv-add1").find("#paraB").attr("required","true");
+  	$("#methodDiv-add2").hide();
+  	$("#methodDiv-add2").find("#paraC").attr("required","false");
+    $("#methodDiv-add2").find("#paraX").attr("required","false");
+    $("#methodDiv-add2").find("#paraD").attr("required","false");
+  })
+  
+  $("#modifyModal").on("show.bs.modal", function (event) {
+	  var button = $(event.relatedTarget);
+	  var id = button.data("id");
+	  var prodId = button.data("prodid");
+	  var prodName = button.data("prodname");
+	  var countryId = button.data("countryid");
+	  var countryName = button.data("countryname");
+	  var method = button.data("method");
+	  var paraA = button.data("paraa");
+	  var paraB = button.data("parab");
+	  var paraC = button.data("parac");
+	  var paraX = button.data("parax");
+	  var paraD = button.data("parad");
+	  var modal = $(this)
+	  modal.find("#id").val(id);
+	  modal.find("#prodId").val(prodId);
+	  modal.find("#prodName").text(prodName);
+	  modal.find("#countryId").val(countryId);
+	  modal.find("#countryName").text(countryName);
+	  if(method == 1){
+	  	modal.find("#method-1").prop("checked",true);
+	  	modal.find("#method-2").prop("checked",false);
+	  	$("#methodDiv-modify1").show();
+	  	$("#methodDiv-modify1").find("#paraA").attr("required","true");
+        $("#methodDiv-modify1").find("#paraB").attr("required","true");
+	  	$("#methodDiv-modify2").hide();
+	  	$("#methodDiv-modify2").find("#paraC").attr("required","false");
+        $("#methodDiv-modify2").find("#paraX").attr("required","false");
+        $("#methodDiv-modify2").find("#paraD").attr("required","false");
+	  } else if(method == 2){
+	    modal.find("#method-1").prop("checked",false);
+	  	modal.find("#method-2").prop("checked",true);
+	  	$("#methodDiv-modify1").hide();
+	  	$("#methodDiv-modify1").find("#paraA").attr("required","false");
+        $("#methodDiv-modify1").find("#paraB").attr("required","false");
+	  	$("#methodDiv-modify2").show();
+	  	$("#methodDiv-modify2").find("#paraC").attr("required","true");
+        $("#methodDiv-modify2").find("#paraX").attr("required","true");
+        $("#methodDiv-modify2").find("#paraD").attr("required","true");
+	  } 
+	  modal.find("#paraA").val(paraA);
+	  modal.find("#paraB").val(paraB);
+	  modal.find("#paraC").val(paraC);
+	  modal.find("#paraX").val(paraX);
+	  modal.find("#paraD").val(paraD);
+	})
 
 </script>

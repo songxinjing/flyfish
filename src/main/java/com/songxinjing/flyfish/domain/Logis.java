@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,14 +35,14 @@ public class Logis implements Serializable {
 	/**
 	 * 该物流方式针对发货国家
 	 */
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn
 	private Country country;
 
 	/**
 	 * 该物流方式所属产品
 	 */
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn
 	private LogisProd prod;
 
@@ -106,6 +105,12 @@ public class Logis implements Serializable {
 	 */
 	@Transient
 	private BigDecimal fee100;
+	
+	/**
+	 * 平台国家权重
+	 */
+	@Transient
+	private BigDecimal platCountryWeight;
 
 	public int getId() {
 		return id;
@@ -209,6 +214,14 @@ public class Logis implements Serializable {
 
 	public void setFee100(BigDecimal fee100) {
 		this.fee100 = fee100;
+	}
+
+	public BigDecimal getPlatCountryWeight() {
+		return platCountryWeight;
+	}
+
+	public void setPlatCountryWeight(BigDecimal platCountryWeight) {
+		this.platCountryWeight = platCountryWeight;
 	}
 
 }

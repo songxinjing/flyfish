@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.songxinjing.flyfish.controller.base.BaseController;
+import com.songxinjing.flyfish.domain.Country;
 import com.songxinjing.flyfish.domain.Logis;
+import com.songxinjing.flyfish.domain.LogisProd;
 import com.songxinjing.flyfish.domain.Weight;
+import com.songxinjing.flyfish.form.LogisProdForm;
 import com.songxinjing.flyfish.service.CountryService;
 import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.LogisService;
@@ -51,58 +55,62 @@ public class LogisController extends BaseController {
 			platId = 1;
 		}
 
+		List<Weight> weights = platformService.find(platId).getWeights();
+
+		Map<Country, BigDecimal> countryWeightMap = new HashMap<Country, BigDecimal>();
+
+		for (Weight weight : weights) {
+			countryWeightMap.put(weight.getCountry(), weight.getRate());
+		}
+
 		List<Logis> logises = logisService.find();
 
-		Map<String, List<Logis>> map = new HashMap<String, List<Logis>>();
+		Map<LogisProd, List<Logis>> logisMap = new LinkedHashMap<LogisProd, List<Logis>>();
 
 		for (Logis logis : logises) {
 
-			if (logis.getMethod() == 1) {
+			if (logis.getMethod() == 1 && logis.getParaA() != null && logis.getParaB() != null) {
 				logis.setFee100(logis.getParaA().multiply(new BigDecimal(100)).add(logis.getParaB()).setScale(2,
 						RoundingMode.HALF_UP));
-			} else if (logis.getMethod() == 2) {
+			} else if (logis.getMethod() == 2 && logis.getParaC() != null && logis.getParaX() != null
+					&& logis.getParaD() != null) {
 				if (logis.getParaX().compareTo(new BigDecimal(100)) > 0) {
 					logis.setFee100(logis.getParaC());
 				} else {
 					logis.setFee100(logis.getParaD().multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP));
 				}
+			} else {
+				logis.setFee100(new BigDecimal(0));
 			}
-
-			if (map.containsKey(logis.getProd().getName())) {
-				map.get(logis.getProd().getName()).add(logis);
+			if (countryWeightMap.get(logis.getCountry()) != null) {
+				logis.setPlatCountryWeight(countryWeightMap.get(logis.getCountry()));
+			}
+			if (logisMap.containsKey(logis.getProd())) {
+				logisMap.get(logis.getProd()).add(logis);
 			} else {
 				List<Logis> list = new ArrayList<Logis>();
 				list.add(logis);
-				map.put(logis.getProd().getName(), list);
+				logisMap.put(logis.getProd(), list);
 			}
 		}
 
-		List<Weight> weights = platformService.find(platId).getWeights();
+		List<LogisProdForm> prodFormList = new ArrayList<LogisProdForm>();
 
-		Map<Integer, BigDecimal> countryWeight = new HashMap<Integer, BigDecimal>();
-
-		for (Weight weight : weights) {
-			countryWeight.put(weight.getCountry().getId(), weight.getRate());
-		}
-
-		// 物流产品在该平台的加权平均运费
-		Map<String, BigDecimal> mapFee100ByWeight = new HashMap<String, BigDecimal>();
-
-		// 物流产品备注
-		Map<String, String> remarkMap = new HashMap<String, String>();
-
-		for (String logisName : map.keySet()) {
+		for (LogisProd logisProd : logisMap.keySet()) {
+			LogisProdForm form = new LogisProdForm();
+			form.setLogisProd(logisProd);
+			form.setLogises(logisMap.get(logisProd));
 			BigDecimal fee100ByWeight = new BigDecimal(0);
 			BigDecimal allRate = new BigDecimal(0);
-			for (Logis logis : map.get(logisName)) {
+			for (Logis logis : logisMap.get(logisProd)) {
 				BigDecimal weightRate = new BigDecimal(0);
-				if (countryWeight.get(logis.getCountry().getId()) != null) {
-					weightRate = countryWeight.get(logis.getCountry().getId());
+				if (logis.getPlatCountryWeight() != null) {
+					weightRate = logis.getPlatCountryWeight();
 				}
 				fee100ByWeight = fee100ByWeight.add(logis.getFee100().multiply(weightRate).divide(new BigDecimal(100)));
 				allRate = allRate.add(weightRate);
 			}
-			mapFee100ByWeight.put(logisName, fee100ByWeight.setScale(2, RoundingMode.HALF_UP));
+			form.setFee100ByWeight(fee100ByWeight.setScale(2, RoundingMode.HALF_UP));
 			String remark = "";
 			if (allRate.compareTo(new BigDecimal(100)) < 0) {
 				remark = "<span class='remark-red'>权重合计" + allRate + "%,不足100%!!!</span>";
@@ -111,13 +119,11 @@ public class LogisController extends BaseController {
 			} else {
 				remark = "<span class='remark-green'>权重合计" + allRate + "%</span>";
 			}
-			remarkMap.put(logisName, remark);
+			form.setRemark(remark);
+			prodFormList.add(form);
 		}
 
-		model.addAttribute("map", map);
-		model.addAttribute("countryWeight", countryWeight);
-		model.addAttribute("mapFee100ByWeight", mapFee100ByWeight);
-		model.addAttribute("remarkMap", remarkMap);
+		model.addAttribute("prodFormList", prodFormList);
 
 		model.addAttribute("countries", countryService.find());
 		model.addAttribute("prods", logisProdService.find());
@@ -128,11 +134,32 @@ public class LogisController extends BaseController {
 	}
 
 	@RequestMapping(value = "logis/add", method = RequestMethod.POST)
-	public String add(Model model, int prod, int country, int method, BigDecimal paraA, BigDecimal paraB,
-			BigDecimal paraC, BigDecimal paraX, BigDecimal paraD,int platId) {
+	public String add(Model model, int prodId, int countryId, int method, BigDecimal paraA, BigDecimal paraB,
+			BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
+		if (method == 1) {
+			if (paraA == null) {
+				paraA = new BigDecimal(0);
+			}
+			if (paraB == null) {
+				paraB = new BigDecimal(0);
+			}
+		}
+
+		if (method == 2) {
+			if (paraC == null) {
+				paraC = new BigDecimal(0);
+			}
+			if (paraD == null) {
+				paraD = new BigDecimal(0);
+			}
+			if (paraX == null) {
+				paraX = new BigDecimal(0);
+			}
+		}
+
 		Logis logis = new Logis();
-		logis.setCountry(countryService.find(country));
-		logis.setProd(logisProdService.find(prod));
+		logis.setCountry(countryService.find(countryId));
+		logis.setProd(logisProdService.find(prodId));
 		logis.setMethod(method);
 		logis.setParaA(paraA);
 		logis.setParaB(paraB);
@@ -143,6 +170,57 @@ public class LogisController extends BaseController {
 		logis.setModifyer("宋鑫晶");
 		logis.setModifyTm(new Timestamp(System.currentTimeMillis()));
 		logisService.save(logis);
+		model.addAttribute("queryProdId", prodId);
+		return list(model, platId);
+	}
+	
+	@RequestMapping(value = "logis/modify", method = RequestMethod.POST)
+	public String modify(Model model, int id,int prodId, int countryId, int method, BigDecimal paraA, BigDecimal paraB,
+			BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
+		if (method == 1) {
+			if (paraA == null) {
+				paraA = new BigDecimal(0);
+			}
+			if (paraB == null) {
+				paraB = new BigDecimal(0);
+			}
+		}
+
+		if (method == 2) {
+			if (paraC == null) {
+				paraC = new BigDecimal(0);
+			}
+			if (paraD == null) {
+				paraD = new BigDecimal(0);
+			}
+			if (paraX == null) {
+				paraX = new BigDecimal(0);
+			}
+		}
+
+		Logis logis = logisService.find(id);
+		logis.setCountry(countryService.find(countryId));
+		logis.setProd(logisProdService.find(prodId));
+		logis.setMethod(method);
+		logis.setParaA(paraA);
+		logis.setParaB(paraB);
+		logis.setParaC(paraC);
+		logis.setParaX(paraX);
+		logis.setParaD(paraD);
+		logis.setModifyId("songxinjing");
+		logis.setModifyer("宋鑫晶");
+		logis.setModifyTm(new Timestamp(System.currentTimeMillis()));
+		logisService.update(logis);
+		model.addAttribute("queryProdId", prodId);
+		return list(model, platId);
+	}
+	
+	@RequestMapping(value = "logis/del", method = RequestMethod.GET)
+	public String del(Model model,int id,int platId) {
+		Logis logis = logisService.find(id);
+		int queryProdId = logis.getProd().getId();
+		logisService.delete(logis);
+		model.addAttribute("queryProdId", queryProdId);
 		return list(model, platId);
 	}
 
