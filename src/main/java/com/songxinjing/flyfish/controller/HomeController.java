@@ -39,14 +39,15 @@ public class HomeController extends BaseController {
 	}
 
 	@RequestMapping(value = "doLogin", method = RequestMethod.POST)
-	public String login(HttpServletRequest request, String reqUrl, String userId, String password) {
+	public String login(HttpServletRequest request, Model model, String reqUrl, String userId, String password) {
 		logger.info("进行登录");
 		User loginUser = userService.find(userId);
 		if(loginUser != null && password.equals(loginUser.getPassword())){
 			request.getSession().setAttribute(Constant.SESSION_LOGIN_USER, loginUser);
 			return "redirect:" + reqUrl;
 		}
-		return error();
+		model.addAttribute("msg", "用户名或密码错误，请重试！！！");
+		return login(model,reqUrl);
 	}
 
 	@RequestMapping(value = "system/error", method = RequestMethod.GET)
