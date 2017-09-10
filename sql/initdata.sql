@@ -43,3 +43,5 @@ insert into LogisProd values(9,'英国微包',9);
 insert into LogisProd values(10,'欧速通',10);
 insert into LogisProd values(11,'yodel小包',11);
 
+-- 管理员
+insert into `User` values('admin','','管理员','admin12345','',0);
