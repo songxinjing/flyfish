@@ -121,7 +121,7 @@ public class ExcelController extends BaseController {
 			try {
 				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
 				for (Map<String, String> obj : data) {
-					if (StringUtils.isEmpty(obj.get("SKU")) || goodsService.find(obj.get("SKU")) == null) {
+					if (StringUtils.isNotEmpty(obj.get("SKU")) && goodsService.find(obj.get("SKU")) == null) {
 						Goods goods = new Goods();
 						for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
 							if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key))) {
