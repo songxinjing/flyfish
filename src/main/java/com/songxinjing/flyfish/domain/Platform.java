@@ -54,6 +54,13 @@ public class Platform implements Serializable {
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "platform")
 	private List<Weight> weights;
+	
+	/**
+	 * 该平台店铺列表
+	 */
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "platform")
+	private List<Store> stores;
+
 
 	public int getId() {
 		return id;
@@ -95,4 +102,12 @@ public class Platform implements Serializable {
 		this.weights = weights;
 	}
 
+	public List<Store> getStores() {
+		return stores;
+	}
+
+	public void setStores(List<Store> stores) {
+		this.stores = stores;
+	}
+	
 }

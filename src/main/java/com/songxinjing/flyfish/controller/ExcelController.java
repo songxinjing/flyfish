@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,8 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
 import com.songxinjing.flyfish.service.GoodsService;
@@ -114,7 +117,7 @@ public class ExcelController extends BaseController {
 	}
 
 	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
-	public String load(MultipartFile file, int same) {
+	public String load(HttpServletRequest request, MultipartFile file, int same) {
 		logger.info("Excel导入common模版数据");
 
 		if (!file.isEmpty()) {
@@ -128,6 +131,10 @@ public class ExcelController extends BaseController {
 								ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
 							}
 						}
+						// 获取用户登录信息
+						User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+						goods.setModifyId(user.getUserId());
+						goods.setModifyer(user.getName());
 						goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
 						goodsService.save(goods);
 					}

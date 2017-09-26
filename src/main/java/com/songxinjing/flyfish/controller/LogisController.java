@@ -9,16 +9,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Country;
 import com.songxinjing.flyfish.domain.Logis;
 import com.songxinjing.flyfish.domain.LogisProd;
+import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.domain.Weight;
 import com.songxinjing.flyfish.form.LogisProdForm;
 import com.songxinjing.flyfish.service.CountryService;
@@ -134,8 +138,8 @@ public class LogisController extends BaseController {
 	}
 
 	@RequestMapping(value = "logis/add", method = RequestMethod.POST)
-	public String add(Model model, int prodId, int countryId, int method, BigDecimal paraA, BigDecimal paraB,
-			BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
+	public String add(HttpServletRequest request, Model model, int prodId, int countryId, int method, BigDecimal paraA,
+			BigDecimal paraB, BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
 		if (method == 1) {
 			if (paraA == null) {
 				paraA = new BigDecimal(0);
@@ -166,17 +170,19 @@ public class LogisController extends BaseController {
 		logis.setParaC(paraC);
 		logis.setParaX(paraX);
 		logis.setParaD(paraD);
-		logis.setModifyId("songxinjing");
-		logis.setModifyer("宋鑫晶");
+		// 获取用户登录信息
+		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		logis.setModifyId(user.getUserId());
+		logis.setModifyer(user.getName());
 		logis.setModifyTm(new Timestamp(System.currentTimeMillis()));
 		logisService.save(logis);
 		model.addAttribute("queryProdId", prodId);
 		return list(model, platId);
 	}
-	
+
 	@RequestMapping(value = "logis/modify", method = RequestMethod.POST)
-	public String modify(Model model, int id,int prodId, int countryId, int method, BigDecimal paraA, BigDecimal paraB,
-			BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
+	public String modify(HttpServletRequest request, Model model, int id, int prodId, int countryId, int method,
+			BigDecimal paraA, BigDecimal paraB, BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
 		if (method == 1) {
 			if (paraA == null) {
 				paraA = new BigDecimal(0);
@@ -207,16 +213,18 @@ public class LogisController extends BaseController {
 		logis.setParaC(paraC);
 		logis.setParaX(paraX);
 		logis.setParaD(paraD);
-		logis.setModifyId("songxinjing");
-		logis.setModifyer("宋鑫晶");
+		// 获取用户登录信息
+		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		logis.setModifyId(user.getUserId());
+		logis.setModifyer(user.getName());
 		logis.setModifyTm(new Timestamp(System.currentTimeMillis()));
 		logisService.update(logis);
 		model.addAttribute("queryProdId", prodId);
 		return list(model, platId);
 	}
-	
+
 	@RequestMapping(value = "logis/del", method = RequestMethod.GET)
-	public String del(Model model,int id,int platId) {
+	public String del(Model model, int id, int platId) {
 		Logis logis = logisService.find(id);
 		int queryProdId = logis.getProd().getId();
 		logisService.delete(logis);

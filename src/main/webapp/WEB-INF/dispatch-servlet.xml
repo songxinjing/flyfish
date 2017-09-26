@@ -26,13 +26,6 @@
 	<mvc:resources mapping="/resources/**" location="/resources/"
 		cache-period="86400" />
 
-	<mvc:interceptors>
-		<mvc:interceptor>
-			<mvc:mapping path="/**/*.html" />
-			<bean class="com.songxinjing.flyfish.interceptor.GlobalInterceptor"></bean>
-		</mvc:interceptor>
-	</mvc:interceptors>
-
 	<bean class="org.springframework.web.servlet.mvc.WebContentInterceptor"
 		p:cacheSeconds="0" p:alwaysUseFullPath="true">
 		<property name="cacheMappings">
