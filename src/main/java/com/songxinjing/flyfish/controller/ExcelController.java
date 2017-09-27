@@ -1,6 +1,8 @@
 package com.songxinjing.flyfish.controller;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -156,7 +158,7 @@ public class ExcelController extends BaseController {
 	@RequestMapping(value = "csv/import/wish", method = RequestMethod.POST)
 	public String loadWish(HttpServletRequest request, MultipartFile file, int same) {
 		logger.info("CSV导入Wish模版数据");
-		
+
 		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
 
 		new Thread() {
@@ -178,8 +180,6 @@ public class ExcelController extends BaseController {
 												obj.get(key));
 									}
 								}
-								// 获取用户登录信息
-								
 								goodsPlat.setModifyId(user.getUserId());
 								goodsPlat.setModifyer(user.getName());
 								goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
@@ -200,6 +200,57 @@ public class ExcelController extends BaseController {
 		}.start();
 
 		return "redirect:/goods/list.html";
+	}
+
+	@RequestMapping(value = "csv/export/wish", method = RequestMethod.GET)
+	public void exportWish(HttpServletResponse response) {
+		logger.info("导出Wish模版数据");
+
+		List<GoodsPlat> goodses = goodsPlatService.find();
+
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		for (GoodsPlat goods : goodses) {
+			Map<String, String> map = new HashMap<String, String>();
+			for (String key : CSVTemp.WISH_FIELD.keySet()) {
+				if (!StringUtils.isEmpty(CSVTemp.WISH_FIELD.get(key))) {
+					Object obj = ReflectionUtil.getFieldValue(goods, CSVTemp.WISH_FIELD.get(key));
+					map.put(key, obj.toString());
+				}
+			}
+			data.add(map);
+		}
+
+		String file = ConfigUtil.getValue("/config.properties", "workDir") + CSVTemp.WISH;
+
+		String[] headers = CSVTemp.WISH_FIELD.keySet().toArray(new String[] {});
+
+		File csvFile = CSVUtil.writeCSV(file, data, headers);
+
+		try {
+
+			response.setContentType("multipart/form-data");
+			response.setHeader("Content-Disposition",
+					"attachment;filename=" + URLEncoder.encode("商品信息-WISH.csv", "UTF-8"));
+			OutputStream os = new BufferedOutputStream(response.getOutputStream());
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
+			byte[] buff = new byte[2048];
+			while (true) {
+				int bytesRead;
+				if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
+					break;
+				os.write(buff, 0, bytesRead);
+			}
+			bis.close();
+			os.flush();
+			os.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

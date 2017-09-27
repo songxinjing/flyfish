@@ -204,6 +204,14 @@ public class GoodsPlat implements Serializable {
 		this.sku = sku;
 	}
 
+	public String getParentSku() {
+		return parentSku;
+	}
+
+	public void setParentSku(String parentSku) {
+		this.parentSku = parentSku;
+	}
+
 	public String getName() {
 		return name;
 	}

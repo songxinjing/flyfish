@@ -1,9 +1,13 @@
 package com.songxinjing.flyfish.csv;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +15,7 @@ import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 public class CSVUtil {
@@ -64,9 +69,35 @@ public class CSVUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	// public static Workbook writeCSV(InputStream temp, List<Map<String,
-	// String>> data) {
-
-	// }
+	public static File writeCSV(String file, List<Map<String, String>> data, String[] headers) {
+		File csvFile = null;
+		BufferedWriter csvFileOutputStream = null;
+		CSVPrinter csvPrinter = null;
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader(headers);
+		try {
+			csvFile = new File(file);
+			csvFileOutputStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "UTF-8"),
+					1024);
+			csvPrinter = new CSVPrinter(csvFileOutputStream, csvFileFormat);
+			
+			for(Map<String, String> map : data){
+				for(String header :headers){
+					csvPrinter.print(map.get(header));
+				}
+				csvPrinter.println();// 换行
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				csvFileOutputStream.flush();
+				csvFileOutputStream.close();
+				csvPrinter.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return csvFile;
+	}
 
 }

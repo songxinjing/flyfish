@@ -1,5 +1,6 @@
 package com.songxinjing.flyfish.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.plugin.page.PageModel;
+import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 
 /**
@@ -24,6 +27,9 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	GoodsService goodsService;
+	
+	@Autowired
+	GoodsPlatService goodsPlatService;
 
 	@RequestMapping(value = "goods/list", method = RequestMethod.GET)
 	public String list(Model model, Integer page) {
@@ -36,13 +42,21 @@ public class GoodsController extends BaseController {
 		int total = goodsService.find().size();
 
 		// 分页代码
-		PageModel<Goods> pageModel = new PageModel<Goods>();
+		PageModel<GoodsForm> pageModel = new PageModel<GoodsForm>();
 		pageModel.init(page, total);
 		pageModel.setUrl("goods/list.html");
 		pageModel.setPara("?");
 		String hql = "from Goods";
 		List<Goods> goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize());
-		pageModel.setRecList(goodses);
+		List<GoodsForm> list = new ArrayList<GoodsForm>();
+		for(Goods goods : goodses){
+			GoodsForm form = new GoodsForm();
+			form.setGoods(goods);
+			form.setGoodsPlat(goodsPlatService.find(goods.getSku()));
+			list.add(form);
+		}
+		
+		pageModel.setRecList(list);
 
 		model.addAttribute("pageModel", pageModel);
 
