@@ -133,7 +133,7 @@ public class ExcelController extends BaseController {
 			try {
 				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
 				for (Map<String, String> obj : data) {
-					if (StringUtils.isNotEmpty(obj.get("SKU")) && goodsService.find(obj.get("SKU")) == null) {
+					if (StringUtils.isNotEmpty(obj.get("SKU"))) {
 						Goods goods = new Goods();
 						for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
 							if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key))) {
@@ -145,7 +145,11 @@ public class ExcelController extends BaseController {
 						goods.setModifyId(user.getUserId());
 						goods.setModifyer(user.getName());
 						goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-						goodsService.save(goods);
+						if(goodsService.find(obj.get("SKU")) == null){
+							goodsService.save(goods);
+						}else{
+							goodsService.update(goods);
+						}		
 					}
 				}
 			} catch (IOException e) {

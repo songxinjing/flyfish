@@ -51,7 +51,7 @@
 						#if($!{rec.goods.url2}) <a href="$!{rec.goods.url2}">供应商2</a><br>#end
 						#if($!{rec.goods.url3}) <a href="$!{rec.goods.url3}">供应商3</a><br>#end
 					  </td>
-			          <td>$!{rec.goods.modifyTm}</td>
+			          <td>#if($!{rec.goods.modifyTm}) $!{rec.goods.modifyTm} #else $!{rec.goodsPlat.modifyTm} #end</td>
 					  <td>修改</td>
 			        </tr>
 				#end
