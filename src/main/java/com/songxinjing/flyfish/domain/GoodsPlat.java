@@ -34,7 +34,7 @@ public class GoodsPlat implements Serializable {
 	/**
 	 * name
 	 */
-	@Column(length = 128)
+	@Column(length = 255)
 	private String name;
 	
 	/**
@@ -52,21 +52,21 @@ public class GoodsPlat implements Serializable {
 	/**
 	 * msrp
 	 */
-	@Column(length = 4)
+	@Column(length = 8)
 	private String msrp;
 
 	
 	/**
 	 * color
 	 */
-	@Column(length = 16)
+	@Column(length = 32)
 	private String color;
 
 	
 	/**
 	 * size
 	 */
-	@Column(length = 4)
+	@Column(length = 32)
 	private String size;
 
 	/**

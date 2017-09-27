@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 public class CSVUtil {
@@ -27,20 +28,31 @@ public class CSVUtil {
 		// CSVFormat format =
 		// CSVFormat.DEFAULT.withHeader(headers).withSkipHeaderRecord();
 
+		BufferedReader br = new BufferedReader(new InputStreamReader(temp));
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(temp));
+		// 创建CSVFormat（header mapping）
+		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader(headers).withSkipHeaderRecord();
+
+		CSVParser csvFileParser = null;
 		try {
-			Iterable<CSVRecord> records = CSVFormat.EXCEL.parse(br);
+			csvFileParser = new CSVParser(br, csvFileFormat);
+			List<CSVRecord> records = csvFileParser.getRecords();
 			for (CSVRecord record : records) {
 				Map<String, String> map = new HashMap<String, String>();
 				for (int i = 0; i < headers.length; i++) {
-					map.put(headers[i], record.get(headers[i]));
+					map.put(headers[i], record.get(headers[i]).trim());
 				}
 				list.add(map);
 			}
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				csvFileParser.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return list;
 	}
@@ -52,9 +64,9 @@ public class CSVUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	//public static Workbook writeCSV(InputStream temp, List<Map<String, String>> data) {
-		
-	//}
+	// public static Workbook writeCSV(InputStream temp, List<Map<String,
+	// String>> data) {
 
+	// }
 
 }

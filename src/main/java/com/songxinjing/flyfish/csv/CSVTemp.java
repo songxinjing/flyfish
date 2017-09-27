@@ -1,6 +1,6 @@
 package com.songxinjing.flyfish.csv;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CSVTemp {
@@ -19,7 +19,7 @@ public class CSVTemp {
 	/**
 	 * WISH模版字段映射
 	 */
-	public static final Map<String,String> WISH_FIELD = new HashMap<String,String>();
+	public static final Map<String,String> WISH_FIELD = new LinkedHashMap<String,String>();
 	
 	static {
 		WISH_FIELD.put("Parent Unique ID", "parentSku");
@@ -51,7 +51,7 @@ public class CSVTemp {
 	/**
 	 * JOOM模版字段映射
 	 */
-	public static final Map<String,String> JOOM_FIELD = new HashMap<String,String>();
+	public static final Map<String,String> JOOM_FIELD = new LinkedHashMap<String,String>();
 	
 	static {
 		JOOM_FIELD.put("Parent SKU", "parentSku");

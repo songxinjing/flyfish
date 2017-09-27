@@ -29,10 +29,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
+import com.songxinjing.flyfish.csv.CSVTemp;
+import com.songxinjing.flyfish.csv.CSVUtil;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
+import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.util.ConfigUtil;
 import com.songxinjing.flyfish.util.ReflectionUtil;
@@ -48,6 +52,9 @@ public class ExcelController extends BaseController {
 
 	@Autowired
 	GoodsService goodsService;
+
+	@Autowired
+	GoodsPlatService goodsPlatService;
 
 	@RequestMapping(value = "excel/export/common", method = RequestMethod.GET)
 	public void export(HttpServletResponse response) {
@@ -143,6 +150,55 @@ public class ExcelController extends BaseController {
 				e.printStackTrace();
 			}
 		}
+		return "redirect:/goods/list.html";
+	}
+
+	@RequestMapping(value = "csv/import/wish", method = RequestMethod.POST)
+	public String loadWish(HttpServletRequest request, MultipartFile file, int same) {
+		logger.info("CSV导入Wish模版数据");
+		
+		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+
+		new Thread() {
+
+			@Override
+			public void run() {
+				if (!file.isEmpty()) {
+					try {
+						String[] headers = CSVTemp.WISH_FIELD.keySet().toArray(new String[] {});
+						List<Map<String, String>> data = CSVUtil.readCSV(file.getInputStream(), headers);
+						int i = 0;
+						for (Map<String, String> obj : data) {
+							if (StringUtils.isNotEmpty(obj.get("*Unique ID"))
+									&& goodsPlatService.find(obj.get("*Unique ID")) == null) {
+								GoodsPlat goodsPlat = new GoodsPlat();
+								for (String key : CSVTemp.WISH_FIELD.keySet()) {
+									if (!StringUtils.isEmpty(CSVTemp.WISH_FIELD.get(key))) {
+										ReflectionUtil.setFieldValue(goodsPlat, CSVTemp.WISH_FIELD.get(key),
+												obj.get(key));
+									}
+								}
+								// 获取用户登录信息
+								
+								goodsPlat.setModifyId(user.getUserId());
+								goodsPlat.setModifyer(user.getName());
+								goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
+								goodsPlatService.save(goodsPlat);
+							}
+							i++;
+							if (i == 100) {
+								Thread.sleep(1000);
+								i = 0;
+							}
+						}
+					} catch (IOException | InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		}.start();
+
 		return "redirect:/goods/list.html";
 	}
 
