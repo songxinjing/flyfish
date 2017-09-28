@@ -8,9 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.plugin.page.PageModel;
 import com.songxinjing.flyfish.service.GoodsPlatService;
@@ -27,7 +29,7 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	GoodsService goodsService;
-	
+
 	@Autowired
 	GoodsPlatService goodsPlatService;
 
@@ -49,13 +51,13 @@ public class GoodsController extends BaseController {
 		String hql = "from Goods";
 		List<Goods> goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize());
 		List<GoodsForm> list = new ArrayList<GoodsForm>();
-		for(Goods goods : goodses){
+		for (Goods goods : goodses) {
 			GoodsForm form = new GoodsForm();
 			form.setGoods(goods);
 			form.setGoodsPlat(goodsPlatService.find(goods.getSku()));
 			list.add(form);
 		}
-		
+
 		pageModel.setRecList(list);
 
 		model.addAttribute("pageModel", pageModel);
@@ -65,16 +67,22 @@ public class GoodsController extends BaseController {
 		return "goods/list";
 	}
 
-	@RequestMapping(value = "goods/add", method = RequestMethod.GET)
-	public String add() {
-		logger.info("进入商品列表页面");
-		return "goods/add";
+	@RequestMapping(value = "goods/edit", method = RequestMethod.GET)
+	public String edit(Model model, String sku) {
+		logger.info("进入商品详情页面");
+		GoodsForm form = new GoodsForm();
+		form.setGoods(goodsService.find(sku));
+		form.setGoodsPlat(goodsPlatService.find(sku));
+		model.addAttribute("form", form);
+		return "goods/edit";
 	}
 
-	@RequestMapping(value = "goods/import", method = RequestMethod.GET)
-	public String home() {
-		logger.info("进入商品列表页面");
-		return "goods/list";
+	@RequestMapping(value = "goods/save", method = RequestMethod.GET)
+	@ResponseBody
+	public boolean save(Model model, GoodsEditForm form) {
+		logger.info("保存商品详情页面");
+
+		return true;
 	}
 
 }

@@ -19,10 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +55,55 @@ public class ExcelController extends BaseController {
 	@Autowired
 	GoodsPlatService goodsPlatService;
 
+	/**
+	 * 普源数据导入
+	 * 
+	 * @param request
+	 * @param file
+	 * @return
+	 */
+	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
+	public String load(HttpServletRequest request, MultipartFile file) {
+		logger.info("Excel导入common模版数据");
+
+		if (!file.isEmpty()) {
+			try {
+				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
+				for (Map<String, String> obj : data) {
+					if (StringUtils.isNotEmpty(obj.get("SKU"))) {
+						Goods goods = goodsService.find(obj.get("SKU"));
+						if (goods == null) {
+							goods = new Goods();
+						}
+						for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
+							if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key))) {
+								ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
+							}
+						}
+						// 获取用户登录信息
+						User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+						goods.setModifyId(user.getUserId());
+						goods.setModifyer(user.getName());
+						goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
+						if (goodsService.find(obj.get("SKU")) == null) {
+							goodsService.save(goods);
+						} else {
+							goodsService.update(goods);
+						}
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return "redirect:/goods/list.html";
+	}
+
+	/**
+	 * 普源数据导出
+	 * 
+	 * @param response
+	 */
 	@RequestMapping(value = "excel/export/common", method = RequestMethod.GET)
 	public void export(HttpServletResponse response) {
 		logger.info("Excel导出模版数据");
@@ -96,122 +142,46 @@ public class ExcelController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "excel/temp/common", method = RequestMethod.GET)
-	public void temp(HttpServletResponse response) {
-		logger.info("下载模版：商品信息新增导入模版.xls");
-
-		String temp = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.COMMON;
-
-		try {
-			Workbook workbook = WorkbookFactory.create(new FileInputStream(temp));
-			response.setContentType("multipart/form-data");
-			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode("商品信息新增导入模版.xls", "UTF-8"));
-			OutputStream os = new BufferedOutputStream(response.getOutputStream());
-			workbook.write(os);
-			os.flush();
-			os.close();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (EncryptedDocumentException e) {
-			e.printStackTrace();
-		} catch (InvalidFormatException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
-	public String load(HttpServletRequest request, MultipartFile file, int same) {
-		logger.info("Excel导入common模版数据");
-
+	@RequestMapping(value = "csv/import/wish", method = RequestMethod.POST)
+	public String loadWish(HttpServletRequest request, MultipartFile file) {
+		logger.info("CSV导入Wish模版数据");
+		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
 		if (!file.isEmpty()) {
 			try {
-				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
+				String[] headers = CSVTemp.WISH_FIELD.keySet().toArray(new String[] {});
+				List<Map<String, String>> data = CSVUtil.readCSV(file.getInputStream(), headers);
+				int i = 0;
 				for (Map<String, String> obj : data) {
-					if (StringUtils.isNotEmpty(obj.get("SKU"))) {
-						Goods goods = new Goods();
-						for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
-							if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key))) {
-								ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
+					if (StringUtils.isNotEmpty(obj.get("*Unique ID"))
+							&& goodsPlatService.find(obj.get("*Unique ID")) == null) {
+						GoodsPlat goodsPlat = new GoodsPlat();
+						for (String key : CSVTemp.WISH_FIELD.keySet()) {
+							if (!StringUtils.isEmpty(CSVTemp.WISH_FIELD.get(key))) {
+								ReflectionUtil.setFieldValue(goodsPlat, CSVTemp.WISH_FIELD.get(key), obj.get(key));
 							}
 						}
-						// 获取用户登录信息
-						User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
-						goods.setModifyId(user.getUserId());
-						goods.setModifyer(user.getName());
-						goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-						if(goodsService.find(obj.get("SKU")) == null){
-							goodsService.save(goods);
-						}else{
-							goodsService.update(goods);
-						}		
+						goodsPlat.setModifyId(user.getUserId());
+						goodsPlat.setModifyer(user.getName());
+						goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
+						goodsPlatService.save(goodsPlat);
+					}
+					i++;
+					if (i == 100) {
+						Thread.sleep(1000);
+						i = 0;
 					}
 				}
-			} catch (IOException e) {
+			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		return "redirect:/goods/list.html";
 	}
 
-	@RequestMapping(value = "csv/import/wish", method = RequestMethod.POST)
-	public String loadWish(HttpServletRequest request, MultipartFile file, int same) {
-		logger.info("CSV导入Wish模版数据");
-
-		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
-
-		new Thread() {
-
-			@Override
-			public void run() {
-				if (!file.isEmpty()) {
-					try {
-						String[] headers = CSVTemp.WISH_FIELD.keySet().toArray(new String[] {});
-						List<Map<String, String>> data = CSVUtil.readCSV(file.getInputStream(), headers);
-						int i = 0;
-						for (Map<String, String> obj : data) {
-							if (StringUtils.isNotEmpty(obj.get("*Unique ID"))
-									&& goodsPlatService.find(obj.get("*Unique ID")) == null) {
-								GoodsPlat goodsPlat = new GoodsPlat();
-								for (String key : CSVTemp.WISH_FIELD.keySet()) {
-									if (!StringUtils.isEmpty(CSVTemp.WISH_FIELD.get(key))) {
-										ReflectionUtil.setFieldValue(goodsPlat, CSVTemp.WISH_FIELD.get(key),
-												obj.get(key));
-									}
-								}
-								goodsPlat.setModifyId(user.getUserId());
-								goodsPlat.setModifyer(user.getName());
-								goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
-								goodsPlatService.save(goodsPlat);
-							}
-							i++;
-							if (i == 100) {
-								Thread.sleep(1000);
-								i = 0;
-							}
-						}
-					} catch (IOException | InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-		}.start();
-
-		return "redirect:/goods/list.html";
-	}
-
 	@RequestMapping(value = "csv/export/wish", method = RequestMethod.GET)
 	public void exportWish(HttpServletResponse response) {
 		logger.info("导出Wish模版数据");
-
 		List<GoodsPlat> goodses = goodsPlatService.find();
-
 		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		for (GoodsPlat goods : goodses) {
 			Map<String, String> map = new HashMap<String, String>();
@@ -223,15 +193,10 @@ public class ExcelController extends BaseController {
 			}
 			data.add(map);
 		}
-
 		String file = ConfigUtil.getValue("/config.properties", "workDir") + CSVTemp.WISH;
-
 		String[] headers = CSVTemp.WISH_FIELD.keySet().toArray(new String[] {});
-
 		File csvFile = CSVUtil.writeCSV(file, data, headers);
-
 		try {
-
 			response.setContentType("multipart/form-data");
 			response.setHeader("Content-Disposition",
 					"attachment;filename=" + URLEncoder.encode("商品信息-WISH.csv", "UTF-8"));
@@ -254,7 +219,84 @@ public class ExcelController extends BaseController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
+	@RequestMapping(value = "csv/import/joom", method = RequestMethod.POST)
+	public String loadJoom(HttpServletRequest request, MultipartFile file) {
+		logger.info("CSV导入Joom模版数据");
+		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		if (!file.isEmpty()) {
+			try {
+				String[] headers = CSVTemp.JOOM_FIELD.keySet().toArray(new String[] {});
+				List<Map<String, String>> data = CSVUtil.readCSV(file.getInputStream(), headers);
+				int i = 0;
+				for (Map<String, String> obj : data) {
+					if (StringUtils.isNotEmpty(obj.get("SKU")) && goodsPlatService.find(obj.get("SKU")) == null) {
+						GoodsPlat goodsPlat = new GoodsPlat();
+						for (String key : CSVTemp.JOOM_FIELD.keySet()) {
+							if (!StringUtils.isEmpty(CSVTemp.JOOM_FIELD.get(key))) {
+								ReflectionUtil.setFieldValue(goodsPlat, CSVTemp.JOOM_FIELD.get(key), obj.get(key));
+							}
+						}
+						goodsPlat.setModifyId(user.getUserId());
+						goodsPlat.setModifyer(user.getName());
+						goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
+						goodsPlatService.save(goodsPlat);
+					}
+					i++;
+					if (i == 100) {
+						Thread.sleep(1000);
+						i = 0;
+					}
+				}
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return "redirect:/goods/list.html";
+	}
+
+	@RequestMapping(value = "csv/export/joom", method = RequestMethod.GET)
+	public void exportJoom(HttpServletResponse response) {
+		logger.info("导出Joom模版数据");
+		List<GoodsPlat> goodses = goodsPlatService.find();
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		for (GoodsPlat goods : goodses) {
+			Map<String, String> map = new HashMap<String, String>();
+			for (String key : CSVTemp.JOOM_FIELD.keySet()) {
+				if (!StringUtils.isEmpty(CSVTemp.JOOM_FIELD.get(key))) {
+					Object obj = ReflectionUtil.getFieldValue(goods, CSVTemp.JOOM_FIELD.get(key));
+					map.put(key, obj.toString());
+				}
+			}
+			data.add(map);
+		}
+		String file = ConfigUtil.getValue("/config.properties", "workDir") + CSVTemp.JOOM;
+		String[] headers = CSVTemp.JOOM_FIELD.keySet().toArray(new String[] {});
+		File csvFile = CSVUtil.writeCSV(file, data, headers);
+		try {
+			response.setContentType("multipart/form-data");
+			response.setHeader("Content-Disposition",
+					"attachment;filename=" + URLEncoder.encode("商品信息-JOOM.csv", "UTF-8"));
+			OutputStream os = new BufferedOutputStream(response.getOutputStream());
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
+			byte[] buff = new byte[2048];
+			while (true) {
+				int bytesRead;
+				if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
+					break;
+				os.write(buff, 0, bytesRead);
+			}
+			bis.close();
+			os.flush();
+			os.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
