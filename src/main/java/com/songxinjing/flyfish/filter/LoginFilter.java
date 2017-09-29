@@ -75,7 +75,7 @@ public class LoginFilter implements Filter {
 			if ("/".equals(reqUrl)) {
 				reqUrl = "/index.html";
 			}
-			resp.sendRedirect("login.html?reqUrl=" + reqUrl);
+			resp.sendRedirect(req.getContextPath() + "/login.html?reqUrl=" + reqUrl);
 			return;
 		}
 

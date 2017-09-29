@@ -5,67 +5,69 @@ import java.util.List;
 
 /**
  * 分页组件
+ * 
  * @author songxinjing
  *
- * @param <T> 分页内容对象
+ * @param <T>
+ *            分页内容对象
  */
 public class PageModel<T> {
-	
+
 	/**
 	 * 记录总数
 	 */
 	private int recTotal;
-	
+
 	/**
 	 * 分页总数
 	 */
 	private int pageTotal;
-	
+
 	/**
 	 * 每页记录数
 	 */
 	private int pageSize = 10;
-	
+
 	/**
 	 * 当前页码
 	 */
 	private int currPage = 1;
-	
+
 	/**
 	 * 最大显示页码数（页面可直接点击的页面）
 	 */
 	private int showPageNum = 5;
-	
+
 	/**
 	 * 显示页码开始页（页面可直接点击的页面）
 	 */
 	private int showPageFrom;
-	
+
 	/**
 	 * 显示页码结束页（页面可直接点击的页面）
 	 */
 	private int showPageTo;
-	
+
 	/**
 	 * 记录结果集
 	 */
 	public List<T> recList = new ArrayList<T>();
-	
+
 	/**
 	 * 数据请求URL
 	 */
 	private String url;
-	
+
 	/**
 	 * 数据请求参数（?key1=value1&key2=value2&...&）
 	 */
 	private String para;
-	
+
 	/**
 	 * 当前页第一条记录的游标
 	 */
 	private int recFrom;
-	
+
 	public int getRecTotal() {
 		return recTotal;
 	}
@@ -137,7 +139,7 @@ public class PageModel<T> {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
+
 	public String getPara() {
 		return para;
 	}
@@ -161,29 +163,35 @@ public class PageModel<T> {
 	 * @param total
 	 */
 	public void init(int currPage, int recTotal) {
-		this.currPage = currPage;
 		this.recTotal = recTotal;
-		recFrom = (currPage - 1) * pageSize;
-		pageTotal = ((recTotal % pageSize) == 0) ? (recTotal / pageSize) : ((recTotal / pageSize) + 1);
-		if(pageTotal <= showPageNum){
+		pageTotal = ((this.recTotal % pageSize) == 0) ? (this.recTotal / pageSize) : ((this.recTotal / pageSize) + 1);
+		if(pageTotal == 0){
+			pageTotal = 1;
+		}
+		if (currPage <= pageTotal) {
+			this.currPage = currPage;
+		} else {
+			this.currPage = pageTotal;
+		}
+		recFrom = (this.currPage - 1) * pageSize;
+		if (pageTotal <= showPageNum) {
 			showPageFrom = 1;
 			showPageTo = pageTotal;
 		} else {
-			int showPageNumPrev = (showPageNum - 1)/2;
-			int showPageNumNext = showPageNum - showPageNumPrev -1;
-			if(currPage <= showPageNumPrev){
+			int showPageNumPrev = (showPageNum - 1) / 2;
+			int showPageNumNext = showPageNum - showPageNumPrev - 1;
+			if (this.currPage <= showPageNumPrev) {
 				showPageFrom = 1;
 				showPageTo = showPageNum;
-			} else if(currPage >= (pageTotal - showPageNumNext + 1)){
+			} else if (this.currPage >= (pageTotal - showPageNumNext + 1)) {
 				showPageTo = pageTotal;
 				showPageFrom = pageTotal - showPageNum + 1;
 			} else {
-				showPageFrom = currPage - showPageNumPrev;
-				showPageTo = currPage + showPageNumNext;
+				showPageFrom = this.currPage - showPageNumPrev;
+				showPageTo = this.currPage + showPageNumNext;
 			}
 		}
 
 	}
-
 
 }

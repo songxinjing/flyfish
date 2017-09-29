@@ -115,7 +115,7 @@ public abstract class BaseService<T, PK extends Serializable> {
 	 * @return
 	 */
 	public List<T> findHql(final String hql, final Object... values) {
-		return dao.findHql(hql);
+		return dao.findHql(hql, values);
 	}
 
 	/**
@@ -125,8 +125,8 @@ public abstract class BaseService<T, PK extends Serializable> {
 	 * @param size
 	 * @return
 	 */
-	public List<T> findPage(String hql, int from, int size) {
-		return dao.findPage(hql, from, size);
+	public List<T> findPage(String hql, int from, int size, Object... values) {
+		return dao.findPage(hql, from, size, values);
 	}
 
 }

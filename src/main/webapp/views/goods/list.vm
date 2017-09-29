@@ -12,6 +12,16 @@
 		<button type="button" class="btn btn-info margin-bottom" onclick="window.open('${rc.contextPath}/csv/export/wish.html')">Wish导出</button>
 		<button type="button" class="btn btn-success margin-bottom" data-toggle='modal' data-target='#joomImportModal'>Joom导入</button>
 		<button type="button" class="btn btn-info margin-bottom" onclick="window.open('${rc.contextPath}/csv/export/joom.html')">Joom导出</button>
+		<br>
+		<form class="form-inline" action="${rc.contextPath}/goods/list.html?page=$!page" method="post">
+		  <div class="form-group">
+		    <input type="text" class="form-control" name="skuQuery" value="$!skuQuery" placeholder="请输入SKU或父SKU">
+		  </div>
+		  <div class="form-group">
+		    <input type="text" class="form-control" name="nameQuery" value="$!nameQuery" placeholder="请输入商品名称">
+		  </div>
+		  <button type="submit" class="btn btn-default">查询</button>
+		</form>
 	</div>
 	<div class="panel-body">
 		<div class="table-responsive">
@@ -44,9 +54,9 @@
 			          <td>$!{rec.goods.name}</td>
 					  <td>$!{rec.goodsPlat.name}</td>
 			          <td>
-						#if($!{rec.goods.url}) <a href="$!{rec.goods.url}">供应商1</a><br>#end
-						#if($!{rec.goods.url2}) <a href="$!{rec.goods.url2}">供应商2</a><br>#end
-						#if($!{rec.goods.url3}) <a href="$!{rec.goods.url3}">供应商3</a><br>#end
+						#if("$!{rec.goods.url}" != "") <a target="_blank" class="btn btn-info btn-sm" href="$!{rec.goods.url}">供应商1</a><br>#end
+						#if("$!{rec.goods.url2}" != "") <a target="_blank" class="btn btn-info btn-sm" href="$!{rec.goods.url2}">供应商2</a><br>#end
+						#if("$!{rec.goods.url3}" != "") <a target="_blank" class="btn btn-info btn-sm" href="$!{rec.goods.url3}">供应商3</a><br>#end
 					  </td>
 			          <td>#if($!{rec.goods.modifyTm}) $!{rec.goods.modifyTm} #else $!{rec.goodsPlat.modifyTm} #end</td>
 					  <td><button type="button" class="btn btn-warning btn-sm" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button></td>

@@ -51,7 +51,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<init-param>
 			<!-- 忽略应用功能URL路径名 -->
 			<param-name>excludeUrl</param-name>
-			<param-value>/login.html,/doLogin.html,/resources,/system</param-value>
+			<param-value>/login.html,/logout.html,/doLogin.html,/resources,/system</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>

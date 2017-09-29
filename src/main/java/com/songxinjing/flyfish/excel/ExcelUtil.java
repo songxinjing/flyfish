@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -49,8 +50,14 @@ public class ExcelUtil {
 			Map<String, String> map = new HashMap<String, String>();
 			for (int j = 0; j < titles.size(); j++) {
 				cell = row.getCell(j);
-				if(cell !=null){
-					String cellVal = cell.getStringCellValue();
+
+				if (cell != null) {
+					String cellVal = "";
+					if (CellType.NUMERIC == cell.getCellTypeEnum()) {
+						cellVal = cell.getNumericCellValue() + "";
+					} else if (CellType.STRING == cell.getCellTypeEnum()) {
+						cellVal = cell.getStringCellValue().trim();
+					}
 					map.put(titles.get(j), cellVal);
 				}
 			}
