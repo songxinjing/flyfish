@@ -31,14 +31,17 @@ import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.csv.CSVTemp;
 import com.songxinjing.flyfish.csv.CSVUtil;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
+import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.util.ConfigUtil;
 import com.songxinjing.flyfish.util.ReflectionUtil;
+import com.songxinjing.flyfish.util.SftpUtil;
 
 /**
  * 主页控制类
@@ -54,6 +57,9 @@ public class ExcelController extends BaseController {
 
 	@Autowired
 	GoodsPlatService goodsPlatService;
+
+	@Autowired
+	GoodsImgService goodsImgService;
 
 	/**
 	 * 普源数据导入
@@ -105,7 +111,7 @@ public class ExcelController extends BaseController {
 	 * @param response
 	 */
 	@RequestMapping(value = "excel/export/common", method = RequestMethod.GET)
-	public void export(HttpServletResponse response) {
+	public void exportCommon(HttpServletResponse response) {
 		logger.info("Excel导出模版数据");
 
 		List<Goods> goodses = goodsService.find();
@@ -150,7 +156,6 @@ public class ExcelController extends BaseController {
 			try {
 				String[] headers = CSVTemp.WISH_FIELD.keySet().toArray(new String[] {});
 				List<Map<String, String>> data = CSVUtil.readCSV(file.getInputStream(), headers);
-				int i = 0;
 				for (Map<String, String> obj : data) {
 					if (StringUtils.isNotEmpty(obj.get("*Unique ID"))
 							&& goodsPlatService.find(obj.get("*Unique ID")) == null) {
@@ -164,14 +169,28 @@ public class ExcelController extends BaseController {
 						goodsPlat.setModifyer(user.getName());
 						goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
 						goodsPlatService.save(goodsPlat);
-					}
-					i++;
-					if (i == 100) {
-						Thread.sleep(1000);
-						i = 0;
+
+						GoodsImg goodsImg = new GoodsImg();
+						goodsImg.setSku(goodsPlat.getSku());
+						goodsImg.setParentSku(goodsPlat.getParentSku());
+						for (String key : CSVTemp.WISH_FIELD.keySet()) {
+							if (!StringUtils.isEmpty(CSVTemp.WISH_FIELD.get(key))) {
+								if (CSVTemp.WISH_FIELD.get(key).contains("Img")) {
+									new Thread() {
+										public void run() {
+											SftpUtil.startFTP(obj.get(key),
+													goodsPlat.getSku() + "-" + CSVTemp.WISH_FIELD.get(key) + ".jpg");
+										}
+									}.start();
+									ReflectionUtil.setFieldValue(goodsImg, CSVTemp.WISH_FIELD.get(key),
+											goodsPlat.getSku() + "-" + CSVTemp.WISH_FIELD.get(key) + ".jpg");
+								}
+							}
+						}
+						goodsImgService.save(goodsImg);
 					}
 				}
-			} catch (IOException | InterruptedException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -268,6 +287,78 @@ public class ExcelController extends BaseController {
 					Object obj = ReflectionUtil.getFieldValue(goods, CSVTemp.JOOM_FIELD.get(key));
 					map.put(key, obj.toString());
 				}
+			}
+			data.add(map);
+		}
+		String file = ConfigUtil.getValue("/config.properties", "workDir") + CSVTemp.JOOM;
+		String[] headers = CSVTemp.JOOM_FIELD.keySet().toArray(new String[] {});
+		File csvFile = CSVUtil.writeCSV(file, data, headers);
+		try {
+			response.setContentType("multipart/form-data");
+			response.setHeader("Content-Disposition",
+					"attachment;filename=" + URLEncoder.encode("商品信息-JOOM.csv", "UTF-8"));
+			OutputStream os = new BufferedOutputStream(response.getOutputStream());
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
+			byte[] buff = new byte[2048];
+			while (true) {
+				int bytesRead;
+				if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
+					break;
+				os.write(buff, 0, bytesRead);
+			}
+			bis.close();
+			os.flush();
+			os.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@RequestMapping(value = "export", method = RequestMethod.POST)
+	public void export(HttpServletResponse response, String skuQuery, String nameQuery, Integer platformId,
+			String domainName) {
+
+		if (skuQuery == null) {
+			skuQuery = "";
+		}
+
+		List<GoodsPlat> goodses = new ArrayList<GoodsPlat>();
+		String hql = "from GoodsPlat where 1=1";
+		if (StringUtils.isNotEmpty(skuQuery)) {
+			hql = hql + " and (sku like ? or parentSku like ?)";
+			goodses = goodsPlatService.findHql(hql, "%" + skuQuery + "%", "%" + skuQuery + "%");
+		} else {
+			goodses = goodsPlatService.findHql(hql);
+		}
+
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		for (GoodsPlat goods : goodses) {
+			Map<String, String> map = new HashMap<String, String>();
+			for (String key : CSVTemp.JOOM_FIELD.keySet()) {
+				if (!StringUtils.isEmpty(CSVTemp.JOOM_FIELD.get(key))) {
+					Object obj = ReflectionUtil.getFieldValue(goods, CSVTemp.JOOM_FIELD.get(key));
+					if(obj != null){
+						map.put(key, obj.toString());
+					}
+				}
+				if (key.equals("inventory") && StringUtils.isEmpty(map.get(key))) {
+					map.put(key, "9999");
+				}
+				if (key.equals("shipping days") && StringUtils.isEmpty(map.get(key))) {
+					map.put(key, "15-35");
+				}
+				if (key.contains("image")) {
+					map.put(key,
+							"http://" + domainName + "/" + goods.getSku() + "-" + CSVTemp.JOOM_FIELD.get(key) + ".jpg");
+				}
+				if (key.equals("shipping price")) {
+					map.put(key, "数据待完善");
+				}
+
 			}
 			data.add(map);
 		}

@@ -274,7 +274,7 @@
 	  var paraC = button.data("parac");
 	  var paraX = button.data("parax");
 	  var paraD = button.data("parad");
-	  var modal = $(this)
+	  var modal = $(this);
 	  modal.find("#id").val(id);
 	  modal.find("#prodId").val(prodId);
 	  modal.find("#prodName").text(prodName);

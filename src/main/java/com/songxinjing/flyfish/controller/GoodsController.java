@@ -16,8 +16,10 @@ import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.plugin.page.PageModel;
+import com.songxinjing.flyfish.service.DomainService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
+import com.songxinjing.flyfish.service.PlatformService;
 
 /**
  * 商品管理控制类
@@ -34,15 +36,21 @@ public class GoodsController extends BaseController {
 	@Autowired
 	GoodsPlatService goodsPlatService;
 
+	@Autowired
+	DomainService domainService;
+
+	@Autowired
+	PlatformService platformService;
+
 	@RequestMapping(value = "goods/list")
 	public String list(Model model, Integer page, String skuQuery, String nameQuery) {
 		logger.info("进入商品列表页面");
-		
-		if(skuQuery == null){
+
+		if (skuQuery == null) {
 			skuQuery = "";
 		}
-		
-		if(nameQuery == null){
+
+		if (nameQuery == null) {
 			nameQuery = "";
 		}
 
@@ -103,7 +111,8 @@ public class GoodsController extends BaseController {
 		model.addAttribute("page", page);
 		model.addAttribute("skuQuery", skuQuery);
 		model.addAttribute("nameQuery", nameQuery);
-
+		model.addAttribute("platforms", platformService.find());
+		model.addAttribute("domains", domainService.find());
 		return "goods/list";
 	}
 

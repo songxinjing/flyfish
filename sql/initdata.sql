@@ -43,5 +43,13 @@ insert into LogisProd(id,name,orderNum) values(9,'英国微包',9);
 insert into LogisProd(id,name,orderNum) values(10,'欧速通',10);
 insert into LogisProd(id,name,orderNum) values(11,'yodel小包',11);
 
+-- 初始化域名信息
+delete from Domain;
+insert into Domain(name,orderNum) values('www.bentain.site',1);
+insert into Domain(name,orderNum) values('www.bentain.vip',2);
+insert into Domain(name,orderNum) values('www.bentain.top',3);
+insert into Domain(name,orderNum) values('www.bentain.ltd',4);
+insert into Domain(name,orderNum) values('www.bentain.cn',5);
+
 -- 管理员
 insert into `User`(userId,email,name,password,phone,state) values('admin','','管理员','admin12345','',0);
