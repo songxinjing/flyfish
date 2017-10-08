@@ -31,14 +31,17 @@ import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.csv.CSVTemp;
 import com.songxinjing.flyfish.csv.CSVUtil;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
+import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.util.ConfigUtil;
 import com.songxinjing.flyfish.util.ReflectionUtil;
+import com.songxinjing.flyfish.util.SftpUtil;
 
 /**
  * 主页控制类
@@ -54,6 +57,9 @@ public class ExcelController extends BaseController {
 
 	@Autowired
 	GoodsPlatService goodsPlatService;
+
+	@Autowired
+	GoodsImgService goodsImgService;
 
 	/**
 	 * 普源数据导入
@@ -150,7 +156,6 @@ public class ExcelController extends BaseController {
 			try {
 				String[] headers = CSVTemp.WISH_FIELD.keySet().toArray(new String[] {});
 				List<Map<String, String>> data = CSVUtil.readCSV(file.getInputStream(), headers);
-				int i = 0;
 				for (Map<String, String> obj : data) {
 					if (StringUtils.isNotEmpty(obj.get("*Unique ID"))
 							&& goodsPlatService.find(obj.get("*Unique ID")) == null) {
@@ -164,14 +169,28 @@ public class ExcelController extends BaseController {
 						goodsPlat.setModifyer(user.getName());
 						goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
 						goodsPlatService.save(goodsPlat);
-					}
-					i++;
-					if (i == 100) {
-						Thread.sleep(1000);
-						i = 0;
+
+						GoodsImg goodsImg = new GoodsImg();
+						goodsImg.setSku(goodsPlat.getSku());
+						goodsImg.setParentSku(goodsPlat.getParentSku());
+						for (String key : CSVTemp.WISH_FIELD.keySet()) {
+							if (!StringUtils.isEmpty(CSVTemp.WISH_FIELD.get(key))) {
+								if (CSVTemp.WISH_FIELD.get(key).contains("Img")) {
+									new Thread() {
+										public void run() {
+											SftpUtil.startFTP(obj.get(key),
+													goodsPlat.getSku() + "-" + CSVTemp.WISH_FIELD.get(key) + ".jpg");
+										}
+									}.start();
+									ReflectionUtil.setFieldValue(goodsImg, CSVTemp.WISH_FIELD.get(key),
+											goodsPlat.getSku() + "-" + CSVTemp.WISH_FIELD.get(key) + ".jpg");
+								}
+							}
+						}
+						goodsImgService.save(goodsImg);
 					}
 				}
-			} catch (IOException | InterruptedException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
