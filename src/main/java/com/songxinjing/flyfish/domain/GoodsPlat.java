@@ -32,10 +32,10 @@ public class GoodsPlat implements Serializable {
 	private String parentSku;
 	
 	/**
-	 * name
+	 * title
 	 */
 	@Column(length = 255)
-	private String name;
+	private String title;
 	
 	/**
 	 * descp
@@ -187,12 +187,12 @@ public class GoodsPlat implements Serializable {
 		this.parentSku = parentSku;
 	}
 
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getDescp() {

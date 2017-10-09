@@ -1,7 +1,11 @@
 package com.songxinjing.flyfish.controller;
 
+import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.GoodsPlat;
+import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.plugin.page.PageModel;
@@ -21,6 +28,7 @@ import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
+import com.songxinjing.flyfish.util.ReflectionUtil;
 
 /**
  * 商品管理控制类
@@ -42,7 +50,7 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	PlatformService platformService;
-	
+
 	@Autowired
 	LogisProdService logisProdService;
 
@@ -133,9 +141,42 @@ public class GoodsController extends BaseController {
 
 	@RequestMapping(value = "goods/save", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean save(Model model, GoodsEditForm form) {
+	public boolean save(HttpServletRequest request, Model model, GoodsEditForm form) {
 		logger.info("保存商品详情页面");
+		Goods goods = goodsService.find(form.getSku());
+		GoodsPlat goodsPlat = goodsPlatService.find(form.getSku());
 
+		Field[] fields = form.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			Object value = ReflectionUtil.getFieldValue(form, field.getName());
+			if(value != null){
+				try {
+					goods.getClass().getDeclaredField(field.getName());
+					ReflectionUtil.setFieldValue(goods, field.getName(), value);
+				} catch (NoSuchFieldException e) {
+					logger.debug("Goods不存在字段：" + field.getName());
+				}
+				try {
+					goodsPlat.getClass().getDeclaredField(field.getName());
+					ReflectionUtil.setFieldValue(goodsPlat, field.getName(), value);
+				} catch (NoSuchFieldException e) {
+					logger.debug("GoodsPlat不存在字段：" + field.getName());
+				}
+			}
+		}
+
+		// 获取用户登录信息
+		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		goods.setModifyId(user.getUserId());
+		goods.setModifyer(user.getName());
+		goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
+
+		goodsPlat.setModifyId(user.getUserId());
+		goodsPlat.setModifyer(user.getName());
+		goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
+
+		goodsService.update(goods);
+		goodsPlatService.update(goodsPlat);
 		return true;
 	}
 

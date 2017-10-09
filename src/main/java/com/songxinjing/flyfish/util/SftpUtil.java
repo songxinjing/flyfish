@@ -21,10 +21,34 @@ public class SftpUtil {
 
 	protected static final Logger logger = LoggerFactory.getLogger(SftpUtil.class);
 
-	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
+	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
+	
+	private static StandardFileSystemManager manager = new StandardFileSystemManager();
+	private static FileSystemOptions opts = new FileSystemOptions();
+	
+	private static String serverAddress = "47.91.248.241";
+	private static String userId = "root";
+	private static String password = "Sxj!2345";
+	private static String remoteDirectory = "/flyfish/images";
+	private static String userInfo = userId + ":" + password;
 
 	static {
-		for (int index = 0; index < 10; index++) {
+		
+		// Initializes the file manager
+		try {
+			manager.init();
+			// Setup our SFTP configuration
+			SftpFileSystemConfigBuilder.getInstance().setStrictHostKeyChecking(opts, "no");
+			SftpFileSystemConfigBuilder.getInstance().setUserDirIsRoot(opts, true);
+			SftpFileSystemConfigBuilder.getInstance().setTimeout(opts, 10000);
+			
+		} catch (FileSystemException e) {
+			e.printStackTrace();
+		}
+
+		
+		
+		for (int index = 0; index < 3; index++) {
 			Runnable sftper = new Runnable() {
 				public void run() {
 					while (true) {
@@ -67,33 +91,13 @@ public class SftpUtil {
 
 	public static void doFTP(SftpJob sftpJob) {
 
-		StandardFileSystemManager manager = new StandardFileSystemManager();
-
 		try {
 			URL fileUrl = new URL(sftpJob.url);
-
-			String serverAddress = "47.91.248.241";
-			String userId = "root";
-			String password = "Sxj!2345";
-			String remoteDirectory = "/flyfish/images";
-
-			// Initializes the file manager
-			manager.init();
-
-			// Setup our SFTP configuration
-			FileSystemOptions opts = new FileSystemOptions();
-			SftpFileSystemConfigBuilder.getInstance().setStrictHostKeyChecking(opts, "no");
-			SftpFileSystemConfigBuilder.getInstance().setUserDirIsRoot(opts, true);
-			SftpFileSystemConfigBuilder.getInstance().setTimeout(opts, 10000);
-
-			String userInfo = userId + ":" + password;
 			String path = remoteDirectory + "/" + sftpJob.name;
 			URI sftpUri = new URI("sftp", userInfo, serverAddress, -1, path, null, null);
 			FileObject remoteFile = manager.resolveFile(sftpUri.toString(), opts);
-
 			// Create local file object
 			FileObject localFile = manager.resolveFile(fileUrl);
-
 			// Copy local file to sftp server
 			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
 		} catch (MalformedURLException | FileSystemException | URISyntaxException e) {

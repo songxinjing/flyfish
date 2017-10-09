@@ -379,7 +379,7 @@ public class ExcelController extends BaseController {
 				List<Weight> list = weightService.find(temp);
 				BigDecimal rate = new BigDecimal(0);
 				if (list != null && !list.isEmpty()) {
-					rate = list.get(0).getRate();
+					rate = list.get(0).getRate().divide(new BigDecimal(100));
 				}
 				if (logis.getMethod() == 1 && logis.getParaA() != null && logis.getParaB() != null) {
 					shippingPrice = shippingPrice.add(

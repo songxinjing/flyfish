@@ -124,7 +124,7 @@ public class ExcelTemp {
 
 	static {
 		WISH_FIELD.put("Parent Unique ID", "parentSku");
-		WISH_FIELD.put("*Product Name", "name");
+		WISH_FIELD.put("*Product Name", "title");
 		WISH_FIELD.put("Description", "descp");
 		WISH_FIELD.put("*Tags", "tags");
 		WISH_FIELD.put("*Unique ID", "sku");
@@ -157,7 +157,7 @@ public class ExcelTemp {
 	static {
 		JOOM_FIELD.put("Parent SKU", "parentSku");
 		JOOM_FIELD.put("SKU", "sku");
-		JOOM_FIELD.put("product name", "name");
+		JOOM_FIELD.put("product name", "title");
 		JOOM_FIELD.put("description", "descp");
 		JOOM_FIELD.put("tags", "tags");
 		JOOM_FIELD.put("msrp", "");
