@@ -1,21 +1,30 @@
 package com.songxinjing.flyfish.excel;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ExcelTemp {
-	
-	
+
 	/**
 	 * 普通模版文件
 	 */
 	public static final String COMMON = "/excelTemp/common.xls";
-	
+
+	/**
+	 * WISH模版文件
+	 */
+	public static final String WISH = "/excelTemp/wish.csv";
+
+	/**
+	 * JOOM模版文件
+	 */
+	public static final String JOOM = "/excelTemp/joom.csv";
+
 	/**
 	 * 普通模版字段映射
 	 */
-	public static final Map<String,String> COMMON_FIELD = new HashMap<String,String>();
-	
+	public static final Map<String, String> COMMON_FIELD = new LinkedHashMap<String, String>();
+
 	static {
 		COMMON_FIELD.put("操作类型", "");
 		COMMON_FIELD.put("商品编码", "parentSku");
@@ -105,9 +114,95 @@ public class ExcelTemp {
 		COMMON_FIELD.put("物流公司价格", "");
 		COMMON_FIELD.put("交易费", "");
 		COMMON_FIELD.put("毛利率", "");
-		COMMON_FIELD.put("计算售价", "");		
+		COMMON_FIELD.put("计算售价", "");
 	}
-	
-	
 
+	/**
+	 * WISH模版字段映射
+	 */
+	public static final Map<String, String> WISH_FIELD = new LinkedHashMap<String, String>();
+
+	static {
+		WISH_FIELD.put("Parent Unique ID", "parentSku");
+		WISH_FIELD.put("*Product Name", "name");
+		WISH_FIELD.put("Description", "descp");
+		WISH_FIELD.put("*Tags", "tags");
+		WISH_FIELD.put("*Unique ID", "sku");
+		WISH_FIELD.put("Color", "color");
+		WISH_FIELD.put("Size", "size");
+		WISH_FIELD.put("*Quantity", "quantity");
+		WISH_FIELD.put("*Price", "");
+		WISH_FIELD.put("*Shipping", "");
+		WISH_FIELD.put("Shipping Time(enter without \" \", just the estimated days )", "shipDays");
+		WISH_FIELD.put("*Product Main Image URL", "mainImgUrl");
+		WISH_FIELD.put("Variant Main Image URL", "vMainImgUrl");
+		WISH_FIELD.put("Extra Image URL", "eImgUrl");
+		WISH_FIELD.put("Extra Image URL 1", "eImgUrl1");
+		WISH_FIELD.put("Extra Image URL 2", "eImgUrl2");
+		WISH_FIELD.put("Extra Image URL 3", "eImgUrl3");
+		WISH_FIELD.put("Extra Image URL 4", "eImgUrl4");
+		WISH_FIELD.put("Extra Image URL 5", "eImgUrl5");
+		WISH_FIELD.put("Extra Image URL 6", "eImgUrl6");
+		WISH_FIELD.put("Extra Image URL 7", "eImgUrl7");
+		WISH_FIELD.put("Extra Image URL 8", "eImgUrl8");
+		WISH_FIELD.put("Extra Image URL 9", "eImgUrl9");
+		WISH_FIELD.put("Extra Image URL 10", "eImgUrl10");
+	}
+
+	/**
+	 * JOOM模版字段映射
+	 */
+	public static final Map<String, String> JOOM_FIELD = new LinkedHashMap<String, String>();
+
+	static {
+		JOOM_FIELD.put("Parent SKU", "parentSku");
+		JOOM_FIELD.put("SKU", "sku");
+		JOOM_FIELD.put("product name", "name");
+		JOOM_FIELD.put("description", "descp");
+		JOOM_FIELD.put("tags", "tags");
+		JOOM_FIELD.put("msrp", "");
+		JOOM_FIELD.put("color", "color");
+		JOOM_FIELD.put("size", "size");
+		JOOM_FIELD.put("price", "");
+		JOOM_FIELD.put("shipping price", "");
+		JOOM_FIELD.put("inventory", "quantity");
+		JOOM_FIELD.put("shipping days", "shipDays");
+		JOOM_FIELD.put("product main image URL", "mainImgUrl");
+		JOOM_FIELD.put("variant main image URL", "vMainImgUrl");
+		JOOM_FIELD.put("extra image URL 1", "eImgUrl");
+		JOOM_FIELD.put("extra image URL 2", "eImgUrl1");
+		JOOM_FIELD.put("extra image URL 3", "eImgUrl2");
+		JOOM_FIELD.put("extra image URL 4", "eImgUrl3");
+		JOOM_FIELD.put("extra image URL 5", "eImgUrl4");
+		JOOM_FIELD.put("extra image URL 6", "eImgUrl5");
+		JOOM_FIELD.put("extra image URL 7", "eImgUrl6");
+		JOOM_FIELD.put("extra image URL 8", "eImgUrl7");
+		JOOM_FIELD.put("extra image URL 9", "eImgUrl8");
+	}
+
+	/**
+	 * 平台模版Map
+	 */
+	public static final Map<String, Map<String, String>> PLATFORM_TEMP_FIELD = new LinkedHashMap<String, Map<String, String>>();
+	static {
+		PLATFORM_TEMP_FIELD.put("Common", COMMON_FIELD);
+		PLATFORM_TEMP_FIELD.put("Ebay", null);
+		PLATFORM_TEMP_FIELD.put("Amazon", null);
+		PLATFORM_TEMP_FIELD.put("AliExpress", null);
+		PLATFORM_TEMP_FIELD.put("Wish", WISH_FIELD);
+		PLATFORM_TEMP_FIELD.put("Joom", JOOM_FIELD);
+	}
+
+	/**
+	 * 平台模版Map
+	 */
+	public static final Map<String, String> PLATFORM_TEMP_FILE = new LinkedHashMap<String, String>();
+	static {
+		PLATFORM_TEMP_FILE.put("Common", COMMON);
+		PLATFORM_TEMP_FILE.put("Ebay", "");
+		PLATFORM_TEMP_FILE.put("Amazon", "");
+		PLATFORM_TEMP_FILE.put("AliExpress", "");
+		PLATFORM_TEMP_FILE.put("Wish", WISH);
+		PLATFORM_TEMP_FILE.put("Joom", JOOM);
+	}
 }

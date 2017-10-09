@@ -19,6 +19,7 @@ import com.songxinjing.flyfish.plugin.page.PageModel;
 import com.songxinjing.flyfish.service.DomainService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
+import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
 
 /**
@@ -41,6 +42,9 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	PlatformService platformService;
+	
+	@Autowired
+	LogisProdService logisProdService;
 
 	@RequestMapping(value = "goods/list")
 	public String list(Model model, Integer page, String skuQuery, String nameQuery) {
@@ -113,6 +117,7 @@ public class GoodsController extends BaseController {
 		model.addAttribute("nameQuery", nameQuery);
 		model.addAttribute("platforms", platformService.find());
 		model.addAttribute("domains", domainService.find());
+		model.addAttribute("prods", logisProdService.find());
 		return "goods/list";
 	}
 
@@ -126,7 +131,7 @@ public class GoodsController extends BaseController {
 		return "goods/edit";
 	}
 
-	@RequestMapping(value = "goods/save", method = RequestMethod.GET)
+	@RequestMapping(value = "goods/save", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean save(Model model, GoodsEditForm form) {
 		logger.info("保存商品详情页面");

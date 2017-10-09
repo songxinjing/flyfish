@@ -50,13 +50,6 @@ public class GoodsPlat implements Serializable {
 	private String tags;
 	
 	/**
-	 * msrp
-	 */
-	@Column(length = 8)
-	private String msrp;
-
-	
-	/**
 	 * color
 	 */
 	@Column(length = 32)
@@ -68,30 +61,12 @@ public class GoodsPlat implements Serializable {
 	 */
 	@Column(length = 32)
 	private String size;
-
-	/**
-	 * price
-	 */
-	@Column(length = 8)
-	private String price;
-
-	/**
-	 * shipPrice
-	 */
-	@Column(length = 8)
-	private String shipPrice;
 	
 	/**
 	 * Quantity
 	 */
 	@Column(length = 8)
 	private String quantity;	
-
-	/**
-	 * inventory
-	 */
-	@Column(length = 8)
-	private String inventory;
 
 	/**
 	 * shipping days 
@@ -236,14 +211,6 @@ public class GoodsPlat implements Serializable {
 		this.tags = tags;
 	}
 
-	public String getMsrp() {
-		return msrp;
-	}
-
-	public void setMsrp(String msrp) {
-		this.msrp = msrp;
-	}
-
 	public String getColor() {
 		return color;
 	}
@@ -260,36 +227,12 @@ public class GoodsPlat implements Serializable {
 		this.size = size;
 	}
 
-	public String getPrice() {
-		return price;
-	}
-
-	public void setPrice(String price) {
-		this.price = price;
-	}
-
-	public String getShipPrice() {
-		return shipPrice;
-	}
-
-	public void setShipPrice(String shipPrice) {
-		this.shipPrice = shipPrice;
-	}
-
 	public String getQuantity() {
 		return quantity;
 	}
 
 	public void setQuantity(String quantity) {
 		this.quantity = quantity;
-	}
-
-	public String getInventory() {
-		return inventory;
-	}
-
-	public void setInventory(String inventory) {
-		this.inventory = inventory;
 	}
 
 	public String getShipDays() {

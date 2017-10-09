@@ -5,9 +5,12 @@
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading"></div>
+	<div class="panel-heading">
+		<button id="btnSave" type="button" class="btn btn-success">保存</button>
+		<button type="button" class="btn btn-info" onclick="javascript:history.back();">返回</button>
+	</div>
 	<div class="panel-body">
-		 <form class="form-horizontal" id="editForm" action="${rc.contextPath}/goods/save.html" method="post">
+		 <form class="form-horizontal" id="editForm">
 			<fieldset>
             	<legend>基本信息</legend>
 			<div class="form-group">
@@ -222,46 +225,136 @@
            	    </div> 
             	
             	<div class="form-group">
-	                <label class="col-sm-2 control-label">SKU附图（远程）</label>
+	                <label class="col-sm-2 control-label">SKU附图1（远程）</label>
 	                <div class="col-sm-4">
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl1}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl2}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl3}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl4}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl5}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl6}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl7}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl8}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl9}"/><br>
-	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl10}"/>
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl}"/>
 	                </div>
 	                <label class="col-sm-2 control-label">SKU附图（本地）</label>
 	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>   
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图2（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl1}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图2（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl1.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	     <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图3（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl2}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图3（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl2.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图4（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl3}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图4（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl3.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图5（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl4}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图5（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl4.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图6（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl5}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图6（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl5.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图7（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl6}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图7（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl6.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图8（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl7}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图8（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl7.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图9（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl8}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图9（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl8.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图10（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl9}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图10（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl9.jpg"/>
-	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button><br>
+	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
+	                </div>
+           	    </div>  
+           	    
+           	    <div class="form-group">
+	                <label class="col-sm-2 control-label">SKU附图11（远程）</label>
+	                <div class="col-sm-4">
+	                	<img height="40px" width="40px" src="$!{form.goodsPlat.eImgUrl10}"/>
+	                </div>
+	                <label class="col-sm-2 control-label">SKU附图11（本地）</label>
+	                <div class="col-sm-4">
 	                	<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl10.jpg"/>
 	                	<button type="button" class="btn btn-info margin-bottom" onclick="">重新抓取</button>
 	                </div>
-           	    </div>     
+           	    </div>  
            	    
              </fieldset>
              
@@ -271,9 +364,29 @@
                 <div class="col-sm-12">
                 	<textarea  name="descp" class="form-control" rows="10">$!{form.goodsPlat.descp}</textarea>
                 </div>
-            </div>
-            	 </fieldset>
+            	</div>
+            </fieldset>
             
         </form>
 	</div>
 </div>
+
+<script>
+  
+  $("#btnSave").on("click", function () {
+  		$.ajax({
+            cache: true,
+            type: "POST",
+            url: "${rc.contextPath}/goods/save.html",
+            data: $("#editForm").serialize(),
+            async: false,
+            error: function(request) {
+                base.alert("保存失败!");
+            },
+            success: function(data) {
+                base.alert("保存成功!");
+            }
+        });
+  })
+  
+</script>
