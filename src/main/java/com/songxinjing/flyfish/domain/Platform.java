@@ -50,6 +50,18 @@ public class Platform implements Serializable {
 	private BigDecimal rate;
 
 	/**
+	 * 平台利润率（%）
+	 */
+	@Column(precision = 5, scale = 2)
+	private BigDecimal profitRate;
+	
+	/**
+	 * 平台折扣率（%）
+	 */
+	@Column(precision = 5, scale = 2)
+	private BigDecimal cutRate;
+	
+	/**
 	 * 该平台权重列表
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "platform")
@@ -92,6 +104,22 @@ public class Platform implements Serializable {
 
 	public void setRate(BigDecimal rate) {
 		this.rate = rate;
+	}
+
+	public BigDecimal getProfitRate() {
+		return profitRate;
+	}
+
+	public void setProfitRate(BigDecimal profitRate) {
+		this.profitRate = profitRate;
+	}
+
+	public BigDecimal getCutRate() {
+		return cutRate;
+	}
+
+	public void setCutRate(BigDecimal cutRate) {
+		this.cutRate = cutRate;
 	}
 
 	public List<Weight> getWeights() {

@@ -34,11 +34,13 @@ import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.Logis;
+import com.songxinjing.flyfish.domain.LogisProd;
 import com.songxinjing.flyfish.domain.Platform;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.domain.Weight;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
+import com.songxinjing.flyfish.service.ExchangeService;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
@@ -72,6 +74,9 @@ public class ExcelController extends BaseController {
 
 	@Autowired
 	PlatformService platformService;
+
+	@Autowired
+	ExchangeService exchangeService;
 
 	@Autowired
 	WeightService weightService;
@@ -336,6 +341,8 @@ public class ExcelController extends BaseController {
 		if (skuQuery == null) {
 			skuQuery = "";
 		}
+		
+		LogisProd logisProd = logisProdService.find(prodId);
 
 		Platform platform = platformService.find(platformId);
 		Map<String, String> tempFiledMap = ExcelTemp.PLATFORM_TEMP_FIELD.get(platform.getName());
@@ -371,7 +378,7 @@ public class ExcelController extends BaseController {
 			if (StringUtils.isEmpty(weight)) {
 				weight = "0";
 			}
-			List<Logis> logises = logisProdService.find(prodId).getLogises();
+			List<Logis> logises = logisProd.getLogises();
 			for (Logis logis : logises) {
 				Weight temp = new Weight();
 				temp.setPlatform(platform);
@@ -399,8 +406,16 @@ public class ExcelController extends BaseController {
 			if (StringUtils.isEmpty(costPrice)) {
 				costPrice = "0";
 			}
-			BigDecimal price = shippingPrice.add(new BigDecimal(costPrice));
-			BigDecimal msrp = price.multiply(new BigDecimal(10));
+			BigDecimal platformRate = platform.getRate().divide(new BigDecimal(100));
+			BigDecimal profitRate = platform.getProfitRate().divide(new BigDecimal(100));
+			BigDecimal cutRate = platform.getCutRate().divide(new BigDecimal(100));
+			BigDecimal tempRate = new BigDecimal(1).subtract(platformRate).subtract(profitRate);
+			BigDecimal exchangeRate = exchangeService.find(Constant.USD_CNY).getRate();
+
+			BigDecimal price = shippingPrice.add(new BigDecimal(costPrice)).divide(tempRate, 4, RoundingMode.HALF_UP)
+					.divide(cutRate, 4, RoundingMode.HALF_UP).divide(exchangeRate,4, RoundingMode.HALF_UP);
+			price = price.setScale(2, RoundingMode.HALF_UP);
+			BigDecimal msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
 
 			if ("Wish".equals(platform.getName())) {
 				if (StringUtils.isEmpty(map.get("*Quantity"))) {
@@ -431,7 +446,7 @@ public class ExcelController extends BaseController {
 		try {
 			response.setContentType("multipart/form-data");
 			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode("商品信息-" + platform.getName() + ".csv", "UTF-8"));
+					"attachment;filename=" + URLEncoder.encode("商品信息-" + platform.getName() + "-" + logisProd.getName()  + "-" + domainName + ".csv", "UTF-8"));
 			OutputStream os = new BufferedOutputStream(response.getOutputStream());
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
 			byte[] buff = new byte[2048];

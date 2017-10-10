@@ -24,6 +24,7 @@ import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.plugin.page.PageModel;
 import com.songxinjing.flyfish.service.DomainService;
+import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.LogisProdService;
@@ -44,6 +45,9 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	GoodsPlatService goodsPlatService;
+	
+	@Autowired
+	GoodsImgService goodsImgService;
 
 	@Autowired
 	DomainService domainService;
@@ -137,6 +141,15 @@ public class GoodsController extends BaseController {
 		form.setGoodsPlat(goodsPlatService.find(sku));
 		model.addAttribute("form", form);
 		return "goods/edit";
+	}
+	
+	@RequestMapping(value = "goods/delete", method = RequestMethod.GET)
+	public String delete(String sku) {
+		logger.info("删除商品信息");
+		goodsService.delete(sku);
+		goodsPlatService.delete(sku);
+		goodsImgService.delete(sku);
+		return "redirect:/goods/list.html";
 	}
 
 	@RequestMapping(value = "goods/save", method = RequestMethod.POST)

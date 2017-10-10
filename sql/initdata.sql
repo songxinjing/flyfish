@@ -23,11 +23,11 @@ insert into Country(id,name,orderNum) values(20,'其他国家',20);
 
 -- 初始化平台信息
 delete from Platform;
-insert into Platform(id,name,orderNum,rate) values(1,'Ebay',1,0);
-insert into Platform(id,name,orderNum,rate) values(2,'Amazon',2,0);
-insert into Platform(id,name,orderNum,rate) values(3,'AliExpress',3,0);
-insert into Platform(id,name,orderNum,rate) values(4,'Wish',4,0);
-insert into Platform(id,name,orderNum,rate) values(5,'Joom',5,0);
+insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(1,'Ebay',1,15,100,12);
+insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(2,'Amazon',2,15,100,12);
+insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(3,'AliExpress',3,15,100,12);
+insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(4,'Wish',4,15,100,12);
+insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(5,'Joom',5,15,100,12);
 
 -- 初始化物流产品信息
 delete from LogisProd;
@@ -50,6 +50,10 @@ insert into Domain(name,orderNum) values('www.bentain.vip',2);
 insert into Domain(name,orderNum) values('www.bentain.top',3);
 insert into Domain(name,orderNum) values('www.bentain.ltd',4);
 insert into Domain(name,orderNum) values('www.bentain.cn',5);
+
+-- 初始化汇率信息
+delete from Exchange;
+insert into Exchange(code,name,rate,orderNum) values('USD/CNY','美元/人民币',6.5,1);
 
 -- 管理员
 insert into `User`(userId,email,name,password,phone,state) values('admin','','管理员','admin12345','',0);
