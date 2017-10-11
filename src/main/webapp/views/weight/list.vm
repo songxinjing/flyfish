@@ -82,7 +82,7 @@
             </div>
            <div class="form-group">
                 <label>平台权重</label>
-                 <input class="form-control  input-para" name="rate" number="true" maxlength="5" max="100" required>%
+                 <input class="form-control  input-para" name="rate" number="true" maxlength="6" max="100" required>%
             </div>
 	     </form>
       </div>
@@ -117,7 +117,7 @@
             </div>
            <div class="form-group">
                 <label>平台权重</label>
-                 <input id="rate" class="form-control input-para" name="rate" number="true" maxlength="5" max="100" required>%
+                 <input id="rate" class="form-control input-para" name="rate" number="true" maxlength="6" max="100" required>%
             </div>
 	     </form>
       </div>
