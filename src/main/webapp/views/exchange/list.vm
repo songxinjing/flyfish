@@ -1,0 +1,116 @@
+<div class="row">
+	<div class="col-md-12">
+		<h3 class="page-header">汇率列表</h3>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+	    	<table class="table table-striped table-bordered table-hover">
+	    	  <thead>
+			    <tr>
+				  <th width="25%">汇率代码</th>
+				  <th width="25%">汇率名称</th>
+				  <th width="25%">当前汇率</th>
+				  <th width="25%">操作</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+				#foreach($rec in $!recList)
+			        <tr>
+			          <td>$!{rec.code}</td>
+			          <td>$!{rec.name}</td>
+			          <td>$!{rec.rate}</td>
+					  <td>
+						<button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modifyModal" 
+            					    data-code="$!rec.code" 
+            					    data-name="$!rec.name"
+            					    data-rate="$!rec.rate" >修改</button>
+					  </td>
+			        </tr>
+				#end
+			  </tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!-- modify Modal-->
+<div id="modifyModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">修改汇率</h4>
+      </div>
+      <div class="modal-body">
+         <form id="modifyForm">
+           <input id="code" name="code" type="hidden"> 
+           <div class="form-group">
+                <label>汇率代码</label>
+                <p class="form-control-static" id="code-p"></p>
+            </div>
+            <div class="form-group">
+                <label>汇率名称</label>
+                <p class="form-control-static" id="name"></p>
+            </div>
+            <div class="form-group">
+                <label>当前汇率</label>
+                <input id="rate" class="form-control" name="rate" number="true" maxlength="8" required>
+            </div>
+	     </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="confirm-yes btn btn-primary" id="btnModify">提交</button>
+        <button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  
+  $().ready(function() {
+    $("#modifyForm").validate();
+  });
+
+  
+  $("#btnModify").on("click", function () {
+    var flag = $("#modifyForm").valid();
+    if(!flag){
+        //没有通过验证
+        return;
+    }
+	$.ajax({
+        cache: true,
+        type: "POST",
+        url: "${rc.contextPath}/exchange/modify.html",
+        data: $("#modifyForm").serialize(),
+        async: false,
+        error: function(request) {
+        	$("#modifyModal").modal('hide')
+            base.alert("保存失败!");
+        },
+        success: function(data) {
+        	$("#modifyModal").modal('hide')
+            window.location.reload();
+        }
+    });
+  })
+  
+  $("#modifyModal").on("show.bs.modal", function (event) {
+	  var button = $(event.relatedTarget);
+	  var code = button.data("code");
+	  var name = button.data("name");
+	  var rate = button.data("rate");
+	  var modal = $(this);
+	  modal.find("#code").val(code);
+	  modal.find("#code-p").text(code);
+	  modal.find("#name").text(name);
+	  modal.find("#rate").val(rate);
+	})
+
+</script>

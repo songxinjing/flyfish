@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
@@ -230,6 +231,41 @@ public class LogisController extends BaseController {
 		logisService.delete(logis);
 		model.addAttribute("queryProdId", queryProdId);
 		return list(model, platId);
+	}
+
+	@RequestMapping(value = "logisprod/list", method = RequestMethod.GET)
+	public String prodList(Model model) {
+		logger.info("进入物流产品列表页面");
+
+		List<LogisProd> recList = logisProdService.find();
+		model.addAttribute("recList", recList);
+
+		return "logisprod/list";
+	}
+
+	@RequestMapping(value = "logisprod/add", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean prodAdd(LogisProd form) {
+		int id = (Integer)logisProdService.save(form);
+		LogisProd logisProd = logisProdService.find(id);
+		logisProd.setOrderNum(id);
+		logisProdService.update(logisProd);
+		return true;
+	}
+
+	@RequestMapping(value = "logisprod/modify", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean prodModify(LogisProd form) {
+		LogisProd logisProd = logisProdService.find(form.getId());
+		logisProd.setName(form.getName());
+		logisProdService.update(logisProd);
+		return true;
+	}
+	
+	@RequestMapping(value = "logisprod/delete", method = RequestMethod.GET)
+	public String delete(Integer id) {
+		logisProdService.delete(id);
+		return "redirect:/logisprod/list.html";
 	}
 
 }

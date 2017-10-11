@@ -103,6 +103,9 @@
 						<li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i>物流管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
+                            	<li>
+                                    <a href="${rc.contextPath}/logisprod/list.html">物流产品管理</a>
+                                </li>
                                 <li>
                                     <a href="${rc.contextPath}/logis/list.html">物流方式列表</a>
                                 </li>
@@ -117,13 +120,16 @@
                             <a href="#"><i class="fa fa-wrench fa-fw"></i>系统管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="#">用户管理</a>
+                                    <a href="${rc.contextPath}/user/list.html">用户管理</a>
                                 </li>
 								<li>
-                                    <a href="#">汇率设置</a>
+                                    <a href="${rc.contextPath}/exchange/list.html">汇率管理</a>
                                 </li>
 								<li>
-                                    <a href="#">平台费率设置</a>
+                                    <a href="${rc.contextPath}/platform/list.html">平台管理</a>
+                                </li>
+                                <li>
+                                    <a href="${rc.contextPath}/country/list.html">国家管理</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
