@@ -3,7 +3,9 @@ package com.songxinjing.flyfish.controller;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,6 +24,7 @@ import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
+import com.songxinjing.flyfish.form.GoodsQueryForm;
 import com.songxinjing.flyfish.plugin.page.PageModel;
 import com.songxinjing.flyfish.service.DomainService;
 import com.songxinjing.flyfish.service.GoodsImgService;
@@ -45,7 +48,7 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	GoodsPlatService goodsPlatService;
-	
+
 	@Autowired
 	GoodsImgService goodsImgService;
 
@@ -59,16 +62,8 @@ public class GoodsController extends BaseController {
 	LogisProdService logisProdService;
 
 	@RequestMapping(value = "goods/list")
-	public String list(Model model, Integer page, String skuQuery, String nameQuery, Integer pageSize) {
+	public String list(Model model, Integer page, Integer pageSize, GoodsQueryForm form) {
 		logger.info("进入商品列表页面");
-		
-		if (skuQuery == null) {
-			skuQuery = "";
-		}
-
-		if (nameQuery == null) {
-			nameQuery = "";
-		}
 
 		if (page == null) {
 			page = 1;
@@ -77,51 +72,98 @@ public class GoodsController extends BaseController {
 			pageSize = 10;
 		}
 		int total = 0;
-		String hql = "from Goods where 1=1";
-		if (StringUtils.isNotEmpty(skuQuery) && StringUtils.isNotEmpty(nameQuery)) {
-			hql = hql + " and (sku like ? or parentSku like ?) and name like ?";
-			total = goodsService.findHql(hql, "%" + skuQuery + "%", "%" + skuQuery + "%", "%" + nameQuery + "%").size();
-		} else if (StringUtils.isNotEmpty(skuQuery)) {
-			hql = hql + " and (sku like ? or parentSku like ?)";
-			total = goodsService.findHql(hql, "%" + skuQuery + "%", "%" + skuQuery + "%").size();
-		} else if (StringUtils.isNotEmpty(nameQuery)) {
-			hql = hql + " and name like ?";
-			total = goodsService.findHql(hql, "%" + nameQuery + "%").size();
-		} else {
-			total = goodsService.find().size();
+
+		String bigCataName = "";
+		String smallCataName = "";
+		String bussOwner1 = "";
+		String bussOwner2 = "";
+		String buyer = "";
+		String state = "";
+		String isElectric = "";
+		String createTmBegin = "";
+		String createTmEnd = "";
+		String parentSkus = "";
+
+		String hql = "from Goods where 1=1 ";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		if (StringUtils.isNotEmpty(form.getBigCataName())) {
+			bigCataName = form.getBigCataName().trim();
+			hql = hql + "and bigCataName like :bigCataName ";
+			paraMap.put("bigCataName", "%" + bigCataName + "%");
 		}
+		if (StringUtils.isNotEmpty(form.getSmallCataName())) {
+			smallCataName = form.getSmallCataName().trim();
+			hql = hql + "and smallCataName like :smallCataName ";
+			paraMap.put("smallCataName", "%" + smallCataName + "%");
+		}
+
+		if (StringUtils.isNotEmpty(form.getBussOwner1())) {
+			bussOwner1 = form.getBussOwner1().trim();
+			hql = hql + "and bussOwner1 like :bussOwner1 ";
+			paraMap.put("bussOwner1", "%" + bussOwner1 + "%");
+		}
+
+		if (StringUtils.isNotEmpty(form.getBussOwner2())) {
+			bussOwner2 = form.getBussOwner2().trim();
+			hql = hql + "and bussOwner2 like :bussOwner2 ";
+			paraMap.put("bussOwner2", "%" + bussOwner2 + "%");
+		}
+
+		if (StringUtils.isNotEmpty(form.getBuyer())) {
+			buyer = form.getBuyer().trim();
+			hql = hql + "and buyer like :buyer ";
+			paraMap.put("buyer", "%" + buyer + "%");
+		}
+
+		if (StringUtils.isNotEmpty(form.getState())) {
+			state = form.getState().trim();
+			hql = hql + "and state = :state ";
+			paraMap.put("state", state);
+		}
+
+		if (StringUtils.isNotEmpty(form.getIsElectric())) {
+			isElectric = form.getIsElectric().trim();
+			hql = hql + "and isElectric = :isElectric ";
+			paraMap.put("isElectric", isElectric);
+		}
+
+		if (StringUtils.isNotEmpty(form.getCreateTmBegin()) && StringUtils.isNotEmpty(form.getCreateTmEnd())) {
+			createTmBegin = form.getCreateTmBegin().trim();
+			createTmEnd = form.getCreateTmEnd().trim();
+			hql = hql + "and createTm >= :createTmBegin and createTm <= :createTmEnd ";
+			paraMap.put("createTmBegin", createTmBegin);
+			paraMap.put("createTmEnd", createTmEnd);
+		}
+
+		if (StringUtils.isNotEmpty(form.getParentSkus())) {
+			parentSkus = form.getParentSkus().replaceAll("，", ",");
+			List<String> inParas = new ArrayList<String>();
+			for(String inPara : parentSkus.split(",")){
+				inParas.add(inPara.trim());
+			}
+			hql = hql + "and parentSku in  (:inParas) ";
+			paraMap.put("inParas", inParas);
+		}
+		total = goodsService.findHql(hql, paraMap).size();
 
 		// 分页代码
 		PageModel<GoodsForm> pageModel = new PageModel<GoodsForm>();
 		pageModel.setPageSize(pageSize);
 		pageModel.init(page, total);
 		pageModel.setUrl("goods/list.html");
-		pageModel.setPara("?skuQuery=" + skuQuery + "&nameQuery=" + nameQuery + "&");
+		pageModel.setPara("?bigCataName=" + bigCataName + "&smallCataName=" + smallCataName + "&bussOwner1="
+				+ bussOwner1 + "&bussOwner2=" + bussOwner2 + "&buyer=" + buyer + "&state=" + state + "&isElectric="
+				+ isElectric + "&createTmBegin=" + createTmBegin + "&createTmEnd=" + createTmEnd + "&parentSkus="
+				+ parentSkus + "&");
 
 		List<Goods> goodses = new ArrayList<Goods>();
-		hql = "from Goods where 1=1";
-		if (StringUtils.isNotEmpty(skuQuery) && StringUtils.isNotEmpty(nameQuery)) {
-			hql = hql + " and (sku like ? or parentSku like ?) and name like ?";
-			goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), "%" + skuQuery + "%",
-					"%" + skuQuery + "%", "%" + nameQuery + "%");
-		} else if (StringUtils.isNotEmpty(skuQuery)) {
-			hql = hql + " and (sku like ? or parentSku like ?)";
-			goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), "%" + skuQuery + "%",
-					"%" + skuQuery + "%");
-		} else if (StringUtils.isNotEmpty(nameQuery)) {
-			hql = hql + " and name like ?";
-			goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(),
-					"%" + nameQuery + "%");
-		} else {
-			goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize());
-		}
-
+		goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
 		List<GoodsForm> list = new ArrayList<GoodsForm>();
 		for (Goods goods : goodses) {
-			GoodsForm form = new GoodsForm();
-			form.setGoods(goods);
-			form.setGoodsPlat(goodsPlatService.find(goods.getSku()));
-			list.add(form);
+			GoodsForm goodsForm = new GoodsForm();
+			goodsForm.setGoods(goods);
+			goodsForm.setGoodsPlat(goodsPlatService.find(goods.getSku()));
+			list.add(goodsForm);
 		}
 
 		pageModel.setRecList(list);
@@ -129,8 +171,7 @@ public class GoodsController extends BaseController {
 		model.addAttribute("pageModel", pageModel);
 
 		model.addAttribute("page", page);
-		model.addAttribute("skuQuery", skuQuery);
-		model.addAttribute("nameQuery", nameQuery);
+		model.addAttribute("queryForm", form);
 		model.addAttribute("platforms", platformService.find());
 		model.addAttribute("domains", domainService.find());
 		model.addAttribute("prods", logisProdService.find());
@@ -146,7 +187,7 @@ public class GoodsController extends BaseController {
 		model.addAttribute("form", form);
 		return "goods/edit";
 	}
-	
+
 	@RequestMapping(value = "goods/delete", method = RequestMethod.GET)
 	public String delete(String sku) {
 		logger.info("删除商品信息");
@@ -166,7 +207,7 @@ public class GoodsController extends BaseController {
 		Field[] fields = form.getClass().getDeclaredFields();
 		for (Field field : fields) {
 			Object value = ReflectionUtil.getFieldValue(form, field.getName());
-			if(value != null){
+			if (value != null) {
 				try {
 					goods.getClass().getDeclaredField(field.getName());
 					ReflectionUtil.setFieldValue(goods, field.getName(), value);

@@ -3,6 +3,7 @@ package com.songxinjing.flyfish.service.base;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.songxinjing.flyfish.dao.base.BaseDao;
 
@@ -119,14 +120,36 @@ public abstract class BaseService<T, PK extends Serializable> {
 	}
 
 	/**
+	 * HQL查询
+	 * 
+	 * @param queryString
+	 * @param values
+	 * @return
+	 */
+	public List<T> findHql(final String hql, final Map<String, Object> paraMap) {
+		return dao.findHql(hql, paraMap);
+	}
+
+	/**
 	 * 分页查询
 	 * 
 	 * @param from
 	 * @param size
 	 * @return
 	 */
-	public List<T> findPage(String hql, int from, int size, Object... values) {
+	public List<T> findPage(String hql, int from, int size, final Object... values) {
 		return dao.findPage(hql, from, size, values);
+	}
+	
+	/**
+	 * 分页查询
+	 * 
+	 * @param from
+	 * @param size
+	 * @return
+	 */
+	public List<T> findPage(String hql, int from, int size, final Map<String, Object> paraMap) {
+		return dao.findPage(hql, from, size, paraMap);
 	}
 
 }
