@@ -96,13 +96,17 @@ public class ExcelController extends BaseController {
 			try {
 				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
 				for (Map<String, String> obj : data) {
-					if (StringUtils.isNotEmpty(obj.get("SKU"))) {
-						Goods goods = goodsService.find(obj.get("SKU"));
+					String sku = obj.get("SKU");
+					if(StringUtils.isEmpty(sku)){
+						sku = obj.get("sku");
+					}
+					if (StringUtils.isNotEmpty(sku)) {
+						Goods goods = goodsService.find(sku);
 						if (goods == null) {
 							goods = new Goods();
 						}
 						for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
-							if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key))) {
+							if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)) {
 								ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
 							}
 						}
@@ -111,7 +115,7 @@ public class ExcelController extends BaseController {
 						goods.setModifyId(user.getUserId());
 						goods.setModifyer(user.getName());
 						goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-						if (goodsService.find(obj.get("SKU")) == null) {
+						if (goodsService.find(sku) == null) {
 							goodsService.save(goods);
 						} else {
 							goodsService.update(goods);
@@ -181,7 +185,7 @@ public class ExcelController extends BaseController {
 							&& goodsPlatService.find(obj.get("*Unique ID")) == null) {
 						GoodsPlat goodsPlat = new GoodsPlat();
 						for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-							if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
+							if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
 								ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
 							}
 						}
@@ -269,7 +273,7 @@ public class ExcelController extends BaseController {
 					if (StringUtils.isNotEmpty(obj.get("SKU")) && goodsPlatService.find(obj.get("SKU")) == null) {
 						GoodsPlat goodsPlat = new GoodsPlat();
 						for (String key : ExcelTemp.JOOM_FIELD.keySet()) {
-							if (!StringUtils.isEmpty(ExcelTemp.JOOM_FIELD.get(key))) {
+							if (!StringUtils.isEmpty(ExcelTemp.JOOM_FIELD.get(key)) && obj.containsKey(key)) {
 								ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.JOOM_FIELD.get(key), obj.get(key));
 							}
 						}

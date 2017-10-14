@@ -59,9 +59,9 @@ public class GoodsController extends BaseController {
 	LogisProdService logisProdService;
 
 	@RequestMapping(value = "goods/list")
-	public String list(Model model, Integer page, String skuQuery, String nameQuery) {
+	public String list(Model model, Integer page, String skuQuery, String nameQuery, Integer pageSize) {
 		logger.info("进入商品列表页面");
-
+		
 		if (skuQuery == null) {
 			skuQuery = "";
 		}
@@ -72,6 +72,9 @@ public class GoodsController extends BaseController {
 
 		if (page == null) {
 			page = 1;
+		}
+		if (pageSize == null) {
+			pageSize = 10;
 		}
 		int total = 0;
 		String hql = "from Goods where 1=1";
@@ -90,6 +93,7 @@ public class GoodsController extends BaseController {
 
 		// 分页代码
 		PageModel<GoodsForm> pageModel = new PageModel<GoodsForm>();
+		pageModel.setPageSize(pageSize);
 		pageModel.init(page, total);
 		pageModel.setUrl("goods/list.html");
 		pageModel.setPara("?skuQuery=" + skuQuery + "&nameQuery=" + nameQuery + "&");

@@ -3,6 +3,8 @@ package com.songxinjing.flyfish.plugin.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.songxinjing.flyfish.constant.Constant;
+
 /**
  * 分页组件
  * 
@@ -26,7 +28,7 @@ public class PageModel<T> {
 	/**
 	 * 每页记录数
 	 */
-	private int pageSize = 10;
+	private int pageSize = Constant.PAGE_SIZE;
 
 	/**
 	 * 当前页码

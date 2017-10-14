@@ -30,31 +30,31 @@ public class Goods implements Serializable {
 	 */
 	@Column(length = 32)
 	private String parentSku;
-	
+
 	/**
 	 * 多款式（是、否）
 	 */
-	@Column(length = 2)
+	@Column(length = 8)
 	private String isMoreSytle;
-	
+
 	/**
 	 * 是否有样品（是、否）
 	 */
-	@Column(length = 2)
+	@Column(length = 8)
 	private String hasSample;
-	
+
 	/**
 	 * 样品数量
 	 */
 	@Column(length = 8)
 	private String sampleNum;
-	
+
 	/**
 	 * 大类名称
 	 */
 	@Column(length = 32)
 	private String bigCataName;
-	
+
 	/**
 	 * 小类名称
 	 */
@@ -66,11 +66,11 @@ public class Goods implements Serializable {
 	 */
 	@Column(length = 64)
 	private String name;
-	
+
 	/**
 	 * 当前状态（在售、停售）
 	 */
-	@Column(length = 4)
+	@Column(length = 8)
 	private String state;
 
 	/**
@@ -84,7 +84,7 @@ public class Goods implements Serializable {
 	 */
 	@Column(length = 8)
 	private String costPrice;
-	
+
 	/**
 	 * 批发价格（美元）
 	 */
@@ -102,19 +102,19 @@ public class Goods implements Serializable {
 	 */
 	@Column(length = 32)
 	private String reportNameEn;
-	
+
 	/**
 	 * 申报价值（美元）
 	 */
 	@Column(length = 8)
 	private String reportPrice;
-	
+
 	/**
 	 * 原产国代码
 	 */
 	@Column(length = 8)
 	private String prodCountryCd;
-	
+
 	/**
 	 * 原产国
 	 */
@@ -126,13 +126,13 @@ public class Goods implements Serializable {
 	 */
 	@Column(length = 16)
 	private String bussOwner1;
-	
+
 	/**
 	 * 业绩归属人2
 	 */
 	@Column(length = 16)
 	private String bussOwner2;
-	
+
 	/**
 	 * 开发日期
 	 */
@@ -144,7 +144,7 @@ public class Goods implements Serializable {
 	 */
 	@Column(length = 16)
 	private String buyer;
-	
+
 	/**
 	 * 采购到货天数
 	 */
@@ -156,60 +156,108 @@ public class Goods implements Serializable {
 	 */
 	@Column(length = 128)
 	private String url;
-	
+
 	/**
 	 * 网页URL2
 	 */
 	@Column(length = 128)
 	private String url2;
-	
+
 	/**
 	 * 网页URL3
 	 */
 	@Column(length = 128)
 	private String url3;
-	
+
 	/**
-	 * 是否带电（是、否）
+	 * 是否带电（False/True）
 	 */
-	@Column(length = 2)
+	@Column(length = 8)
 	private String isElectric;
-	
+
 	/**
 	 * 商品SKU状态（在售、停售）
 	 */
-	@Column(length = 4)
+	@Column(length = 8)
 	private String skuState;
-	
+
 	/**
 	 * 季节
 	 */
 	@Column(length = 16)
 	private String season;
-	
+
 	/**
 	 * 是否粉末（是、否）
 	 */
-	@Column(length = 2)
+	@Column(length = 8)
 	private String isPowder;
-	
+
 	/**
 	 * 是否液体（是、否）
 	 */
-	@Column(length = 2)
+	@Column(length = 8)
 	private String isLiquid;
-	
+
 	/**
 	 * 责任归属人1
 	 */
 	@Column(length = 16)
 	private String respOwner1;
-	
+
 	/**
 	 * 责任归属人2
 	 */
 	@Column(length = 16)
 	private String respOwner2;
+
+	/**
+	 * 是否组合品
+	 */
+	@Column(length = 8)
+	private String isJoin;
+
+	/**
+	 * 款式
+	 */
+	@Column(length = 16)
+	private String style;
+
+	/**
+	 * 品牌
+	 */
+	@Column(length = 16)
+	private String make;
+
+	/**
+	 * 所有库存数量
+	 */
+	@Column(length = 8)
+	private String allNum;
+
+	/**
+	 * 供应商名称
+	 */
+	@Column(length = 32)
+	private String supplyName;
+
+	/**
+	 * 普源编号
+	 */
+	@Column(length = 8)
+	private String pyNum;
+
+	/**
+	 * 创建时间
+	 */
+	@Column(length = 32)
+	private String createTm;
+
+	/**
+	 * 最低采购单价
+	 */
+	@Column(length = 16)
+	private String minBuyPrice;
 
 	/**
 	 * 最后修改人ID
@@ -507,6 +555,70 @@ public class Goods implements Serializable {
 
 	public void setModifyTm(Timestamp modifyTm) {
 		this.modifyTm = modifyTm;
+	}
+
+	public String getIsJoin() {
+		return isJoin;
+	}
+
+	public void setIsJoin(String isJoin) {
+		this.isJoin = isJoin;
+	}
+
+	public String getStyle() {
+		return style;
+	}
+
+	public void setStyle(String style) {
+		this.style = style;
+	}
+
+	public String getMake() {
+		return make;
+	}
+
+	public void setMake(String make) {
+		this.make = make;
+	}
+
+	public String getAllNum() {
+		return allNum;
+	}
+
+	public void setAllNum(String allNum) {
+		this.allNum = allNum;
+	}
+
+	public String getSupplyName() {
+		return supplyName;
+	}
+
+	public void setSupplyName(String supplyName) {
+		this.supplyName = supplyName;
+	}
+
+	public String getPyNum() {
+		return pyNum;
+	}
+
+	public void setPyNum(String pyNum) {
+		this.pyNum = pyNum;
+	}
+
+	public String getCreateTm() {
+		return createTm;
+	}
+
+	public void setCreateTm(String createTm) {
+		this.createTm = createTm;
+	}
+
+	public String getMinBuyPrice() {
+		return minBuyPrice;
+	}
+
+	public void setMinBuyPrice(String minBuyPrice) {
+		this.minBuyPrice = minBuyPrice;
 	}
 
 }

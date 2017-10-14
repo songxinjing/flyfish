@@ -10,7 +10,7 @@ public class Constant {
 	/**
 	 * 分页组件：每页显示数目
 	 */
-	public static final int PAGE_SIZE = 15;
+	public static final int PAGE_SIZE = 10;
 	
 	
 	/**
