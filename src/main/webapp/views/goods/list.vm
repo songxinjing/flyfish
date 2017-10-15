@@ -26,7 +26,7 @@
 	}
 
 	#div-overflow-front {
-		width: 2300px;
+		width: 1800px;
 		position: relative;
 	}
 </style>
@@ -86,7 +86,7 @@
 					</div>
 					<label class="col-sm-2 control-label">创建时间：</label>
 					<div class="col-sm-5">
-						<input id="dateBegin" type="text"> 到 <input id="dateEnd" type="text">
+						<input id="dateBegin" name="createTmBegin" type="text" value="$!{queryForm.createTmBegin}"> 到 <input id="dateEnd" name="createTmEnd" type="text" value="$!{queryForm.createTmEnd}">
 					</div>
 					<div class="col-sm-3">
 						<label class="col-sm-6 control-label">每页显示：</label>
@@ -107,8 +107,8 @@
 					<div class="col-sm-12">
 						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#importModal'>普源导入</button>
 						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#wishImportModal'>Wish导入</button>
-						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#joomImportModal'>Joom导入</button>
 						<!--
+						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#joomImportModal'>Joom导入</button>
 						<button type="button" class="btn btn-info margin-bottom" onclick="window.open('${rc.contextPath}/excel/export/common.html')">普源导出</button>
 						<button type="button" class="btn btn-info margin-bottom" onclick="window.open('${rc.contextPath}/csv/export/wish.html')">Wish导出</button>
 						<button type="button" class="btn btn-info margin-bottom" onclick="window.open('${rc.contextPath}/csv/export/joom.html')">Joom导出</button>
@@ -130,26 +130,26 @@
 			<table class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
-						<th width="50px">操作</th>
-						<th width="100px">Listing主图</th>
-						<th width="100px">SKU主图</th>
-						<th width="100px">SKU</th>
-						<th width="100px">商品编码</th>
-						<th width="100px">商品名称</th>
-						<th width="100px">大类名称</th>
-						<th width="100px">小类名称</th>
-						<th width="100px">是否停售</th>
-						<th width="100px">是否带电</th>
-						<th width="100px">重量（G）</th>
-						<th width="100px">成本（元）</th>
-						<th width="100px">业绩归属1</th>
-						<th width="100px">业绩归属2</th>
-						<th width="100px">采购员</th>
-						<th width="100px">所有库存</th>
-						<th width="100px">供应商</th>
-						<th width="450px">标题</th>
-						<th width="100px">创建时间</th>
-						<th width="100px">更新时间</th>
+						<th width="115px">操作</th>
+						<th width="60px">Listing<br>主图</th>
+						<th width="60px">SKU<br>主图</th>
+						<th width="60px">SKU</th>
+						<th width="60px">商品<br>编码</th>
+						<th width="100px">商品<br>名称</th>
+						<th width="60px">大类<br>名称</th>
+						<th width="60px">小类<br>名称</th>
+						<th width="50px">是否<br>停售</th>
+						<th width="50px">是否<br>带电</th>
+						<th width="60px">重量<br>（G）</th>
+						<th width="60px">成本<br>（元）</th>
+						<th width="60px">业绩<br>归属1</th>
+						<th width="80px">业绩<br>归属2</th>
+						<th width="60px">采购员</th>
+						<th width="50px">所有<br>库存</th>
+						<th width="150px">供应商</th>
+						<th >标题</th>
+						<th width="90px">创建时间</th>
+						<th width="90px">更新时间</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -165,9 +165,9 @@
 							<button type="button" class="btn btn-warning btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button>
 							<button type="button" class="btn btn-danger btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/delete.html?sku=$!{rec.goods.sku}'">删除</button>
 						</td>
-						<td><img class="lazy" height="80px" width="80px" data-original="http://www.bentain.site/$!{rec.goods.sku}-mainImgUrl.jpg"
+						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goods.sku}-mainImgUrl.jpg"
 							/></td>
-						<td><img class="lazy" height="80px" width="80px" data-original="http://www.bentain.site/$!{rec.goods.sku}-vMainImgUrl.jpg"
+						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goods.sku}-vMainImgUrl.jpg"
 							/></td>
 						<td>$!{rec.goods.sku}</td>
 						<td>$!{rec.goods.parentSku}</td>
@@ -183,9 +183,9 @@
 						<td>$!{rec.goods.buyer}</td>
 						<td>$!{rec.goods.allNum}</td>
 						<td>
-							#if("$!{rec.goods.url}" != "") <a target="_blank" class="btn btn-info btn-sm margin-bottom" href="$!{rec.goods.url}">供应商1</a>#end
-							#if("$!{rec.goods.url2}" != "") <a target="_blank" class="btn btn-info btn-sm margin-bottom" href="$!{rec.goods.url2}">供应商2</a>#end
-							#if("$!{rec.goods.url3}" != "") <a target="_blank" class="btn btn-info btn-sm margin-bottom" href="$!{rec.goods.url3}">供应商3</a>#end
+							#if("$!{rec.goods.url}" != "") <a target="_blank" class="btn btn-info btn-sm margin-bottom" href="$!{rec.goods.url}">供1</a>#end
+							#if("$!{rec.goods.url2}" != "") <a target="_blank" class="btn btn-info btn-sm margin-bottom" href="$!{rec.goods.url2}">供2</a>#end
+							#if("$!{rec.goods.url3}" != "") <a target="_blank" class="btn btn-info btn-sm margin-bottom" href="$!{rec.goods.url3}">供3</a>#end
 						</td>
 						<td>$!{rec.goodsPlat.title}</td>
 						<td>$!{rec.goods.createTm}</td>
@@ -320,9 +320,25 @@
 <script>
 	$(function () {
 		$("img.lazy").lazyload();
-		jQuery.datetimepicker.setLocale('zh');
-		$('#dateBegin').datetimepicker();
-		$('#dateEnd').datetimepicker();
+		$.datetimepicker.setLocale('zh');
+		$("#dateBegin").datetimepicker({
+          format:'Y-m-d',
+          onShow:function( ct ){
+           this.setOptions({
+            maxDate:$("#dateEnd").val()?$("#dateEnd").val():false
+           })
+          },
+          timepicker:false
+         });
+         $("#dateEnd").datetimepicker({
+          format:'Y-m-d',
+          onShow:function( ct ){
+           this.setOptions({
+            minDate:$("#dateBegin").val()?$("#dateBegin").val():false
+           })
+          },
+          timepicker:false
+         });
 	});
 
 	window.onload = function () {

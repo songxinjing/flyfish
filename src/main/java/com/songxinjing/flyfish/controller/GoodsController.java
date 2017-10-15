@@ -154,7 +154,7 @@ public class GoodsController extends BaseController {
 		pageModel.setPara("?bigCataName=" + bigCataName + "&smallCataName=" + smallCataName + "&bussOwner1="
 				+ bussOwner1 + "&bussOwner2=" + bussOwner2 + "&buyer=" + buyer + "&state=" + state + "&isElectric="
 				+ isElectric + "&createTmBegin=" + createTmBegin + "&createTmEnd=" + createTmEnd + "&parentSkus="
-				+ parentSkus + "&");
+				+ parentSkus + "&pageSize=" + pageSize + "&");
 
 		List<Goods> goodses = new ArrayList<Goods>();
 		goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
@@ -171,6 +171,7 @@ public class GoodsController extends BaseController {
 		model.addAttribute("pageModel", pageModel);
 
 		model.addAttribute("page", page);
+		model.addAttribute("pageSize", pageSize);
 		model.addAttribute("queryForm", form);
 		model.addAttribute("platforms", platformService.find());
 		model.addAttribute("domains", domainService.find());

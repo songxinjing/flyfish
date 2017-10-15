@@ -18,8 +18,8 @@ import com.songxinjing.flyfish.service.base.BaseService;
  * 
  */
 @Service
-public class GoodsPlatService extends BaseService<GoodsPlat, String>{
-	
+public class GoodsPlatService extends BaseService<GoodsPlat, String> {
+
 	@Autowired
 	GoodsDao goodsDao;
 
@@ -27,7 +27,7 @@ public class GoodsPlatService extends BaseService<GoodsPlat, String>{
 	public void setSuperDao(GoodsPlatDao dao) {
 		super.setDao(dao);
 	}
-	
+
 	/**
 	 * 新增
 	 * 
@@ -37,14 +37,33 @@ public class GoodsPlatService extends BaseService<GoodsPlat, String>{
 	 */
 	@Transactional
 	public String save(final GoodsPlat entity) {
-		
-		if(goodsDao.find(entity.getSku()) == null){
+
+		if (goodsDao.find(entity.getSku()) == null) {
 			Goods goods = new Goods();
 			goods.setSku(entity.getSku());
 			goods.setParentSku(entity.getParentSku());
 			goodsDao.save(goods);
 		}
-		return (String)dao.save(entity);
+		return (String) dao.save(entity);
+	}
+
+	/**
+	 * 修改
+	 * 
+	 * @param entity
+	 *            实体对象
+	 * @return 主键值
+	 */
+	@Transactional
+	public void update(final GoodsPlat entity) {
+
+		if (goodsDao.find(entity.getSku()) == null) {
+			Goods goods = new Goods();
+			goods.setSku(entity.getSku());
+			goods.setParentSku(entity.getParentSku());
+			goodsDao.save(goods);
+		}
+		dao.update(entity);
 	}
 
 }

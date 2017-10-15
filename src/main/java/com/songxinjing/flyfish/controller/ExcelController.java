@@ -181,9 +181,11 @@ public class ExcelController extends BaseController {
 				String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
 				List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
 				for (Map<String, String> obj : data) {
-					if (StringUtils.isNotEmpty(obj.get("*Unique ID"))
-							&& goodsPlatService.find(obj.get("*Unique ID")) == null) {
-						GoodsPlat goodsPlat = new GoodsPlat();
+					if (StringUtils.isNotEmpty(obj.get("*Unique ID"))) {
+						GoodsPlat goodsPlat = goodsPlatService.find(obj.get("*Unique ID"));
+						if (goodsPlat == null) {
+							goodsPlat = new GoodsPlat();
+						}
 						for (String key : ExcelTemp.WISH_FIELD.keySet()) {
 							if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
 								ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
@@ -192,9 +194,16 @@ public class ExcelController extends BaseController {
 						goodsPlat.setModifyId(user.getUserId());
 						goodsPlat.setModifyer(user.getName());
 						goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
-						goodsPlatService.save(goodsPlat);
-
-						GoodsImg goodsImg = new GoodsImg();
+						if (goodsService.find(obj.get("*Unique ID")) == null) {
+							goodsPlatService.save(goodsPlat);
+						} else {
+							goodsPlatService.update(goodsPlat);
+						}
+						
+						GoodsImg goodsImg = goodsImgService.find(goodsPlat.getSku());
+						if (goodsImg == null) {
+							goodsImg = new GoodsImg();
+						}
 						goodsImg.setSku(goodsPlat.getSku());
 						goodsImg.setParentSku(goodsPlat.getParentSku());
 						for (String key : ExcelTemp.WISH_FIELD.keySet()) {
@@ -207,7 +216,11 @@ public class ExcelController extends BaseController {
 								}
 							}
 						}
-						goodsImgService.save(goodsImg);
+						if (goodsImgService.find(goodsPlat.getSku()) == null) {
+							goodsImgService.save(goodsImg);
+						} else {
+							goodsImgService.update(goodsImg);
+						}
 					}
 				}
 			} catch (IOException e) {

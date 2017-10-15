@@ -14,7 +14,8 @@
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="${rc.contextPath}/resources/base/css/base.css" rel="stylesheet" />
+    <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.min.css" rel="stylesheet">
+	<link href="${rc.contextPath}/resources/base/css/base.css" rel="stylesheet" />
     <!-- jQuery文件，务必在bootstrap.min.js 之前引入 -->
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -61,19 +62,8 @@
                         <li>
                             <a href="${rc.contextPath}/index.html"><i class="fa fa-dashboard fa-fw"></i>总览</a>
                         </li>
-                        <li>
-                            <a href="#"><i class="fa fa-wrench fa-fw"></i>产品刊登<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="#">产品采集</a>
-                                </li>
-                                <li>
-                                    <a href="#">产品列表</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
-                        <li>
+                        <!--
+						<li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i>店铺管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 #foreach($store in $!stores)
@@ -89,9 +79,8 @@
                                 #end
                                 <li><a href="#">查看全部店铺</a></li>
                             </ul>
-                            <!-- /.nav-second-level -->
                         </li>
-                        
+                        -->
                         <li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i>商品管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
@@ -119,11 +108,8 @@
                         </li>
                         
                         <li>
-                            <a href="#"><i class="fa fa-wrench fa-fw"></i>系统管理<span class="fa arrow"></span></a>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i>参数管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="${rc.contextPath}/user/list.html">用户管理</a>
-                                </li>
 								<li>
                                     <a href="${rc.contextPath}/exchange/list.html">汇率管理</a>
                                 </li>
@@ -132,6 +118,15 @@
                                 </li>
                                 <li>
                                     <a href="${rc.contextPath}/country/list.html">国家管理</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+						<li>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i>系统管理<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="${rc.contextPath}/user/list.html">用户管理</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

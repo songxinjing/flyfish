@@ -17,7 +17,7 @@
 					<label class="col-sm-2 control-label">SKU</label>
 					<p class="col-sm-4 form-control-static">$!{form.goods.sku}</p>
 					<input name="sku" type="hidden" value="$!{form.goods.sku}">
-					<label class="col-sm-2 control-label">父SKU</label>
+					<label class="col-sm-2 control-label">商品编码</label>
 					<p class="col-sm-4 form-control-static">$!{form.goods.parentSku}</p>
 					<input name="parentSku" type="hidden" value="$!{form.goods.parentSku}">
 				</div>
