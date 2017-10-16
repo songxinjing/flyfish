@@ -3,6 +3,7 @@ package com.songxinjing.flyfish.form;
 import java.io.Serializable;
 
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
 
 public class GoodsForm implements Serializable {
@@ -12,6 +13,8 @@ public class GoodsForm implements Serializable {
 	private Goods goods;
 	
 	private GoodsPlat goodsPlat;
+	
+	private GoodsImg goodsImg;
 
 	public Goods getGoods() {
 		return goods;
@@ -27,6 +30,14 @@ public class GoodsForm implements Serializable {
 
 	public void setGoodsPlat(GoodsPlat goodsPlat) {
 		this.goodsPlat = goodsPlat;
+	}
+
+	public GoodsImg getGoodsImg() {
+		return goodsImg;
+	}
+
+	public void setGoodsImg(GoodsImg goodsImg) {
+		this.goodsImg = goodsImg;
 	}
 
 }

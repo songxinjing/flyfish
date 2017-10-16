@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.form.GoodsEditForm;
@@ -33,6 +34,7 @@ import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
 import com.songxinjing.flyfish.util.ReflectionUtil;
+import com.songxinjing.flyfish.util.SftpUtil;
 
 /**
  * 商品管理控制类
@@ -163,6 +165,7 @@ public class GoodsController extends BaseController {
 			GoodsForm goodsForm = new GoodsForm();
 			goodsForm.setGoods(goods);
 			goodsForm.setGoodsPlat(goodsPlatService.find(goods.getSku()));
+			goodsForm.setGoodsImg(goodsImgService.find(goods.getSku()));
 			list.add(goodsForm);
 		}
 
@@ -185,6 +188,7 @@ public class GoodsController extends BaseController {
 		GoodsForm form = new GoodsForm();
 		form.setGoods(goodsService.find(sku));
 		form.setGoodsPlat(goodsPlatService.find(sku));
+		form.setGoodsImg(goodsImgService.find(sku));
 		model.addAttribute("form", form);
 		return "goods/edit";
 	}
@@ -251,6 +255,26 @@ public class GoodsController extends BaseController {
 
 		goodsService.update(goods);
 		goodsPlatService.update(goodsPlat);
+		return true;
+	}
+
+	@RequestMapping(value = "goods/reget", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean reget(String sku, String imgName) {
+		logger.info("保存商品详情页面");
+		GoodsPlat goodsPlat = goodsPlatService.find(sku);
+		String imgUrl = (String) ReflectionUtil.getFieldValue(goodsPlat, imgName);
+		SftpUtil.startFTP(imgUrl, sku + "-" + imgName + ".jpg");
+		return true;
+	}
+
+	@RequestMapping(value = "goods/setmain", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean setmain(String sku, String imgName) {
+		logger.info("设置主图");
+		GoodsImg goodsImg = goodsImgService.find(sku);
+		goodsImg.setvMainImgUrl(sku + "-" + imgName + ".jpg");
+		goodsImgService.save(goodsImg);
 		return true;
 	}
 

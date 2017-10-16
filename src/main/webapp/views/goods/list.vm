@@ -165,9 +165,9 @@
 							<button type="button" class="btn btn-warning btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button>
 							<button type="button" class="btn btn-danger btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/delete.html?sku=$!{rec.goods.sku}'">删除</button>
 						</td>
-						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goods.sku}-mainImgUrl.jpg"
+						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"
 							/></td>
-						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goods.sku}-vMainImgUrl.jpg"
+						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"
 							/></td>
 						<td>$!{rec.goods.sku}</td>
 						<td>$!{rec.goods.parentSku}</td>

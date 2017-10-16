@@ -23,7 +23,7 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU</label>
 					<p class="col-sm-4 form-control-static">$!{form.goods.sku}</p>
-					<input name="sku" type="hidden" value="$!{form.goods.sku}">
+					<input id="sku" name="sku" type="hidden" value="$!{form.goods.sku}">
 					<label class="col-sm-2 control-label">商品编码</label>
 					<p class="col-sm-4 form-control-static">$!{form.goods.parentSku}</p>
 					<input name="parentSku" type="hidden" value="$!{form.goods.parentSku}">
@@ -233,14 +233,12 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Listing主图</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-mainImgUrl.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.mainImgUrl}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU主图</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-vMainImgUrl.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.vMainImgUrl}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#mainImgModal'>设置主图</button>
 					</div>
@@ -250,14 +248,12 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图1</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图2</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl1.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl1}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
@@ -265,14 +261,12 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图3</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl2.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl2}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图4</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl3.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl3}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
@@ -280,14 +274,12 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图5</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl4.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl4}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图6</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl5.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl5}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
@@ -295,14 +287,12 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图7</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl6.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl6}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图8</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl7.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl7}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
@@ -310,14 +300,12 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图9</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl8.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl8}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图10</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl9.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl9}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
@@ -325,8 +313,7 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图11</label>
 					<div class="col-sm-4">
-						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl10.jpg" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl10}" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label"></label>
@@ -361,20 +348,20 @@
 				<form id="mainImgForm">
 					<div class="form-group">
 						<label>请从已有图片中选择主图</label>
-						<select id="mainImgSelect" class="image-picker show-html" name="vMainImgUrl">
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-mainImgUrl.jpg" value="mainImgUrl">mainImgUrl</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-vMainImgUrl.jpg" value="vMainImgUrl">vMainImgUrl</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl.jpg" value="eImgUrl">eImgUrl</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl1.jpg" value="eImgUrl1">eImgUrl1</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl2.jpg" value="eImgUrl2">eImgUrl2</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl3.jpg" value="eImgUrl3">eImgUrl3</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl4.jpg" value="eImgUrl4">eImgUrl4</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl5.jpg" value="eImgUrl5">eImgUrl5</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl6.jpg" value="eImgUrl6">eImgUrl6</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl7.jpg" value="eImgUrl7">eImgUrl7</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl8.jpg" value="eImgUrl8">eImgUrl8</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl9.jpg" value="eImgUrl9">eImgUrl9</option>
-						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl10.jpg" value="eImgUrl10">eImgUrl10</option>
+						<select id="mainImgSelect" class="image-picker show-html">
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.mainImgUrl}" value="mainImgUrl">mainImgUrl</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.vMainImgUrl}" value="vMainImgUrl" selected>vMainImgUrl</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl}" value="eImgUrl">eImgUrl</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl1}" value="eImgUrl1">eImgUrl1</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl2}" value="eImgUrl2">eImgUrl2</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl3}" value="eImgUrl3">eImgUrl3</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl4}" value="eImgUrl4">eImgUrl4</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl5}" value="eImgUrl5">eImgUrl5</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl6}" value="eImgUrl6">eImgUrl6</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl7}" value="eImgUrl7">eImgUrl7</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl8}" value="eImgUrl8">eImgUrl8</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl9}" value="eImgUrl9">eImgUrl9</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl10}" value="eImgUrl10">eImgUrl10</option>
 						</select>
 					</div>
 				</form>
@@ -394,22 +381,56 @@
           hide_select : true,
           show_label  : false
         });
+		
+		$("img").on("error",function(){
+        	 $(this).hide();
+			 $(this).after('<button type="button" class="btn btn-info btn-sm" onclick="javascript:reget(this);">重新抓取</button>') 
+      	});
 	});
-
-	$("#btnMainImg").on("click", function () {
+	
+	
+	function reget(obj) {
+		var img = $(obj).prev();
+		var imgSrc = $(img).attr("src");
+		imgSrc = imgSrc.replace("http://www.bentain.site/", "");
+		imgSrc = imgSrc.replace(".jpg", "");
+		var index = imgSrc.lastIndexOf("-");
+		var sku = $("#sku").val();
+		var imgName = imgSrc.substring(index+1);
 		$.ajax({
 			cache: true,
 			type: "POST",
-			url: "${rc.contextPath}/goods/save.html",
-			data: $("#editForm").serialize(),
+			url: "${rc.contextPath}/goods/reget.html",
+			data: { sku: sku, imgName: imgName },
 			async: false,
 			error: function (request) {
-				base.alert("保存失败!");
+				base.alert("操作失败!");
 			},
 			success: function (data) {
-				base.alert("保存成功!");
+				base.alert("尝试重新获取，请稍后刷新！");
+			}
+		});
+	}
+	
+	$("#btnMainImg").on("click", function () {
+		var sku = $("#sku").val();
+		var imgName = $("#mainImgSelect option[selected]").val(); 
+		$.ajax({
+			cache: true,
+			type: "POST",
+			url: "${rc.contextPath}/goods/setmain.html",
+			data: { sku: sku, imgName: imgName },
+			async: false,
+			error: function (request) {
+				base.alert("操作失败!");
+			},
+			success: function (data) {
+				$("#mainImgModal").modal('hide')
+            	window.location.reload();
 			}
 		});
 	})
+
+	
 
 </script>
