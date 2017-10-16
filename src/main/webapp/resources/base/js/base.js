@@ -49,21 +49,10 @@
 				}
 			}
 		};
-		
 		// 注册相关函数
 		this.alert = _alert;
 		this.confirm = _confirm;
-			
 	}
 	// 注册window对象
 	window.base = new Base();
-	
 })(window, jQuery, document);
-
-document.addEventListener("error", function (e) {
-    var elem = e.target;
-    if ($(elem).tagName.toLowerCase() === 'img') {
-        var clazz = $(elem).attr("class");
-        $(elem).attr("class",clazz + " hidden");
-    }
-}, true);

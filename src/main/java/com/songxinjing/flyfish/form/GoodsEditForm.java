@@ -287,6 +287,12 @@ public class GoodsEditForm implements Serializable {
 	 * extra image URL10
 	 */
 	private String eImgUrl10;
+	
+	/**
+	 * 所有库存数量
+	 */
+	private String allNum;
+
 
 	public String getSku() {
 		return sku;
@@ -736,4 +742,12 @@ public class GoodsEditForm implements Serializable {
 		this.eImgUrl10 = eImgUrl10;
 	}
 
+	public String getAllNum() {
+		return allNum;
+	}
+
+	public void setAllNum(String allNum) {
+		this.allNum = allNum;
+	}
+	
 }
