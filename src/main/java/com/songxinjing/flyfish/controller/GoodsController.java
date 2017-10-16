@@ -138,7 +138,7 @@ public class GoodsController extends BaseController {
 		if (StringUtils.isNotEmpty(form.getParentSkus())) {
 			parentSkus = form.getParentSkus().replaceAll("，", ",");
 			List<String> inParas = new ArrayList<String>();
-			for(String inPara : parentSkus.split(",")){
+			for (String inPara : parentSkus.split(",")) {
 				inParas.add(inPara.trim());
 			}
 			hql = hql + "and parentSku in  (:inParas) ";
@@ -203,10 +203,25 @@ public class GoodsController extends BaseController {
 	public boolean save(HttpServletRequest request, Model model, GoodsEditForm form) {
 		logger.info("保存商品详情页面");
 		Goods goods = goodsService.find(form.getSku());
+		if (goods == null) {
+			goods = new Goods();
+			goods.setSku(form.getSku());
+			goodsService.save(goods);
+			goods = goodsService.find(form.getSku());
+		}
 		GoodsPlat goodsPlat = goodsPlatService.find(form.getSku());
+		if (goodsPlat == null) {
+			goodsPlat = new GoodsPlat();
+			goodsPlat.setSku(form.getSku());
+			goodsPlatService.save(goodsPlat);
+			goodsPlat = goodsPlatService.find(form.getSku());
+		}
 
 		Field[] fields = form.getClass().getDeclaredFields();
 		for (Field field : fields) {
+			if ("serialVersionUID".equals(field.getName())) {
+				continue;
+			}
 			Object value = ReflectionUtil.getFieldValue(form, field.getName());
 			if (value != null) {
 				try {

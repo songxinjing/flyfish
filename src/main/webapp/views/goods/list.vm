@@ -280,7 +280,7 @@
 				<h4 class="modal-title">导出刊登</h4>
 			</div>
 			<div class="modal-body">
-				<form id="exportForm" action="${rc.contextPath}/export.html" enctype="multipart/form-data" method="post">
+				<form id="exportForm" action="${rc.contextPath}/export.html" method="post">
 					<input type="hidden" id="skuQuery-export" name="skuQuery">
 					<input type="hidden" id="nameQuery-export" name="nameQuery">
 					<div class="form-group">

@@ -15,6 +15,7 @@
     <link href="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.min.css" rel="stylesheet">
+	<link href="https://cdn.bootcss.com/image-picker/0.3.0/image-picker.min.css" rel="stylesheet">
 	<link href="${rc.contextPath}/resources/base/css/base.css" rel="stylesheet" />
     <!-- jQuery文件，务必在bootstrap.min.js 之前引入 -->
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
@@ -25,6 +26,7 @@
     <script src="https://cdn.bootcss.com/jquery-validate/1.17.0/localization/messages_zh.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.full.min.js"></script>
+    <script src="https://cdn.bootcss.com/image-picker/0.3.0/image-picker.min.js"></script>
     <script src="${rc.contextPath}/resources/base/js/base.js"></script>
 </head>
 

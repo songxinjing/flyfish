@@ -1,3 +1,10 @@
+<style>
+	.image_picker_image {
+		width: 60px;
+		height: 60px;
+	}
+</style>
+
 <div class="row">
 	<div class="col-md-12">
 		<h3 class="page-header">商品详情</h3>
@@ -7,7 +14,7 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<button id="btnSave" type="button" class="btn btn-success">保存</button>
-		<button type="button" class="btn btn-info" onclick="javascript:history.back();">返回</button>
+		<button type="button" class="btn btn-info" onclick="window.location.href='${rc.contextPath}/goods/list.html'">返回</button>
 	</div>
 	<div class="panel-body">
 		<form class="form-horizontal" id="editForm">
@@ -30,8 +37,26 @@
 					<div class="col-sm-4">
 						<select name="isMoreSytle" class="form-control">
 							<option value="">请选择</option>
-							<option value="是" #if($!{form.goods.isMoreSytle}=='是' ) selected#end>是</option>
-							<option value="否" #if($!{form.goods.isMoreSytle}=='否' ) selected#end>否</option>
+							<option value="True" #if($!{form.goods.isMoreSytle}=='True' ) selected#end>True</option>
+							<option value="False" #if($!{form.goods.isMoreSytle}=='False' ) selected#end>False</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">是否停售</label>
+					<div class="col-sm-4">
+						<select name="state" class="form-control">
+							<option value="">请选择</option>
+							<option value="True" #if($!{form.goods.state}=='True' ) selected#end>True</option>
+							<option value="False" #if($!{form.goods.state}=='False' ) selected#end>False</option>
+						</select>
+					</div>
+					<label class="col-sm-2 control-label">是否带电</label>
+					<div class="col-sm-4">
+						<select name="isElectric" class="form-control">
+							<option value="">请选择</option>
+							<option value="True" #if($!{form.goods.isElectric}=='True' ) selected#end>True</option>
+							<option value="False" #if($!{form.goods.isElectric}=='False' ) selected#end>False</option>
 						</select>
 					</div>
 				</div>
@@ -40,8 +65,8 @@
 					<div class="col-sm-4">
 						<select name="hasSample" class="form-control">
 							<option value="">请选择</option>
-							<option value="是" #if($!{form.goods.hasSample}=='是' ) selected#end>是</option>
-							<option value="否" #if($!{form.goods.hasSample}=='是' ) selected#end>否</option>
+							<option value="True" #if($!{form.goods.hasSample}=='True' ) selected#end>True</option>
+							<option value="False" #if($!{form.goods.hasSample}=='False' ) selected#end>False</option>
 						</select>
 					</div>
 					<label class="col-sm-2 control-label">样品数量</label>
@@ -60,13 +85,9 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label">当前状态</label>
+					<label class="col-sm-2 control-label">所有库存数量</label>
 					<div class="col-sm-4">
-						<select name="state" class="form-control">
-							<option value="">请选择</option>
-							<option value="在售" #if($!{form.goods.state}=='在售' ) selected#end>在售</option>
-							<option value="停售" #if($!{form.goods.state}=='停售' ) selected#end>停售</option>
-						</select>
+						<input name="allNum" class="form-control" value="$!{form.goods.allNum}" digits="true" maxlength="7">
 					</div>
 					<label class="col-sm-2 control-label">重量（G）</label>
 					<div class="col-sm-4">
@@ -196,6 +217,15 @@
 						<input name="shipDays" class="form-control" value="$!{form.goodsPlat.shipDays}" maxlength="10">
 					</div>
 				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">创建时间</label>
+					<p class="col-sm-4 form-control-static">$!{form.goods.createTm}</p>
+					<input name="createTm" type="hidden" value="$!{form.goods.createTm}">
+					<label class="col-sm-2 control-label">更新时间</label>
+					<p class="col-sm-4 form-control-static">$!{form.goods.modifyTm}</p>
+					<input name="modifyTm" type="hidden" value="$!{form.goods.modifyTm}">
+				</div>
 			</fieldset>
 
 			<fieldset>
@@ -205,11 +235,14 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-mainImgUrl.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU主图</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-vMainImgUrl.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#mainImgModal'>设置主图</button>
 					</div>
 				</div>
 
@@ -219,11 +252,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图2</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl1.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
 
@@ -232,11 +267,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl2.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图4</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl3.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
 
@@ -245,11 +282,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl4.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图6</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl5.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
 
@@ -258,11 +297,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl6.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图8</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl7.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
 
@@ -271,11 +312,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl8.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图10</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl9.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 				</div>
 
@@ -284,6 +327,7 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl10.jpg" />
 						<button type="button" class="btn btn-info btn-sm" onclick="">重新抓取</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label"></label>
 					<div class="col-sm-4">
@@ -305,18 +349,54 @@
 	</div>
 </div>
 
+<!-- mainImg Modal-->
+<div id="mainImgModal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">设置主图</h4>
+			</div>
+			<div class="modal-body">
+				<form id="mainImgForm">
+					<div class="form-group">
+						<label>请从已有图片中选择主图</label>
+						<select id="mainImgSelect" class="image-picker show-html" name="vMainImgUrl">
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-mainImgUrl.jpg" value="mainImgUrl">mainImgUrl</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-vMainImgUrl.jpg" value="vMainImgUrl">vMainImgUrl</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl.jpg" value="eImgUrl">eImgUrl</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl1.jpg" value="eImgUrl1">eImgUrl1</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl2.jpg" value="eImgUrl2">eImgUrl2</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl3.jpg" value="eImgUrl3">eImgUrl3</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl4.jpg" value="eImgUrl4">eImgUrl4</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl5.jpg" value="eImgUrl5">eImgUrl5</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl6.jpg" value="eImgUrl6">eImgUrl6</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl7.jpg" value="eImgUrl7">eImgUrl7</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl8.jpg" value="eImgUrl8">eImgUrl8</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl9.jpg" value="eImgUrl9">eImgUrl9</option>
+						  <option data-img-src="http://www.bentain.site/$!{form.goodsPlat.sku}-eImgUrl10.jpg" value="eImgUrl10">eImgUrl10</option>
+						</select>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="confirm-yes btn btn-primary" id="btnMainImg">提交</button>
+				<button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script>
 
 	$().ready(function () {
-		$("#editForm").validate();
+		 $("#mainImgSelect").imagepicker({
+          hide_select : true,
+          show_label  : false
+        });
 	});
 
-	$("#btnSave").on("click", function () {
-		var flag = $("#editForm").valid();
-		if (!flag) {
-			//没有通过验证
-			return;
-		}
+	$("#btnMainImg").on("click", function () {
 		$.ajax({
 			cache: true,
 			type: "POST",

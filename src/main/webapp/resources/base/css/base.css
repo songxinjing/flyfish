@@ -70,11 +70,15 @@ img.platform-logo {
 	color: green;
 }
 
-.error{
-	color:red;
+.error {
+	color: red;
 }
 
 /* ===== 登录相关 ===== */
 div.login {
 	margin-top: 100px;
+}
+
+img.hidden {
+	display: none;
 }
