@@ -395,17 +395,17 @@
 		$.ajax({
 			cache: true,
 			type: "POST",
-			url: "${rc.contextPath}/goods/reget.html",
-			data: { sku: sku, imgName: imgName },
+			url: "${rc.contextPath}/goods/save.html",
+			data: $("#editForm").serialize(),
 			async: false,
 			error: function (request) {
-				base.alert("操作失败!");
+				base.alert("保存失败!");
 			},
 			success: function (data) {
-				base.alert("尝试重新获取，请稍后刷新！");
+				base.alert("保存成功!");
 			}
 		});
-	}
+	})
 	
 	
 	function reget(obj) {
