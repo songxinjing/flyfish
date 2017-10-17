@@ -377,10 +377,9 @@
 <script>
 
 	$().ready(function () {
+
 		$("#editForm").validate();
-		
 		$("#mainImgSelect").imagepicker();
-		
 		$("img").on("error",function(){
         	 $(this).hide();
 			 $(this).after('<button type="button" class="btn btn-info btn-sm" onclick="javascript:reget(this);">重新抓取</button>') 
@@ -396,17 +395,17 @@
 		$.ajax({
 			cache: true,
 			type: "POST",
-			url: "${rc.contextPath}/goods/save.html",
-			data: $("#editForm").serialize(),
+			url: "${rc.contextPath}/goods/reget.html",
+			data: { sku: sku, imgName: imgName },
 			async: false,
 			error: function (request) {
-				base.alert("保存失败!");
+				base.alert("操作失败!");
 			},
 			success: function (data) {
-				base.alert("保存成功!");
+				base.alert("尝试重新获取，请稍后刷新！");
 			}
 		});
-	})
+	}
 	
 	
 	function reget(obj) {
@@ -450,7 +449,5 @@
 			}
 		});
 	})
-
-	
 
 </script>
