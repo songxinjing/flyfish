@@ -252,12 +252,48 @@ public class Goods implements Serializable {
 	 */
 	@Column(length = 32)
 	private String createTm;
+	
+	/**
+	 * 停售时间
+	 */
+	@Column(length = 32)
+	private String stopTm;
+	
+	/**
+	 * 停售原因
+	 */
+	@Column(length = 64)
+	private String stopReson;
 
 	/**
 	 * 最低采购单价
 	 */
 	@Column(length = 16)
 	private String minBuyPrice;
+	
+	/**
+	 * 最小包装数
+	 */
+	@Column(length = 8)
+	private String minNum;
+	
+	/**
+	 * 外箱长
+	 */
+	@Column(length = 8)
+	private String outLength;
+	
+	/**
+	 * 外箱宽
+	 */
+	@Column(length = 8)
+	private String outWidth;
+	
+	/**
+	 * 外箱高
+	 */
+	@Column(length = 8)
+	private String outHeight;
 
 	/**
 	 * 最后修改人ID
@@ -621,4 +657,52 @@ public class Goods implements Serializable {
 		this.minBuyPrice = minBuyPrice;
 	}
 
+	public String getStopTm() {
+		return stopTm;
+	}
+
+	public void setStopTm(String stopTm) {
+		this.stopTm = stopTm;
+	}
+
+	public String getStopReson() {
+		return stopReson;
+	}
+
+	public void setStopReson(String stopReson) {
+		this.stopReson = stopReson;
+	}
+
+	public String getMinNum() {
+		return minNum;
+	}
+
+	public void setMinNum(String minNum) {
+		this.minNum = minNum;
+	}
+
+	public String getOutLength() {
+		return outLength;
+	}
+
+	public void setOutLength(String outLength) {
+		this.outLength = outLength;
+	}
+
+	public String getOutWidth() {
+		return outWidth;
+	}
+
+	public void setOutWidth(String outWidth) {
+		this.outWidth = outWidth;
+	}
+
+	public String getOutHeight() {
+		return outHeight;
+	}
+
+	public void setOutHeight(String outHeight) {
+		this.outHeight = outHeight;
+	}
+	
 }

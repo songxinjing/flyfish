@@ -45,7 +45,7 @@ public class ExcelTemp {
 		COMMON_FIELD.put("款式", "style");
 		COMMON_FIELD.put("品牌", "make");
 		COMMON_FIELD.put("单位", "");
-		COMMON_FIELD.put("最小包装数", "");
+		COMMON_FIELD.put("最小包装数", "minNum");
 		COMMON_FIELD.put("重量(G)", "weight");
 		COMMON_FIELD.put("重量(克)", "weight");
 		COMMON_FIELD.put("采购渠道", "");
@@ -108,12 +108,12 @@ public class ExcelTemp {
 		COMMON_FIELD.put("内盒高(cm)", "");
 		COMMON_FIELD.put("内盒毛重", "");
 		COMMON_FIELD.put("内盒净重", "");
-		COMMON_FIELD.put("外箱长", "");
-		COMMON_FIELD.put("外箱宽", "");
-		COMMON_FIELD.put("外箱高", "");
-		COMMON_FIELD.put("外箱长(cm)", "");
-		COMMON_FIELD.put("外箱宽(cm)", "");
-		COMMON_FIELD.put("外箱高(cm)", "");
+		COMMON_FIELD.put("外箱长", "outLength");
+		COMMON_FIELD.put("外箱宽", "outWidth");
+		COMMON_FIELD.put("外箱高", "outHeight");
+		COMMON_FIELD.put("外箱长(cm)", "outLength");
+		COMMON_FIELD.put("外箱宽(cm)", "outWidth");
+		COMMON_FIELD.put("外箱高(cm)", "outHeight");
 		COMMON_FIELD.put("外箱毛重", "");
 		COMMON_FIELD.put("外箱净重", "");
 		COMMON_FIELD.put("商品URL", "");
@@ -146,8 +146,8 @@ public class ExcelTemp {
 		COMMON_FIELD.put("毛利率", "");
 		COMMON_FIELD.put("计算售价", "");
 		
-		COMMON_FIELD.put("停售时间", "");
-		COMMON_FIELD.put("停售原因", "");
+		COMMON_FIELD.put("停售时间", "stopTm");
+		COMMON_FIELD.put("停售原因", "stopReson");
 		COMMON_FIELD.put("是否带磁", "");
 		COMMON_FIELD.put("功能", "");
 		COMMON_FIELD.put("组合品", "isJoin");

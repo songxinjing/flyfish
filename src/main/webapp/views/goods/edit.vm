@@ -21,142 +21,162 @@
 			<fieldset>
 				<legend>基本信息</legend>
 				<div class="form-group">
-					<label class="col-sm-2 control-label">SKU</label>
-					<p class="col-sm-4 form-control-static">$!{form.goods.sku}</p>
-					<input id="sku" name="sku" type="hidden" value="$!{form.goods.sku}">
 					<label class="col-sm-2 control-label">商品编码</label>
-					<p class="col-sm-4 form-control-static">$!{form.goods.parentSku}</p>
+					<p class="col-sm-2 form-control-static">$!{form.goods.parentSku}</p>
 					<input name="parentSku" type="hidden" value="$!{form.goods.parentSku}">
+					<label class="col-sm-2 control-label">大类名称</label>
+					<div class="col-sm-2">
+						<input name="bigCataName" class="form-control" value="$!{form.goods.bigCataName}" maxlength="20">
+					</div>
+					<label class="col-sm-2 control-label">业绩归属人1</label>
+					<div class="col-sm-2">
+						<input name="bussOwner1" class="form-control" value="$!{form.goods.bussOwner1}" maxlength="20">
+					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label">商品名称</label>
-					<div class="col-sm-4">
-						<input name="name" class="form-control" value="$!{form.goods.name}" maxlength="20">
+					<label class="col-sm-2 control-label">SKU</label>
+					<p class="col-sm-2 form-control-static">$!{form.goods.sku}</p>
+					<input id="sku" name="sku" type="hidden" value="$!{form.goods.sku}">
+					<label class="col-sm-2 control-label">小类名称</label>
+					<div class="col-sm-2">
+						<input name="smallCataName" class="form-control" value="$!{form.goods.smallCataName}" maxlength="20">
 					</div>
+					<label class="col-sm-2 control-label">业绩归属人2</label>
+					<div class="col-sm-2">
+						<input name="bussOwner2" class="form-control" value="$!{form.goods.bussOwner2}" maxlength="20">
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">关联SKU</label>
+					<div class="col-sm-2">
+						<input name="" class="form-control" value="">
+					</div>
+					<label class="col-sm-2 control-label">重量（G）</label>
+					<div class="col-sm-2">
+						<input name="weight" class="form-control" value="$!{form.goods.weight}" number="true" maxlength="7" required>
+					</div>
+					<label class="col-sm-2 control-label">采购员</label>
+					<div class="col-sm-2">
+						<input name="buyer" class="form-control" value="$!{form.goods.buyer}" maxlength="20">
+					</div>
+				</div>
+				
+				<div class="form-group">
 					<label class="col-sm-2 control-label">是否多款式</label>
-					<div class="col-sm-4">
+					<div class="col-sm-2">
 						<select name="isMoreSytle" class="form-control">
 							<option value="">请选择</option>
 							<option value="True" #if($!{form.goods.isMoreSytle}=='True' ) selected#end>True</option>
 							<option value="False" #if($!{form.goods.isMoreSytle}=='False' ) selected#end>False</option>
 						</select>
 					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-2 control-label">是否停售</label>
-					<div class="col-sm-4">
-						<select name="state" class="form-control">
-							<option value="">请选择</option>
-							<option value="True" #if($!{form.goods.state}=='True' ) selected#end>True</option>
-							<option value="False" #if($!{form.goods.state}=='False' ) selected#end>False</option>
-						</select>
+					<label class="col-sm-2 control-label">成本单件（元）</label>
+					<div class="col-sm-2">
+						<input name="costPrice" class="form-control" value="$!{form.goods.costPrice}" number="true" maxlength="7" required>
 					</div>
+					<label class="col-sm-2 control-label">采购到货天数</label>
+					<div class="col-sm-2">
+						<input name="buyDayNum" class="form-control" value="$!{form.goods.buyDayNum}" digits="true" maxlength="3">
+					</div>
+				</div>
+				
+				<div class="form-group">
 					<label class="col-sm-2 control-label">是否带电</label>
-					<div class="col-sm-4">
+					<div class="col-sm-2">
 						<select name="isElectric" class="form-control">
 							<option value="">请选择</option>
 							<option value="True" #if($!{form.goods.isElectric}=='True' ) selected#end>True</option>
 							<option value="False" #if($!{form.goods.isElectric}=='False' ) selected#end>False</option>
 						</select>
 					</div>
+					<label class="col-sm-2 control-label">所有库存数量</label>
+					<div class="col-sm-2">
+						<input name="allNum" class="form-control" value="$!{form.goods.allNum}" digits="true" maxlength="7">
+					</div>
+					<label class="col-sm-2 control-label">最小包装数</label>
+					<div class="col-sm-2">
+						<input name="minNum" class="form-control" value="$!{form.goods.minNum}" digits="true" maxlength="7">
+					</div>
 				</div>
+				
 				<div class="form-group">
 					<label class="col-sm-2 control-label">是否有样品</label>
-					<div class="col-sm-4">
+					<div class="col-sm-2">
 						<select name="hasSample" class="form-control">
 							<option value="">请选择</option>
 							<option value="True" #if($!{form.goods.hasSample}=='True' ) selected#end>True</option>
 							<option value="False" #if($!{form.goods.hasSample}=='False' ) selected#end>False</option>
 						</select>
 					</div>
-					<label class="col-sm-2 control-label">样品数量</label>
-					<div class="col-sm-4">
-						<input name="sampleNum" class="form-control" value="$!{form.goods.sampleNum}" digits="true" maxlength="6">
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-2 control-label">大类名称</label>
-					<div class="col-sm-4">
-						<input name="bigCataName" class="form-control" value="$!{form.goods.bigCataName}" maxlength="20">
-					</div>
-					<label class="col-sm-2 control-label">小类名称</label>
-					<div class="col-sm-4">
-						<input name="smallCataName" class="form-control" value="$!{form.goods.smallCataName}" maxlength="20">
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-2 control-label">所有库存数量</label>
-					<div class="col-sm-4">
-						<input name="allNum" class="form-control" value="$!{form.goods.allNum}" digits="true" maxlength="7">
-					</div>
-					<label class="col-sm-2 control-label">重量（G）</label>
-					<div class="col-sm-4">
-						<input name="weight" class="form-control" value="$!{form.goods.weight}" number="true" maxlength="7" required>
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="col-sm-2 control-label">成本单件（元）</label>
-					<div class="col-sm-4">
-						<input name="costPrice" class="form-control" value="$!{form.goods.costPrice}" number="true" maxlength="7" required>
-					</div>
 					<label class="col-sm-2 control-label">批发价格（美元）</label>
-					<div class="col-sm-4">
+					<div class="col-sm-2">
 						<input name="batchPrice" class="form-control" value="$!{form.goods.batchPrice}" number="true" maxlength="7">
 					</div>
-				</div>
-
-				<div class="form-group">
 					<label class="col-sm-2 control-label">中文申报名</label>
-					<div class="col-sm-4">
+					<div class="col-sm-2">
 						<input name="reportNameCn" class="form-control" value="$!{form.goods.reportNameCn}" maxlength="20">
 					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">样品数量</label>
+					<div class="col-sm-2">
+						<input name="sampleNum" class="form-control" value="$!{form.goods.sampleNum}" digits="true" maxlength="6">
+					</div>
+					<label class="col-sm-2 control-label">原产国</label>
+					<div class="col-sm-2">
+						<input name="prodCountryName" class="form-control" value="$!{form.goods.prodCountryName}" maxlength="20">
+					</div>
 					<label class="col-sm-2 control-label">英文申报名</label>
-					<div class="col-sm-4">
+					<div class="col-sm-2">
 						<input name="reportNameEn" class="form-control" value="$!{form.goods.reportNameEn}" maxlength="20">
 					</div>
 				</div>
-
+				
 				<div class="form-group">
-					<label class="col-sm-2 control-label">申报价值（美元）</label>
-					<div class="col-sm-4">
-						<input name="reportPrice" class="form-control" value="$!{form.goods.reportPrice}" number="true" maxlength="7">
+					<label class="col-sm-2 control-label">季节</label>
+					<div class="col-sm-2">
+						<input name="season" class="form-control" value="$!{form.goods.season}" maxlength="10">
 					</div>
-					<label class="col-sm-2 control-label">开发日期</label>
-					<div class="col-sm-4">
-						<input name="bussDate" class="form-control" value="$!{form.goods.bussDate}" dateISO="true">
-					</div>
-				</div>
-
-				<div class="form-group">
 					<label class="col-sm-2 control-label">原产国代码</label>
-					<div class="col-sm-4">
+					<div class="col-sm-2">
 						<input name="prodCountryCd" class="form-control" value="$!{form.goods.prodCountryCd}" maxlength="10">
 					</div>
-					<label class="col-sm-2 control-label">原产国</label>
-					<div class="col-sm-4">
-						<input name="prodCountryName" class="form-control" value="$!{form.goods.prodCountryName}" maxlength="20">
+					<label class="col-sm-2 control-label">申报价值（美元）</label>
+					<div class="col-sm-2">
+						<input name="reportPrice" class="form-control" value="$!{form.goods.reportPrice}" number="true" maxlength="7">
 					</div>
 				</div>
-
+				
 				<div class="form-group">
-					<label class="col-sm-2 control-label">业绩归属人1</label>
-					<div class="col-sm-4">
-						<input name="bussOwner1" class="form-control" value="$!{form.goods.bussOwner1}" maxlength="20">
+					<label class="col-sm-2 control-label">外箱长（cm）</label>
+					<div class="col-sm-2">
+						<input name="outLength" class="form-control" value="$!{form.goods.outLength}" number="true" maxlength="7">
 					</div>
-					<label class="col-sm-2 control-label">业绩归属人2</label>
-					<div class="col-sm-4">
-						<input name="bussOwner2" class="form-control" value="$!{form.goods.bussOwner2}" maxlength="20">
+					<label class="col-sm-2 control-label">外箱宽（cm）</label>
+					<div class="col-sm-2">
+						<input name="outWidth" class="form-control" value="$!{form.goods.outWidth}" number="true" maxlength="7">
+					</div>
+					<label class="col-sm-2 control-label">外箱高（cm）</label>
+					<div class="col-sm-2">
+						<input name="outHeight" class="form-control" value="$!{form.goods.outHeight}" number="true" maxlength="7">
 					</div>
 				</div>
-
+				
 				<div class="form-group">
-					<label class="col-sm-2 control-label">采购员</label>
-					<div class="col-sm-4">
-						<input name="buyer" class="form-control" value="$!{form.goods.buyer}" maxlength="20">
-					</div>
-					<label class="col-sm-2 control-label">采购到货天数</label>
-					<div class="col-sm-4">
-						<input name="buyDayNum" class="form-control" value="$!{form.goods.buyDayNum}" digits="true" maxlength="3">
+					<label class="col-sm-2 control-label">创建时间</label>
+					<p class="col-sm-2 form-control-static">$!{form.goods.createTm}</p>
+					<label class="col-sm-2 control-label">停售时间</label>
+					<p class="col-sm-2 form-control-static">$!{form.goods.stopTm}</p>
+					<label class="col-sm-2 control-label">停售原因</label>
+					<p class="col-sm-2 form-control-static">$!{form.goods.stopReson}</p>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">供应商名称</label>
+					<div class="col-sm-10">
+						<input name="url" class="form-control" value="$!{form.goods.supplyName}" maxlength="30">
 					</div>
 				</div>
 
@@ -165,7 +185,6 @@
 					<div class="col-sm-10">
 						<input name="url" class="form-control" value="$!{form.goods.url}" url="true">
 					</div>
-
 				</div>
 
 				<div class="form-group">
@@ -181,11 +200,41 @@
 						<input name="url3" class="form-control" value="$!{form.goods.url3}" url="true">
 					</div>
 				</div>
-
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">商品名称</label>
+					<div class="col-sm-2">
+						<input name="name" class="form-control" value="$!{form.goods.name}" maxlength="20">
+					</div>
+					<label class="col-sm-2 control-label">是否停售</label>
+					<div class="col-sm-2">
+						<select name="state" class="form-control">
+							<option value="">请选择</option>
+							<option value="True" #if($!{form.goods.state}=='True' ) selected#end>True</option>
+							<option value="False" #if($!{form.goods.state}=='False' ) selected#end>False</option>
+						</select>
+					</div>
+					<label class="col-sm-2 control-label">开发日期</label>
+					<div class="col-sm-2">
+						<input name="bussDate" class="form-control" value="$!{form.goods.bussDate}" dateISO="true">
+					</div>
+					
+				</div>
+				
+			</fieldset>	
+			<fieldset>
+				<legend>刊登要素</legend>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">商品英文标题</label>
 					<div class="col-sm-10">
 						<input name="title" class="form-control" value="$!{form.goodsPlat.title}" maxlength="200">
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">商品英文标题可选词</label>
+					<div class="col-sm-10">
+						<input name="" class="form-control" value="" maxlength="200">
 					</div>
 				</div>
 
@@ -193,6 +242,13 @@
 					<label class="col-sm-2 control-label">标签</label>
 					<div class="col-sm-10">
 						<input name="tags" class="form-control" value="$!{form.goodsPlat.tags}">
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">虚拟SKU</label>
+					<div class="col-sm-10">
+						<input name="" class="form-control" value="">
 					</div>
 				</div>
 
@@ -219,12 +275,30 @@
 				</div>
 				
 				<div class="form-group">
-					<label class="col-sm-2 control-label">创建时间</label>
-					<p class="col-sm-4 form-control-static">$!{form.goods.createTm}</p>
-					<input name="createTm" type="hidden" value="$!{form.goods.createTm}">
-					<label class="col-sm-2 control-label">更新时间</label>
-					<p class="col-sm-4 form-control-static">$!{form.goods.modifyTm}</p>
-					<input name="modifyTm" type="hidden" value="$!{form.goods.modifyTm}">
+					<label class="col-sm-2 control-label">Wish平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.wishPrice}</p>
+					<label class="col-sm-2 control-label">速卖通平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.smtPrice}</p>
+					<label class="col-sm-2 control-label">敦煌平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.dhPrice}</p>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Joom平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.joomPrice}</p>
+					<label class="col-sm-2 control-label">亚马逊平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.amazonPrice}</p>
+					<label class="col-sm-2 control-label">Lazada平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.lazadaPrice}</p>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Ebay平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.ebayPrice}</p>
+					<label class="col-sm-2 control-label">CD平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.cdPrice}</p>
+					<label class="col-sm-2 control-label">Shopee平台售价</label>
+					<p class="col-sm-2 form-control-static">$!{form.shopeePrice}</p>
 				</div>
 			</fieldset>
 
@@ -234,12 +308,12 @@
 					<label class="col-sm-2 control-label">Listing主图</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.mainImgUrl}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU主图</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.vMainImgUrl}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#mainImgModal'>设置主图</button>
 					</div>
 				</div>
@@ -249,12 +323,12 @@
 					<label class="col-sm-2 control-label">SKU附图1</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图2</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl1}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 				</div>
 
@@ -262,12 +336,12 @@
 					<label class="col-sm-2 control-label">SKU附图3</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl2}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图4</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl3}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 				</div>
 
@@ -275,12 +349,12 @@
 					<label class="col-sm-2 control-label">SKU附图5</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl4}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图6</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl5}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 				</div>
 
@@ -288,12 +362,12 @@
 					<label class="col-sm-2 control-label">SKU附图7</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl6}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图8</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl7}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 				</div>
 
@@ -301,12 +375,12 @@
 					<label class="col-sm-2 control-label">SKU附图9</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl8}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图10</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl9}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 				</div>
 
@@ -314,7 +388,7 @@
 					<label class="col-sm-2 control-label">SKU附图11</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl10}" />
-						<button type="button" class="btn btn-info btn-sm" onclick="">上传图片</button>
+						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'>上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label"></label>
 					<div class="col-sm-4">
@@ -331,6 +405,18 @@
 					</div>
 				</div>
 			</fieldset>
+			
+			<fieldset>
+				<legend>维护信息</legend>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">最后更新人</label>
+					<p class="col-sm-4 form-control-static">$!{form.goods.modifyer}</p>
+					<label class="col-sm-2 control-label">最后更新时间</label>
+					<p class="col-sm-4 form-control-static">$!{form.goods.modifyTm}</p>
+				</div>
+			</fieldset>
+
+			
 
 		</form>
 	</div>
@@ -368,6 +454,30 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="confirm-yes btn btn-primary" id="btnMainImg">提交</button>
+				<button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- upload img Modal-->
+<div id="uploadImgModal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">上传图片</h4>
+			</div>
+			<div class="modal-body">
+				<form id="uploadImgForm" enctype="multipart/form-data" method="post">
+					<div class="form-group">
+						<label>请选择待上传的图片</label>
+						<input type="file" name="file">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="confirm-yes btn btn-primary" id="btnUploadImg">提交</button>
 				<button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
 			</div>
 		</div>
@@ -434,6 +544,25 @@
 	$("#btnMainImg").on("click", function () {
 		var sku = $("#sku").val();
 		var imgName = $("#mainImgSelect").next().find(".selected").find("img").attr("src").replace("http://www.bentain.site/", "");
+		$.ajax({
+			cache: true,
+			type: "POST",
+			url: "${rc.contextPath}/goods/setmain.html",
+			data: { sku: sku, imgName: imgName },
+			async: false,
+			error: function (request) {
+				base.alert("操作失败!");
+			},
+			success: function (data) {
+				$("#mainImgModal").modal('hide')
+            	window.location.reload();
+			}
+		});
+	})
+	
+	$("#btnUploadImg").on("click", function () {
+		var sku = $("#sku").val();
+		
 		$.ajax({
 			cache: true,
 			type: "POST",

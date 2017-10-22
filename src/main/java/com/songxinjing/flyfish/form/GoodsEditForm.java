@@ -292,6 +292,36 @@ public class GoodsEditForm implements Serializable {
 	 * 所有库存数量
 	 */
 	private String allNum;
+	
+	/**
+	 * 停售时间
+	 */
+	private String stopTm;
+	
+	/**
+	 * 停售原因
+	 */
+	private String stopReson;
+	
+	/**
+	 * 最小包装数
+	 */
+	private String minNum;
+	
+	/**
+	 * 外箱长
+	 */
+	private String outLength;
+	
+	/**
+	 * 外箱宽
+	 */
+	private String outWidth;
+	
+	/**
+	 * 外箱高
+	 */
+	private String outHeight;
 
 
 	public String getSku() {
@@ -748,6 +778,54 @@ public class GoodsEditForm implements Serializable {
 
 	public void setAllNum(String allNum) {
 		this.allNum = allNum;
+	}
+
+	public String getStopTm() {
+		return stopTm;
+	}
+
+	public void setStopTm(String stopTm) {
+		this.stopTm = stopTm;
+	}
+
+	public String getStopReson() {
+		return stopReson;
+	}
+
+	public void setStopReson(String stopReson) {
+		this.stopReson = stopReson;
+	}
+
+	public String getMinNum() {
+		return minNum;
+	}
+
+	public void setMinNum(String minNum) {
+		this.minNum = minNum;
+	}
+
+	public String getOutLength() {
+		return outLength;
+	}
+
+	public void setOutLength(String outLength) {
+		this.outLength = outLength;
+	}
+
+	public String getOutWidth() {
+		return outWidth;
+	}
+
+	public void setOutWidth(String outWidth) {
+		this.outWidth = outWidth;
+	}
+
+	public String getOutHeight() {
+		return outHeight;
+	}
+
+	public void setOutHeight(String outHeight) {
+		this.outHeight = outHeight;
 	}
 	
 }
