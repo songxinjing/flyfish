@@ -309,13 +309,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.mainImgUrl}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'  
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl" >上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="mainImgUrl" >上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU主图</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.vMainImgUrl}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="vMainImgUrl">上传图片</button>
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#mainImgModal'>设置主图</button>
 					</div>
 				</div>
@@ -326,13 +326,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图2</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl1}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl1">上传图片</button>
 					</div>
 				</div>
 
@@ -341,13 +341,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl2}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl2">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图4</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl3}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl3">上传图片</button>
 					</div>
 				</div>
 
@@ -356,13 +356,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl4}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl4">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图6</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl5}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl5">上传图片</button>
 					</div>
 				</div>
 
@@ -371,13 +371,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl6}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl6">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图8</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl7}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl7">上传图片</button>
 					</div>
 				</div>
 
@@ -386,13 +386,13 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl8}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl8">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图10</label>
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl9}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl9">上传图片</button>
 					</div>
 				</div>
 
@@ -401,7 +401,7 @@
 					<div class="col-sm-4">
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl10}" />
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
-						data-sku="$!{form.goods.sku}" data-imgName="mainImgUrl">上传图片</button>
+						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl10">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label"></label>
 					<div class="col-sm-4">
@@ -482,7 +482,7 @@
 				<h4 class="modal-title">上传图片</h4>
 			</div>
 			<div class="modal-body">
-				<form id="uploadImgForm" enctype="multipart/form-data" method="post">
+				<form id="uploadImgForm">
 					<input name="sku" type="hidden" id="skuUpload"> 
          			<input name="imgName" type="hidden" id="imgNameUpload">
 					<div class="form-group">
@@ -575,58 +575,30 @@
 		});
 	})
 	
-	$("#modifyModal").on("show.bs.modal", function (event) {
+	$("#uploadImgModal").on("show.bs.modal", function (event) {
 	  var button = $(event.relatedTarget);
-	  var id = button.data("id");
-	  var prodId = button.data("prodid");
+	  var sku = button.data("sku");
+	  var imgname = button.data("imgname");
 	  var modal = $(this);
-	  modal.find("#id").val(id);
-	  modal.find("#prodId").val(prodId);
-	  modal.find("#prodName").text(prodName);
-	  modal.find("#countryId").val(countryId);
-	  modal.find("#countryName").text(countryName);
-	  if(method == 1){
-	  	modal.find("#method-1").prop("checked",true);
-	  	modal.find("#method-2").prop("checked",false);
-	  	$("#methodDiv-modify1").show();
-	  	$("#methodDiv-modify1").find("#paraA").attr("required","true");
-        $("#methodDiv-modify1").find("#paraB").attr("required","true");
-	  	$("#methodDiv-modify2").hide();
-	  	$("#methodDiv-modify2").find("#paraC").attr("required","false");
-        $("#methodDiv-modify2").find("#paraX").attr("required","false");
-        $("#methodDiv-modify2").find("#paraD").attr("required","false");
-	  } else if(method == 2){
-	    modal.find("#method-1").prop("checked",false);
-	  	modal.find("#method-2").prop("checked",true);
-	  	$("#methodDiv-modify1").hide();
-	  	$("#methodDiv-modify1").find("#paraA").attr("required","false");
-        $("#methodDiv-modify1").find("#paraB").attr("required","false");
-	  	$("#methodDiv-modify2").show();
-	  	$("#methodDiv-modify2").find("#paraC").attr("required","true");
-        $("#methodDiv-modify2").find("#paraX").attr("required","true");
-        $("#methodDiv-modify2").find("#paraD").attr("required","true");
-	  } 
-	  modal.find("#paraA").val(paraA);
-	  modal.find("#paraB").val(paraB);
-	  modal.find("#paraC").val(paraC);
-	  modal.find("#paraX").val(paraX);
-	  modal.find("#paraD").val(paraD);
+	  modal.find("#skuUpload").val(sku);
+	  modal.find("#imgNameUpload").val(imgname);
 	})
 	
 	$("#btnUploadImg").on("click", function () {
-		var sku = $("#sku").val();
-		
+		var formData = new FormData($("#uploadImgForm")[0]);
 		$.ajax({
 			cache: true,
 			type: "POST",
-			url: "${rc.contextPath}/goods/setmain.html",
-			data: { sku: sku, imgName: imgName },
+			url: "${rc.contextPath}/goods/uploadimg.html",
+			data: formData,
+			processData : false, 
+			contentType : false,
 			async: false,
 			error: function (request) {
 				base.alert("操作失败!");
 			},
 			success: function (data) {
-				$("#mainImgModal").modal('hide')
+				$("#uploadImgModal").modal('hide')
             	window.location.reload();
 			}
 		});

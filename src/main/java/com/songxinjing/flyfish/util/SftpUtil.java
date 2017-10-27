@@ -1,5 +1,6 @@
 package com.songxinjing.flyfish.util;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -101,6 +102,21 @@ public class SftpUtil {
 			// Copy local file to sftp server
 			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
 		} catch (MalformedURLException | FileSystemException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void doFTP( String name, File image) {
+
+		try {
+			String path = remoteDirectory + "/" + name;
+			URI sftpUri = new URI("sftp", userInfo, serverAddress, -1, path, null, null);
+			FileObject remoteFile = manager.resolveFile(sftpUri.toString(), opts);
+			// Create local file object
+			FileObject localFile = manager.toFileObject(image);
+			// Copy local file to sftp server
+			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
+		} catch ( FileSystemException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 

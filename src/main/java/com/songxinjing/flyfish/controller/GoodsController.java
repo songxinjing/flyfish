@@ -1,5 +1,7 @@
 package com.songxinjing.flyfish.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
@@ -261,10 +264,30 @@ public class GoodsController extends BaseController {
 	@RequestMapping(value = "goods/reget", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean reget(String sku, String imgName) {
-		logger.info("保存商品详情页面");
+		logger.info("重新获取图片");
 		GoodsPlat goodsPlat = goodsPlatService.find(sku);
 		String imgUrl = (String) ReflectionUtil.getFieldValue(goodsPlat, imgName);
 		SftpUtil.startFTP(imgUrl, sku + "-" + imgName + ".jpg");
+		return true;
+	}
+
+	@RequestMapping(value = "goods/uploadimg", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean uploadimg(String sku, String imgName, MultipartFile file) {
+		logger.info("上传图片");
+		GoodsImg goodsImg = goodsImgService.find(sku);
+		String name = sku + "-" + imgName + System.currentTimeMillis() + ".jpg";
+		ReflectionUtil.setFieldValue(goodsImg, imgName, name);
+		goodsImgService.save(goodsImg);
+		
+	    try {
+	    	File temp = File.createTempFile("temp", ".jpg");
+			file.transferTo(temp);
+			SftpUtil.doFTP(name, temp);
+		} catch (IllegalStateException | IOException e) {
+			e.printStackTrace();
+		}
+		
 		return true;
 	}
 
