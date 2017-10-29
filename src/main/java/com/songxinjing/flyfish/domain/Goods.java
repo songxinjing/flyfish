@@ -2,10 +2,12 @@ package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 /**
  * 商品信息表实体类
@@ -312,6 +314,12 @@ public class Goods implements Serializable {
 	 */
 	@Column
 	private Timestamp modifyTm;
+	
+	/**
+	 * 商品刊登店铺列表
+	 */
+	@ManyToMany(mappedBy = "goodses")
+	private Set<Store> stores;
 
 	public String getSku() {
 		return sku;
@@ -703,6 +711,14 @@ public class Goods implements Serializable {
 
 	public void setOutHeight(String outHeight) {
 		this.outHeight = outHeight;
+	}
+
+	public Set<Store> getStores() {
+		return stores;
+	}
+
+	public void setStores(Set<Store> stores) {
+		this.stores = stores;
 	}
 	
 }

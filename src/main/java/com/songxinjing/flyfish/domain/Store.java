@@ -1,6 +1,7 @@
 package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 /**
@@ -53,6 +55,13 @@ public class Store implements Serializable {
 	 */
 	@Column(length = 64)
 	private String domainName;
+	
+	/**
+	 * 刊登商品列表
+	 */
+	@ManyToMany
+	private Set<Goods> goodses;
+
 
 	public int getId() {
 		return id;
@@ -92,6 +101,14 @@ public class Store implements Serializable {
 
 	public void setDomainName(String domainName) {
 		this.domainName = domainName;
+	}
+
+	public Set<Goods> getGoodses() {
+		return goodses;
+	}
+
+	public void setGoodses(Set<Goods> goodses) {
+		this.goodses = goodses;
 	}
 
 }

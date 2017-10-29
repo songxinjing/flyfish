@@ -1,0 +1,90 @@
+<div class="row">
+	<div class="col-md-12">
+		<h3 class="page-header">域名列表</h3>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addModal">新增</button>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+	    	<table class="table table-striped table-bordered table-hover">
+	    	  <thead>
+			    <tr>
+				  <th width="50%">域名</th>
+				  <th width="50%">操作</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+				#foreach($rec in $!recList)
+			        <tr>
+			          <td>$!{rec.name}</td>
+					  <td>
+						<button type="button" class="btn btn-danger btn-sm" onclick="window.location.href='${rc.contextPath}/domain/delete.html?name=$!{rec.name}'">删除</button>
+					  </td>
+			        </tr>
+				#end
+			  </tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!-- add Modal-->
+<div id="addModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">新增域名</h4>
+      </div>
+      <div class="modal-body">
+         <form id="addForm">
+           <div class="form-group">
+                <label>域名</label>
+                <input class="form-control" name="name" maxlength="60">
+            </div>
+	     </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="confirm-yes btn btn-primary" id="btnAdd">提交</button>
+        <button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  
+  $().ready(function() {
+    $("#addForm").validate();
+    $("#modifyForm").validate();
+  });
+
+  $("#btnAdd").on("click", function () {
+  	var flag = $("#addForm").valid();
+    if(!flag){
+        //没有通过验证
+        return;
+    }
+	$.ajax({
+        cache: true,
+        type: "POST",
+        url: "${rc.contextPath}/domain/add.html",
+        data: $("#addForm").serialize(),
+        async: false,
+        error: function(request) {
+        	$("#addModal").modal('hide')
+            base.alert("保存失败!");
+        },
+        success: function(data) {
+        	$("#addModal").modal('hide')
+            window.location.reload();
+        }
+    });
+  })
+  
+
+</script>

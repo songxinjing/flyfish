@@ -55,6 +55,11 @@ public class GoodsQueryForm implements Serializable {
 	 * 创建时间（结束）
 	 */
 	private String createTmEnd;
+	
+	/**
+	 * 排除店铺ID
+	 */
+	private int storeId;
 
 	public String getParentSkus() {
 		return parentSkus;
@@ -135,4 +140,13 @@ public class GoodsQueryForm implements Serializable {
 	public void setCreateTmEnd(String createTmEnd) {
 		this.createTmEnd = createTmEnd;
 	}
+
+	public int getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(int storeId) {
+		this.storeId = storeId;
+	}
+	
 }

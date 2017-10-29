@@ -25,6 +25,7 @@ import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
+import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
@@ -36,6 +37,7 @@ import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
+import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.util.ReflectionUtil;
 import com.songxinjing.flyfish.util.SftpUtil;
 
@@ -65,6 +67,9 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	LogisProdService logisProdService;
+	
+	@Autowired
+	StoreService storeService;
 
 	@RequestMapping(value = "goods/list")
 	public String list(Model model, Integer page, Integer pageSize, GoodsQueryForm form) {
@@ -89,53 +94,63 @@ public class GoodsController extends BaseController {
 		String createTmEnd = "";
 		String parentSkus = "";
 
-		String hql = "from Goods where 1=1 ";
+		int storeId = form.getStoreId();
+		String hql = "";
 		Map<String, Object> paraMap = new HashMap<String, Object>();
+		if (storeId == 0) {
+			hql = "select goods from Goods as goods where 1=1 ";
+		} else if(storeId == -1){
+			hql = "select goods from Goods as goods left join goods.stores as store where store.id is null ";
+		} else {
+			hql = "select goods from Goods as goods left join goods.stores as store where (store.id is null or store.id != :storeId) ";
+			paraMap.put("storeId", storeId);
+		}
+
 		if (StringUtils.isNotEmpty(form.getBigCataName())) {
 			bigCataName = form.getBigCataName().trim();
-			hql = hql + "and bigCataName like :bigCataName ";
+			hql = hql + "and goods.bigCataName like :bigCataName ";
 			paraMap.put("bigCataName", "%" + bigCataName + "%");
 		}
 		if (StringUtils.isNotEmpty(form.getSmallCataName())) {
 			smallCataName = form.getSmallCataName().trim();
-			hql = hql + "and smallCataName like :smallCataName ";
+			hql = hql + "and goods.smallCataName like :smallCataName ";
 			paraMap.put("smallCataName", "%" + smallCataName + "%");
 		}
 
 		if (StringUtils.isNotEmpty(form.getBussOwner1())) {
 			bussOwner1 = form.getBussOwner1().trim();
-			hql = hql + "and bussOwner1 like :bussOwner1 ";
+			hql = hql + "and goods.bussOwner1 like :bussOwner1 ";
 			paraMap.put("bussOwner1", "%" + bussOwner1 + "%");
 		}
 
 		if (StringUtils.isNotEmpty(form.getBussOwner2())) {
 			bussOwner2 = form.getBussOwner2().trim();
-			hql = hql + "and bussOwner2 like :bussOwner2 ";
+			hql = hql + "and goods.bussOwner2 like :bussOwner2 ";
 			paraMap.put("bussOwner2", "%" + bussOwner2 + "%");
 		}
 
 		if (StringUtils.isNotEmpty(form.getBuyer())) {
 			buyer = form.getBuyer().trim();
-			hql = hql + "and buyer like :buyer ";
+			hql = hql + "and goods.buyer like :buyer ";
 			paraMap.put("buyer", "%" + buyer + "%");
 		}
 
 		if (StringUtils.isNotEmpty(form.getState())) {
 			state = form.getState().trim();
-			hql = hql + "and state = :state ";
+			hql = hql + "and goods.state = :state ";
 			paraMap.put("state", state);
 		}
 
 		if (StringUtils.isNotEmpty(form.getIsElectric())) {
 			isElectric = form.getIsElectric().trim();
-			hql = hql + "and isElectric = :isElectric ";
+			hql = hql + "and goods.isElectric = :isElectric ";
 			paraMap.put("isElectric", isElectric);
 		}
 
 		if (StringUtils.isNotEmpty(form.getCreateTmBegin()) && StringUtils.isNotEmpty(form.getCreateTmEnd())) {
 			createTmBegin = form.getCreateTmBegin().trim();
 			createTmEnd = form.getCreateTmEnd().trim();
-			hql = hql + "and createTm >= :createTmBegin and createTm <= :createTmEnd ";
+			hql = hql + "and goods.createTm >= :createTmBegin and goods.createTm <= :createTmEnd ";
 			paraMap.put("createTmBegin", createTmBegin);
 			paraMap.put("createTmEnd", createTmEnd);
 		}
@@ -146,7 +161,7 @@ public class GoodsController extends BaseController {
 			for (String inPara : parentSkus.split(",")) {
 				inParas.add(inPara.trim());
 			}
-			hql = hql + "and parentSku in  (:inParas) ";
+			hql = hql + "and goods.parentSku in  (:inParas) ";
 			paraMap.put("inParas", inParas);
 		}
 		total = goodsService.findHql(hql, paraMap).size();
@@ -299,6 +314,25 @@ public class GoodsController extends BaseController {
 		goodsImg.setvMainImgUrl(imgName);
 		goodsImgService.save(goodsImg);
 		return true;
+	}
+	
+	@RequestMapping(value = "goods/joinstore", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean joinStore(String skus, Integer storeId) {
+		Store store = storeService.find(storeId);
+		if(store != null){
+			for (String sku : skus.split(",")) {
+				if(StringUtils.isNotEmpty(sku)){
+					Goods goods = goodsService.find(sku.trim());
+					if(goods != null){
+						store.getGoodses().add(goods);
+					}
+				}
+			}
+			storeService.update(store);
+			return true;
+		}
+		return false;	
 	}
 
 }

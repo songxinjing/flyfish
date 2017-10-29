@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.User;
+import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.service.UserService;
 
 /**
@@ -25,6 +26,9 @@ public class HomeController extends BaseController {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	StoreService storeService;
 
 	@RequestMapping(value = "index", method = RequestMethod.GET)
 	public String home() {
@@ -55,6 +59,7 @@ public class HomeController extends BaseController {
 		User loginUser = userService.find(userId);
 		if (loginUser != null && password.equals(loginUser.getPassword())) {
 			request.getSession().setAttribute(Constant.SESSION_LOGIN_USER, loginUser);
+			request.getSession().setAttribute(Constant.SESSION_STORES,storeService.find());
 			return "redirect:" + reqUrl;
 		}
 		model.addAttribute("msg", "用户名或密码错误，请重试！！！");

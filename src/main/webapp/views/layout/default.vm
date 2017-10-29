@@ -64,25 +64,16 @@
                         <li>
                             <a href="${rc.contextPath}/index.html"><i class="fa fa-dashboard fa-fw"></i>总览</a>
                         </li>
-                        <!--
 						<li>
-                            <a href="#"><i class="fa fa-wrench fa-fw"></i>店铺管理<span class="fa arrow"></span></a>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i>刊登管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                #foreach($store in $!stores)
+                                #foreach($store in  $!session_stores  )
                                 <li>
-                                    <a href="${rc.contextPath}/store/detail.html?storeId=$!{store.storeId}">
-                                    #if($!{store.platform} == 1)
-									<img class="platform-logo" src="${rc.contextPath}/resources/image/ebay.jpg" /> #elseif($!{store.platform} == 2)
-									<img class="platform-logo" src="${rc.contextPath}/resources/image/wish.jpg" /> #elseif($!{store.platform} == 3)
-									<img class="platform-logo" src="${rc.contextPath}/resources/image/amazon.jpg" /> #elseif($!{store.platform} == 4)
-									<img class="platform-logo" src="${rc.contextPath}/resources/image/aliexpress.jpg" /> #end 
-                                    $!{store.storeName}</a>
+                                    <a href="${rc.contextPath}/publish/list.html?storeId=$!{store.id}">$!{store.platform.name}-$!{store.name}</a>
                                 </li>
                                 #end
-                                <li><a href="#">查看全部店铺</a></li>
                             </ul>
                         </li>
-                        -->
                         <li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i>商品管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
@@ -120,6 +111,12 @@
                                 </li>
                                 <li>
                                     <a href="${rc.contextPath}/country/list.html">国家管理</a>
+                                </li>
+								<li>
+                                    <a href="${rc.contextPath}/domain/list.html">域名管理</a>
+                                </li>
+								<li>
+                                    <a href="${rc.contextPath}/store/list.html">店铺管理</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

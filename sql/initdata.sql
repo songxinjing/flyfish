@@ -23,10 +23,10 @@ insert into Country(id,name,orderNum) values(20,'其他国家',20);
 
 -- 初始化平台信息
 delete from Platform;
-insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(1,'Ebay',1,15,100,12);
+insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(1,'Ebay',1,15,100,15);
 insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(2,'Amazon',2,15,100,12);
 insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(3,'AliExpress',3,15,100,12);
-insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(4,'Wish',4,15,100,12);
+insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(4,'Wish',4,15,100,20);
 insert into Platform(id,name,orderNum,rate,cutRate,profitRate) values(5,'Joom',5,15,100,12);
 
 -- 初始化物流产品信息
