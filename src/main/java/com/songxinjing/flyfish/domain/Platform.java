@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -60,6 +62,20 @@ public class Platform implements Serializable {
 	 */
 	@Column(precision = 5, scale = 2)
 	private BigDecimal cutRate;
+	
+	/**
+	 * 物流策略，重量临界点
+	 */
+	@Column(precision = 6, scale = 2)
+	private BigDecimal weightStrategy;
+	
+	/**
+	 * 物流策略，选择物流产品
+	 */
+	@ManyToOne
+	@JoinColumn
+	private LogisProd prodStrategy;
+	
 	
 	/**
 	 * 该平台权重列表
@@ -136,6 +152,22 @@ public class Platform implements Serializable {
 
 	public void setStores(List<Store> stores) {
 		this.stores = stores;
+	}
+
+	public BigDecimal getWeightStrategy() {
+		return weightStrategy;
+	}
+
+	public void setWeightStrategy(BigDecimal weightStrategy) {
+		this.weightStrategy = weightStrategy;
+	}
+
+	public LogisProd getProdStrategy() {
+		return prodStrategy;
+	}
+
+	public void setProdStrategy(LogisProd prodStrategy) {
+		this.prodStrategy = prodStrategy;
 	}
 	
 }

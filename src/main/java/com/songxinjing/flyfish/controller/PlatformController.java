@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Platform;
+import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
 
 /**
@@ -24,6 +25,9 @@ public class PlatformController extends BaseController {
 
 	@Autowired
 	PlatformService platformService;
+	
+	@Autowired
+	LogisProdService logisProdService;
 
 	@RequestMapping(value = "platform/list", method = RequestMethod.GET)
 	public String prodList(Model model) {
@@ -31,7 +35,7 @@ public class PlatformController extends BaseController {
 
 		List<Platform> recList = platformService.find();
 		model.addAttribute("recList", recList);
-
+		model.addAttribute("prods", logisProdService.find());
 		return "platform/list";
 	}
 
@@ -53,6 +57,8 @@ public class PlatformController extends BaseController {
 		platform.setRate(form.getRate());
 		platform.setProfitRate(form.getProfitRate());
 		platform.setCutRate(form.getCutRate());
+		platform.setWeightStrategy(form.getWeightStrategy());
+		platform.setProdStrategy(logisProdService.find(form.getProdStrategy().getId()));
 		platformService.update(platform);
 		return true;
 	}

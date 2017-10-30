@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.service.DomainService;
@@ -63,6 +64,7 @@ public class StoreController extends BaseController {
 		store.setDomainName(domainName);
 		// 获取用户登录信息
 		storeService.save(store);
+		request.getSession().setAttribute(Constant.SESSION_STORES,storeService.find());
 		return list(model, platformId);
 	}
 
@@ -75,6 +77,7 @@ public class StoreController extends BaseController {
 		store.setDomainName(domainName);
 		// 获取用户登录信息
 		storeService.update(store);
+		request.getSession().setAttribute(Constant.SESSION_STORES,storeService.find());
 		return list(model, platformId);
 	}
 

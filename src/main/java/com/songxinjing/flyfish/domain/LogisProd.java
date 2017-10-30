@@ -48,6 +48,12 @@ public class LogisProd implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "prod")
 	private List<Logis> logises;
 
+	/**
+	 * 物流策略选择该产品的平台列表
+	 */
+	@OneToMany(mappedBy = "prodStrategy")
+	private List<Platform> platforms;
+
 	public int getId() {
 		return id;
 	}
@@ -78,6 +84,14 @@ public class LogisProd implements Serializable {
 
 	public void setLogises(List<Logis> logises) {
 		this.logises = logises;
+	}
+
+	public List<Platform> getPlatforms() {
+		return platforms;
+	}
+
+	public void setPlatforms(List<Platform> platforms) {
+		this.platforms = platforms;
 	}
 
 }
