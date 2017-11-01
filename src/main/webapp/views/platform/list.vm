@@ -77,9 +77,8 @@
             <div class="form-group">
                 <label>物流选择策略</label>
 				<div>
-					如果商品重量大于等于<input class="form-control input-para" name="weightStrategy" number="true" maxlength="8">克，选择
+					如果商品重量大于等于<input class="form-control input-para" name="weightStrategy" number="true" maxlength="8" required>克，选择
 					<select name="prodStrategy.id" class="form-control  input-para">
-					<option value="">请选择</option>
 					#foreach($!prod in $!prods)
                     <option value="$!{prod.id}">$!{prod.name}</option>
 					#end
@@ -128,7 +127,6 @@
 				<div>
 					如果商品重量大于等于<input class="form-control input-para" id="weightStrategy" name="weightStrategy" number="true" maxlength="8">克，选择
 					<select name="prodStrategy.id" class="form-control  input-para" id="prodStrategyId">
-					<option value="">请选择</option>
 					#foreach($!prod in $!prods)
                     <option value="$!{prod.id}">$!{prod.name}</option>
 					#end

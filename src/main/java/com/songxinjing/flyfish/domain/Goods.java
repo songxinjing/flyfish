@@ -4,10 +4,11 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  * 商品信息表实体类
@@ -316,10 +317,10 @@ public class Goods implements Serializable {
 	private Timestamp modifyTm;
 	
 	/**
-	 * 商品刊登店铺列表
+	 * 该店铺关联商品
 	 */
-	@ManyToMany(mappedBy = "goodses")
-	private Set<Store> stores;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "goods")
+	private Set<StoreGoods> storeGoodses;
 
 	public String getSku() {
 		return sku;
@@ -713,12 +714,12 @@ public class Goods implements Serializable {
 		this.outHeight = outHeight;
 	}
 
-	public Set<Store> getStores() {
-		return stores;
+	public Set<StoreGoods> getStoreGoodses() {
+		return storeGoodses;
 	}
 
-	public void setStores(Set<Store> stores) {
-		this.stores = stores;
+	public void setStoreGoodses(Set<StoreGoods> storeGoodses) {
+		this.storeGoodses = storeGoodses;
 	}
-	
+
 }

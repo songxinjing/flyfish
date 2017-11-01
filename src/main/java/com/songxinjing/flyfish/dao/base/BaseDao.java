@@ -121,6 +121,33 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 		Assert.hasText(hql, "对象不能为空！");
 		return createQuery(hql, values).getResultList();
 	}
+	
+	/**
+	 * HQL查询
+	 * 
+	 * @param hql
+	 * @param values
+	 * @return
+	 */
+	public Object findHqlAObject(final String hql, final Object... values) {
+		List<Object> list = findHqlObject(hql, values);
+		if(list.isEmpty()){
+			return null;
+		}
+		return list.get(0);
+	}
+	
+	/**
+	 * HQL查询
+	 * 
+	 * @param hql
+	 * @param values
+	 * @return
+	 */
+	public List<Object> findHqlObject(final String hql, final Object... values) {
+		Assert.hasText(hql, "对象不能为空！");
+		return createQueryObject(hql, values).getResultList();
+	}
 
 	/**
 	 * HQL查询
@@ -172,6 +199,24 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	public Query<T> createQuery(String hql, Object... values) {
 		Assert.hasText(hql, "对象不能为空！");
 		Query<T> query = this.currentSession().createQuery(hql, entityClass);
+		if (values != null) {
+			for (int i = 0; i < values.length; i++) {
+				query.setParameter(i, values[i]);
+			}
+		}
+		return query;
+	}
+	
+	/**
+	 * 创建Query对象
+	 * 
+	 * @param hql
+	 * @param values
+	 * @return
+	 */
+	public Query<Object> createQueryObject(String hql, Object... values) {
+		Assert.hasText(hql, "对象不能为空！");
+		Query<Object> query = this.currentSession().createQuery(hql,Object.class);
 		if (values != null) {
 			for (int i = 0; i < values.length; i++) {
 				query.setParameter(i, values[i]);

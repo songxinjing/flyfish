@@ -30,7 +30,7 @@ public class Logis implements Serializable {
 	@Id
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	/**
 	 * 该物流方式针对发货国家
@@ -50,7 +50,7 @@ public class Logis implements Serializable {
 	 * 计费模式（1：=Ax+B；2：if x < X, =C else =Dx）
 	 */
 	@Column
-	private int method;
+	private Integer method;
 
 	/**
 	 * 计费模式参数A
@@ -112,11 +112,11 @@ public class Logis implements Serializable {
 	@Transient
 	private BigDecimal platCountryWeight;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -136,11 +136,11 @@ public class Logis implements Serializable {
 		this.country = country;
 	}
 
-	public int getMethod() {
+	public Integer getMethod() {
 		return method;
 	}
 
-	public void setMethod(int method) {
+	public void setMethod(Integer method) {
 		this.method = method;
 	}
 

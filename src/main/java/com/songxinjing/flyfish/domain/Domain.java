@@ -28,7 +28,7 @@ public class Domain implements Serializable {
 	 * 域名排序
 	 */
 	@Column
-	private int orderNum;
+	private Integer orderNum;
 
 	public String getName() {
 		return name;
@@ -38,11 +38,11 @@ public class Domain implements Serializable {
 		this.name = name;
 	}
 
-	public int getOrderNum() {
+	public Integer getOrderNum() {
 		return orderNum;
 	}
 
-	public void setOrderNum(int orderNum) {
+	public void setOrderNum(Integer orderNum) {
 		this.orderNum = orderNum;
 	}
 

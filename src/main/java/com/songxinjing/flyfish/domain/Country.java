@@ -28,7 +28,7 @@ public class Country implements Serializable {
 	@Id
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	/**
 	 * 国家名称
@@ -40,7 +40,7 @@ public class Country implements Serializable {
 	 * 国家排序
 	 */
 	@Column
-	private int orderNum;
+	private Integer orderNum;
 
 	/**
 	 * 该国家物流方式列表
@@ -54,11 +54,11 @@ public class Country implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "country")
 	private List<Weight> weights;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -70,11 +70,11 @@ public class Country implements Serializable {
 		this.name = name;
 	}
 
-	public int getOrderNum() {
+	public Integer getOrderNum() {
 		return orderNum;
 	}
 
-	public void setOrderNum(int orderNum) {
+	public void setOrderNum(Integer orderNum) {
 		this.orderNum = orderNum;
 	}
 

@@ -33,20 +33,16 @@ import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
-import com.songxinjing.flyfish.domain.Logis;
-import com.songxinjing.flyfish.domain.LogisProd;
 import com.songxinjing.flyfish.domain.Platform;
+import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.User;
-import com.songxinjing.flyfish.domain.Weight;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
-import com.songxinjing.flyfish.service.ExchangeService;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
-import com.songxinjing.flyfish.service.LogisProdService;
-import com.songxinjing.flyfish.service.PlatformService;
-import com.songxinjing.flyfish.service.WeightService;
+import com.songxinjing.flyfish.service.StoreService;
+import com.songxinjing.flyfish.util.BaseUtil;
 import com.songxinjing.flyfish.util.ConfigUtil;
 import com.songxinjing.flyfish.util.ReflectionUtil;
 import com.songxinjing.flyfish.util.SftpUtil;
@@ -61,25 +57,16 @@ import com.songxinjing.flyfish.util.SftpUtil;
 public class ExcelController extends BaseController {
 
 	@Autowired
-	GoodsService goodsService;
+	private GoodsService goodsService;
 
 	@Autowired
-	GoodsPlatService goodsPlatService;
+	private GoodsPlatService goodsPlatService;
 
 	@Autowired
-	GoodsImgService goodsImgService;
+	private GoodsImgService goodsImgService;
 
 	@Autowired
-	LogisProdService logisProdService;
-
-	@Autowired
-	PlatformService platformService;
-
-	@Autowired
-	ExchangeService exchangeService;
-
-	@Autowired
-	WeightService weightService;
+	private StoreService storeService;
 
 	/**
 	 * 普源数据导入
@@ -97,7 +84,7 @@ public class ExcelController extends BaseController {
 				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
 				for (Map<String, String> obj : data) {
 					String sku = obj.get("SKU");
-					if(StringUtils.isEmpty(sku)){
+					if (StringUtils.isEmpty(sku)) {
 						sku = obj.get("sku");
 					}
 					if (StringUtils.isNotEmpty(sku)) {
@@ -199,7 +186,7 @@ public class ExcelController extends BaseController {
 						} else {
 							goodsPlatService.update(goodsPlat);
 						}
-						
+
 						GoodsImg goodsImg = goodsImgService.find(goodsPlat.getSku());
 						if (goodsImg == null) {
 							goodsImg = new GoodsImg();
@@ -351,87 +338,45 @@ public class ExcelController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "export", method = RequestMethod.POST)
-	public void export(HttpServletResponse response, String skuQuery, String nameQuery, Integer platformId,
-			String domainName, Integer prodId) {
+	@RequestMapping(value = "export", method = RequestMethod.GET)
+	public void export(HttpServletResponse response, Integer storeId, String batchNo) {
 
-		if (skuQuery == null) {
-			skuQuery = "";
-		}
-		
-		LogisProd logisProd = logisProdService.find(prodId);
-
-		Platform platform = platformService.find(platformId);
+		Store store = storeService.find(storeId);
+		Platform platform = store.getPlatform();
+		String hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
+		List<Goods> goodses = goodsService.findHql(hql, storeId, batchNo);
 		Map<String, String> tempFiledMap = ExcelTemp.PLATFORM_TEMP_FIELD.get(platform.getName());
-
-		List<GoodsPlat> goodsPlats = new ArrayList<GoodsPlat>();
-		String hql = "from GoodsPlat where 1=1";
-		if (StringUtils.isNotEmpty(skuQuery)) {
-			hql = hql + " and (sku like ? or parentSku like ?)";
-			goodsPlats = goodsPlatService.findHql(hql, "%" + skuQuery + "%", "%" + skuQuery + "%");
-		} else {
-			goodsPlats = goodsPlatService.findHql(hql);
-		}
-
 		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-		for (GoodsPlat goodsPlat : goodsPlats) {
-			Goods goods = goodsService.find(goodsPlat.getSku());
+
+		for (Goods goods : goodses) {
+			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
+			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
+			String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
 			Map<String, String> map = new HashMap<String, String>();
 			for (String key : tempFiledMap.keySet()) {
 				if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
-					Object obj = ReflectionUtil.getFieldValue(goodsPlat, tempFiledMap.get(key));
-					if (obj != null) {
-						map.put(key, obj.toString());
+					if (goodsImg != null && (key.contains("image") || key.contains("Image"))) {
+						String img = (String) ReflectionUtil.getFieldValue(goodsImg, tempFiledMap.get(key));
+						map.put(key, "http://" + store.getDomainName() + "/" + img);
+					} else if (goodsPlat != null) {
+						Object obj = ReflectionUtil.getFieldValue(goodsPlat, tempFiledMap.get(key));
+						if (obj != null) {
+							map.put(key, obj.toString());
+						}
 					}
-				}
-				if (key.contains("image") || key.contains("Image")) {
-					map.put(key,
-							"http://" + domainName + "/" + goodsPlat.getSku() + "-" + tempFiledMap.get(key) + ".jpg");
 				}
 			}
 
-			BigDecimal shippingPrice = new BigDecimal(0);
 			String weight = goods.getWeight();
 			if (StringUtils.isEmpty(weight)) {
 				weight = "0";
 			}
-			List<Logis> logises = logisProd.getLogises();
-			for (Logis logis : logises) {
-				Weight temp = new Weight();
-				temp.setPlatform(platform);
-				temp.setCountry(logis.getCountry());
-				List<Weight> list = weightService.find(temp);
-				BigDecimal rate = new BigDecimal(0);
-				if (list != null && !list.isEmpty()) {
-					rate = list.get(0).getRate().divide(new BigDecimal(100));
-				}
-				if (logis.getMethod() == 1 && logis.getParaA() != null && logis.getParaB() != null) {
-					shippingPrice = shippingPrice.add(
-							logis.getParaA().multiply(new BigDecimal(weight)).add(logis.getParaB()).multiply(rate));
-				} else if (logis.getMethod() == 2 && logis.getParaC() != null && logis.getParaX() != null
-						&& logis.getParaD() != null) {
-					if (logis.getParaX().compareTo(new BigDecimal(weight)) > 0) {
-						shippingPrice = shippingPrice.add(logis.getParaC().multiply(rate));
-					} else {
-						shippingPrice = shippingPrice
-								.add(logis.getParaD().multiply(new BigDecimal(weight)).multiply(rate));
-					}
-				}
-			}
-			shippingPrice = shippingPrice.setScale(2, RoundingMode.HALF_UP);
-			String costPrice = goods.getCostPrice();
-			if (StringUtils.isEmpty(costPrice)) {
-				costPrice = "0";
-			}
-			BigDecimal platformRate = platform.getRate().divide(new BigDecimal(100));
-			BigDecimal profitRate = platform.getProfitRate().divide(new BigDecimal(100));
-			BigDecimal cutRate = platform.getCutRate().divide(new BigDecimal(100));
-			BigDecimal tempRate = new BigDecimal(1).subtract(platformRate).subtract(profitRate);
-			BigDecimal exchangeRate = exchangeService.find(Constant.USD_CNY).getRate();
 
-			BigDecimal price = shippingPrice.add(new BigDecimal(costPrice)).divide(tempRate, 4, RoundingMode.HALF_UP)
-					.divide(cutRate, 4, RoundingMode.HALF_UP).divide(exchangeRate,4, RoundingMode.HALF_UP);
-			price = price.setScale(2, RoundingMode.HALF_UP);
+			BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
+			if (shippingPrice == null) {
+				shippingPrice = new BigDecimal(0);
+			}
+			BigDecimal price = goodsService.getPrice(platform, goods, shippingPrice);
 			BigDecimal msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
 
 			if ("Wish".equals(platform.getName())) {
@@ -443,6 +388,8 @@ public class ExcelController extends BaseController {
 				}
 				map.put("*Shipping", shippingPrice.toString());
 				map.put("*Price", price.toString());
+				map.put("*Unique ID", listingSku);
+				map.put("Parent Unique ID", goods.getParentSku());
 			} else if ("Joom".equals(platform.getName())) {
 				if (StringUtils.isEmpty(map.get("inventory"))) {
 					map.put("inventory", "9999");
@@ -453,6 +400,8 @@ public class ExcelController extends BaseController {
 				map.put("shipping price", shippingPrice.toString());
 				map.put("price", price.toString());
 				map.put("msrp", msrp.toString());
+				map.put("SKU", listingSku);
+				map.put("Parent SKU", goods.getParentSku());
 			}
 			data.add(map);
 		}
@@ -462,8 +411,8 @@ public class ExcelController extends BaseController {
 		File csvFile = ExcelUtil.writeCSV(file, data, headers);
 		try {
 			response.setContentType("multipart/form-data");
-			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode("商品信息-" + platform.getName() + "-" + logisProd.getName()  + "-" + domainName + ".csv", "UTF-8"));
+			response.setHeader("Content-Disposition", "attachment;filename="
+					+ URLEncoder.encode("刊登商品信息-" + platform.getName() + "-" + store.getName() + ".csv", "UTF-8"));
 			OutputStream os = new BufferedOutputStream(response.getOutputStream());
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
 			byte[] buff = new byte[2048];

@@ -1,5 +1,7 @@
 package com.songxinjing.flyfish.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,21 @@ import com.songxinjing.flyfish.service.base.BaseService;
  * 
  */
 @Service
-public class PlatformService extends BaseService<Platform, Integer>{
+public class PlatformService extends BaseService<Platform, Integer> {
 
 	@Autowired
 	public void setSuperDao(PlatformDao dao) {
 		super.setDao(dao);
+	}
+
+	public Platform findByName(String name) {
+		Platform temp = new Platform();
+		temp.setName(name);
+		List<Platform> list = find(temp);
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+		return null;
 	}
 
 }

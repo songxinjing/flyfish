@@ -3,8 +3,11 @@ package com.songxinjing.flyfish.controller;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +28,9 @@ import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
+import com.songxinjing.flyfish.domain.Platform;
 import com.songxinjing.flyfish.domain.Store;
+import com.songxinjing.flyfish.domain.StoreGoods;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
@@ -37,6 +42,7 @@ import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
+import com.songxinjing.flyfish.service.StoreGoodsService;
 import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.util.ReflectionUtil;
 import com.songxinjing.flyfish.util.SftpUtil;
@@ -51,25 +57,28 @@ import com.songxinjing.flyfish.util.SftpUtil;
 public class GoodsController extends BaseController {
 
 	@Autowired
-	GoodsService goodsService;
+	private GoodsService goodsService;
 
 	@Autowired
-	GoodsPlatService goodsPlatService;
+	private GoodsPlatService goodsPlatService;
 
 	@Autowired
-	GoodsImgService goodsImgService;
+	private GoodsImgService goodsImgService;
 
 	@Autowired
-	DomainService domainService;
+	private DomainService domainService;
 
 	@Autowired
-	PlatformService platformService;
+	private PlatformService platformService;
 
 	@Autowired
-	LogisProdService logisProdService;
-	
+	private LogisProdService logisProdService;
+
 	@Autowired
-	StoreService storeService;
+	private StoreService storeService;
+
+	@Autowired
+	private StoreGoodsService storeGoodsService;
 
 	@RequestMapping(value = "goods/list")
 	public String list(Model model, Integer page, Integer pageSize, GoodsQueryForm form) {
@@ -99,7 +108,7 @@ public class GoodsController extends BaseController {
 		Map<String, Object> paraMap = new HashMap<String, Object>();
 		if (storeId == 0) {
 			hql = "select goods from Goods as goods where 1=1 ";
-		} else if(storeId == -1){
+		} else if (storeId == -1) {
 			hql = "select goods from Goods as goods left join goods.stores as store where store.id is null ";
 		} else {
 			hql = "select goods from Goods as goods left join goods.stores as store where (store.id is null or store.id != :storeId) ";
@@ -190,7 +199,6 @@ public class GoodsController extends BaseController {
 		pageModel.setRecList(list);
 
 		model.addAttribute("pageModel", pageModel);
-
 		model.addAttribute("page", page);
 		model.addAttribute("pageSize", pageSize);
 		model.addAttribute("queryForm", form);
@@ -204,9 +212,13 @@ public class GoodsController extends BaseController {
 	public String edit(Model model, String sku) {
 		logger.info("进入商品详情页面");
 		GoodsForm form = new GoodsForm();
-		form.setGoods(goodsService.find(sku));
+		Goods goods = goodsService.find(sku);
+		form.setGoods(goods);
 		form.setGoodsPlat(goodsPlatService.find(sku));
 		form.setGoodsImg(goodsImgService.find(sku));
+		Platform platform = platformService.findByName(Constant.Joom);
+		BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
+		form.setJoomPrice(goodsService.getPrice(platform, goods, shippingPrice));
 		model.addAttribute("form", form);
 		return "goods/edit";
 	}
@@ -294,15 +306,15 @@ public class GoodsController extends BaseController {
 		String name = sku + "-" + imgName + System.currentTimeMillis() + ".jpg";
 		ReflectionUtil.setFieldValue(goodsImg, imgName, name);
 		goodsImgService.save(goodsImg);
-		
-	    try {
-	    	File temp = File.createTempFile("temp", ".jpg");
+
+		try {
+			File temp = File.createTempFile("temp", ".jpg");
 			file.transferTo(temp);
 			SftpUtil.doFTP(name, temp);
 		} catch (IllegalStateException | IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return true;
 	}
 
@@ -315,24 +327,33 @@ public class GoodsController extends BaseController {
 		goodsImgService.save(goodsImg);
 		return true;
 	}
-	
+
 	@RequestMapping(value = "goods/joinstore", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean joinStore(String skus, Integer storeId) {
 		Store store = storeService.find(storeId);
-		if(store != null){
+		if (store != null) {
+			Date d = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			String batchNo = sdf.format(d);
 			for (String sku : skus.split(",")) {
-				if(StringUtils.isNotEmpty(sku)){
+				if (StringUtils.isNotEmpty(sku)) {
 					Goods goods = goodsService.find(sku.trim());
-					if(goods != null){
-						store.getGoodses().add(goods);
+					if (goods != null) {
+						String hql = "from StoreGoods where store.id = ? and goods.sku = ? ";
+						StoreGoods sg = new StoreGoods();
+						sg.setGoods(goods);
+						sg.setStore(store);
+						if (storeGoodsService.findHql(hql, storeId, sku).isEmpty()) {
+							sg.setBatchNo(batchNo);
+							storeGoodsService.save(sg);
+						}
 					}
 				}
 			}
-			storeService.update(store);
 			return true;
 		}
-		return false;	
+		return false;
 	}
 
 }

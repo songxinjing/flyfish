@@ -31,7 +31,7 @@ public class Platform implements Serializable {
 	@Id
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	/**
 	 * 平台名称
@@ -43,7 +43,7 @@ public class Platform implements Serializable {
 	 * 平台排序
 	 */
 	@Column
-	private int orderNum;
+	private Integer orderNum;
 
 	/**
 	 * 平台费率（%）
@@ -90,11 +90,11 @@ public class Platform implements Serializable {
 	private List<Store> stores;
 
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -106,11 +106,11 @@ public class Platform implements Serializable {
 		this.name = name;
 	}
 
-	public int getOrderNum() {
+	public Integer getOrderNum() {
 		return orderNum;
 	}
 
-	public void setOrderNum(int orderNum) {
+	public void setOrderNum(Integer orderNum) {
 		this.orderNum = orderNum;
 	}
 

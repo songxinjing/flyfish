@@ -29,7 +29,7 @@ public class Weight implements Serializable {
 	@Id
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	/**
 	 * 权重值（%）
@@ -69,11 +69,11 @@ public class Weight implements Serializable {
 	@Column
 	private Timestamp modifyTm;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

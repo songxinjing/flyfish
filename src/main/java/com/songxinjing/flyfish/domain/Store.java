@@ -3,14 +3,15 @@ package com.songxinjing.flyfish.domain;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * 店铺信息表实体类
@@ -29,7 +30,7 @@ public class Store implements Serializable {
 	@Id
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	/**
 	 * 店铺名称
@@ -41,7 +42,7 @@ public class Store implements Serializable {
 	 * 店铺排序
 	 */
 	@Column
-	private int orderNum;
+	private Integer orderNum;
 
 	/**
 	 * 该店铺所属平台
@@ -55,19 +56,24 @@ public class Store implements Serializable {
 	 */
 	@Column(length = 64)
 	private String domainName;
-	
+
 	/**
-	 * 刊登商品列表
+	 * 店铺ListingSKU变换位移
 	 */
-	@ManyToMany
-	private Set<Goods> goodses;
+	@Column
+	private Integer move;
 
+	/**
+	 * 该店铺关联商品
+	 */
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "store")
+	private Set<StoreGoods> storeGoodses;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -79,11 +85,11 @@ public class Store implements Serializable {
 		this.name = name;
 	}
 
-	public int getOrderNum() {
+	public Integer getOrderNum() {
 		return orderNum;
 	}
 
-	public void setOrderNum(int orderNum) {
+	public void setOrderNum(Integer orderNum) {
 		this.orderNum = orderNum;
 	}
 
@@ -103,12 +109,20 @@ public class Store implements Serializable {
 		this.domainName = domainName;
 	}
 
-	public Set<Goods> getGoodses() {
-		return goodses;
+	public Set<StoreGoods> getStoreGoodses() {
+		return storeGoodses;
 	}
 
-	public void setGoodses(Set<Goods> goodses) {
-		this.goodses = goodses;
+	public void setStoreGoodses(Set<StoreGoods> storeGoodses) {
+		this.storeGoodses = storeGoodses;
+	}
+
+	public Integer getMove() {
+		return move;
+	}
+
+	public void setMove(Integer move) {
+		this.move = move;
 	}
 
 }

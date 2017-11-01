@@ -118,6 +118,28 @@ public abstract class BaseService<T, PK extends Serializable> {
 	public List<T> findHql(final String hql, final Object... values) {
 		return dao.findHql(hql, values);
 	}
+	
+	/**
+	 * HQL查询
+	 * 
+	 * @param queryString
+	 * @param values
+	 * @return
+	 */
+	public List<Object> findHqlObject(final String hql, final Object... values) {
+		return dao.findHqlObject(hql, values);
+	}
+	
+	/**
+	 * HQL查询
+	 * 
+	 * @param queryString
+	 * @param values
+	 * @return
+	 */
+	public Object findHqlAObject(final String hql, final Object... values) {
+		return dao.findHqlAObject(hql, values);
+	}
 
 	/**
 	 * HQL查询

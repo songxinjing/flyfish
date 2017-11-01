@@ -26,7 +26,7 @@
 	}
 
 	#div-overflow-front {
-		width: 1800px;
+		width: 1860px;
 		position: relative;
 	}
 </style>
@@ -40,7 +40,22 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<div class="col-md-12">
-			<button type="button" class="btn btn-info" data-toggle='modal' data-target='#exportModal'>导出刊登</button>
+		<form class="form-horizontal" >
+			<div class="form-group">
+				<label class="col-sm-2 control-label">选择批次号：</label>
+				<div class="col-sm-3">
+					<select name="batchNo" class="form-control" id="batchNoSelect">
+	                #foreach($!batOpt in $!batchNos)
+						<option value="$!batOpt" #if($!batOpt==$!batchNo) selected#end>$!batOpt</option>
+					#end
+	            	</select>
+	            </div>
+	            <div class="col-sm-7">
+	            	<button type="button" class="btn btn-danger" onclick="window.location.href='${rc.contextPath}/publish/removeall.html?storeId=$!{store.id}&batchNo=$!{batchNo}'">移除批次</button>
+					<button type="button" class="btn btn-info margin-bottom" onclick="window.open('${rc.contextPath}/export.html?storeId=$!{store.id}&batchNo=$!{batchNo}')">导出刊登</button>
+				</div>
+			</div>
+			</form>
 		</div>
 		<div class="clearfix"></div>
 	</div>
@@ -56,6 +71,7 @@
 						<th width="115px">操作</th>
 						<th width="60px">Listing<br>主图</th>
 						<th width="60px">SKU<br>主图</th>
+						<th width="60px">Listing SKU</th>
 						<th width="60px">SKU</th>
 						<th width="60px">商品<br>编码</th>
 						<th width="100px">商品<br>名称</th>
@@ -92,6 +108,7 @@
 							/></td>
 						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"
 							/></td>
+						<td>$!{rec.listingSku}</td>
 						<td>$!{rec.goods.sku}</td>
 						<td>$!{rec.goods.parentSku}</td>
 						<td>$!{rec.goods.name}</td>
@@ -153,5 +170,10 @@
 			return false;
 		}
 	}
+	
+	$("#batchNoSelect").on("change", function () {
+		var batchNo = $(this).children('option:selected').val();
+		window.location.href="${rc.contextPath}/publish/list.html?storeId=$!{store.id}&batchNo=" + batchNo;
+	})
 
 </script>

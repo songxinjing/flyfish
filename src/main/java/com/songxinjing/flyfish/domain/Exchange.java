@@ -41,7 +41,7 @@ public class Exchange implements Serializable {
 	 * 汇率排序
 	 */
 	@Column
-	private int orderNum;
+	private Integer orderNum;
 
 	public String getCode() {
 		return code;
@@ -67,11 +67,11 @@ public class Exchange implements Serializable {
 		this.rate = rate;
 	}
 
-	public int getOrderNum() {
+	public Integer getOrderNum() {
 		return orderNum;
 	}
 
-	public void setOrderNum(int orderNum) {
+	public void setOrderNum(Integer orderNum) {
 		this.orderNum = orderNum;
 	}
 
