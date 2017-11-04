@@ -42,7 +42,7 @@
 					    data-platformid="$!rec.platform.id"
 					    data-platformname="$!rec.platform.name"
 					    >修改</button>
-					    <button type="button" class="btn btn-danger btn-sm" onclick="window.location.href='${rc.contextPath}/store/del.html?id=$!rec.id'">删除</button>
+					    <button type="button" class="btn btn-danger btn-sm" onclick="del('$!rec.id')">删除</button>
 					  </td>
 			        </tr>
 				#end
@@ -168,4 +168,11 @@
 	  modal.find("#domainName").val(domainName);
 	  modal.find("#move").val(move);
 	})
+	
+	function del(id) {
+		base.confirm("您确定要删除该店铺吗？",function () {
+			window.location.href="${rc.contextPath}/store/del.html?id="+id;
+		}, function () {
+		});
+	}
 </script>

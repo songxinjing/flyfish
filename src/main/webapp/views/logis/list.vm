@@ -75,7 +75,7 @@
             					    data-prodid="$!{prodForm.logisProd.id}"
             					    data-prodname="$!{prodForm.logisProd.name}"
             					    >修改</button>
-            					    <button type="button" class="btn btn-danger btn-sm" onclick="window.location.href='${rc.contextPath}/logis/del.html?id=$!rec.id&platId=$!platId'">删除</button>
+            					    <button type="button" class="btn btn-danger btn-sm" onclick="del('$!rec.id','$!platId')">删除</button>
             					  </td>
             			        </tr>
             				#end
@@ -307,5 +307,12 @@
 	  modal.find("#paraX").val(paraX);
 	  modal.find("#paraD").val(paraD);
 	})
+	
+	function del(id,platId) {
+		base.confirm("您确定要删除该物流方式吗？",function () {
+			window.location.href="${rc.contextPath}/logis/del.html?id="+id+"&platId="+platId;
+		}, function () {
+		});
+	}
 
 </script>

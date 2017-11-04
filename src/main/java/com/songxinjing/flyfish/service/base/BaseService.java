@@ -94,7 +94,11 @@ public abstract class BaseService<T, PK extends Serializable> {
 	 *            主键
 	 */
 	public void delete(final PK id) {
-		delete(find(id));
+		T obj = find(id);
+		if (obj != null) {
+			delete(obj);
+		}
+
 	}
 
 	/**
@@ -118,7 +122,7 @@ public abstract class BaseService<T, PK extends Serializable> {
 	public List<T> findHql(final String hql, final Object... values) {
 		return dao.findHql(hql, values);
 	}
-	
+
 	/**
 	 * HQL查询
 	 * 
@@ -129,7 +133,7 @@ public abstract class BaseService<T, PK extends Serializable> {
 	public List<Object> findHqlObject(final String hql, final Object... values) {
 		return dao.findHqlObject(hql, values);
 	}
-	
+
 	/**
 	 * HQL查询
 	 * 
@@ -162,7 +166,7 @@ public abstract class BaseService<T, PK extends Serializable> {
 	public List<T> findPage(String hql, int from, int size, final Object... values) {
 		return dao.findPage(hql, from, size, values);
 	}
-	
+
 	/**
 	 * 分页查询
 	 * 

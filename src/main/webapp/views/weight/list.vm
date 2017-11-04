@@ -44,7 +44,7 @@
 					    data-platformname="$!rec.platform.name"
 					    data-rate="$!rec.rate" 
 					    >修改</button>
-					    <button type="button" class="btn btn-danger btn-sm" onclick="window.location.href='${rc.contextPath}/weight/del.html?id=$!rec.id'">删除</button>
+					    <button type="button" class="btn btn-danger btn-sm" onclick="del('$!rec.id')">删除</button>
 					  </td>
 			        </tr>
 				#end
@@ -159,4 +159,11 @@
 	  modal.find("#countryName").text(countryName);
 	  modal.find("#rate").val(rate);
 	})
+	
+	function del(id) {
+		base.confirm("您确定要删除该国家权重吗？",function () {
+			window.location.href="${rc.contextPath}/weight/del.html?id="+id;
+		}, function () {
+		});
+	}
 </script>

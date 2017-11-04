@@ -38,7 +38,7 @@
             					    data-cutrate="$!rec.cutRate"
             					    data-weightstrategy="$!rec.weightStrategy"
             					    data-prodstrategyid="$!{rec.prodStrategy.id}" >修改</button>
-						<button type="button" class="btn btn-danger btn-sm" onclick="window.location.href='${rc.contextPath}/platform/delete.html?id=$!{rec.id}'">删除</button>
+						<button type="button" class="btn btn-danger btn-sm" onclick="del('$!{rec.id}')">删除</button>
 					  </td>
 			        </tr>
 				#end
@@ -214,5 +214,12 @@
 	  modal.find("#weightStrategy").val(weightStrategy);
 	  modal.find("#prodStrategyId").val(prodStrategyId);
 	})
+	
+	function del(id) {
+		base.confirm("您确定要删除该平台吗？",function () {
+			window.location.href="${rc.contextPath}/platform/delete.html?id="+id;
+		}, function () {
+		});
+	}
 
 </script>

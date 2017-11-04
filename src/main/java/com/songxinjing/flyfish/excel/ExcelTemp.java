@@ -3,6 +3,8 @@ package com.songxinjing.flyfish.excel;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.songxinjing.flyfish.constant.Constant;
+
 public class ExcelTemp {
 
 	/**
@@ -145,13 +147,13 @@ public class ExcelTemp {
 		COMMON_FIELD.put("交易费", "");
 		COMMON_FIELD.put("毛利率", "");
 		COMMON_FIELD.put("计算售价", "");
-		
+
 		COMMON_FIELD.put("停售时间", "stopTm");
 		COMMON_FIELD.put("停售原因", "stopReson");
 		COMMON_FIELD.put("是否带磁", "");
 		COMMON_FIELD.put("功能", "");
 		COMMON_FIELD.put("组合品", "isJoin");
-		
+
 		COMMON_FIELD.put("简拼", "");
 		COMMON_FIELD.put("采购渠道", "");
 		COMMON_FIELD.put("所有仓库库存数量", "allNum");
@@ -228,11 +230,11 @@ public class ExcelTemp {
 	public static final Map<String, Map<String, String>> PLATFORM_TEMP_FIELD = new LinkedHashMap<String, Map<String, String>>();
 	static {
 		PLATFORM_TEMP_FIELD.put("Common", COMMON_FIELD);
-		PLATFORM_TEMP_FIELD.put("Ebay", null);
-		PLATFORM_TEMP_FIELD.put("Amazon", null);
-		PLATFORM_TEMP_FIELD.put("AliExpress", null);
-		PLATFORM_TEMP_FIELD.put("Wish", WISH_FIELD);
-		PLATFORM_TEMP_FIELD.put("Joom", JOOM_FIELD);
+		PLATFORM_TEMP_FIELD.put(Constant.Ebay, null);
+		PLATFORM_TEMP_FIELD.put(Constant.Amazon, null);
+		PLATFORM_TEMP_FIELD.put(Constant.AliExpress, null);
+		PLATFORM_TEMP_FIELD.put(Constant.Wish, WISH_FIELD);
+		PLATFORM_TEMP_FIELD.put(Constant.Joom, JOOM_FIELD);
 	}
 
 	/**
@@ -241,10 +243,10 @@ public class ExcelTemp {
 	public static final Map<String, String> PLATFORM_TEMP_FILE = new LinkedHashMap<String, String>();
 	static {
 		PLATFORM_TEMP_FILE.put("Common", COMMON);
-		PLATFORM_TEMP_FILE.put("Ebay", "");
-		PLATFORM_TEMP_FILE.put("Amazon", "");
-		PLATFORM_TEMP_FILE.put("AliExpress", "");
-		PLATFORM_TEMP_FILE.put("Wish", WISH);
-		PLATFORM_TEMP_FILE.put("Joom", JOOM);
+		PLATFORM_TEMP_FILE.put(Constant.Ebay, "");
+		PLATFORM_TEMP_FILE.put(Constant.Amazon, "");
+		PLATFORM_TEMP_FILE.put(Constant.AliExpress, "");
+		PLATFORM_TEMP_FILE.put(Constant.Wish, WISH);
+		PLATFORM_TEMP_FILE.put(Constant.Joom, JOOM);
 	}
 }

@@ -22,7 +22,7 @@
 			        <tr>
 			          <td>$!{rec.name}</td>
 					  <td>
-						<button type="button" class="btn btn-danger btn-sm" onclick="window.location.href='${rc.contextPath}/domain/delete.html?name=$!{rec.name}'">删除</button>
+						<button type="button" class="btn btn-danger btn-sm" onclick="del('$!{rec.name}')">删除</button>
 					  </td>
 			        </tr>
 				#end
@@ -85,6 +85,13 @@
         }
     });
   })
+  
+  function del(name) {
+		base.confirm("您确定要删除该域名吗？",function () {
+			window.location.href="${rc.contextPath}/domain/delete.html?name="+name;
+		}, function () {
+		});
+	}
   
 
 </script>

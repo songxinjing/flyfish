@@ -168,16 +168,28 @@ public class ExcelController extends BaseController {
 				String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
 				List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
 				for (Map<String, String> obj : data) {
-					if (StringUtils.isNotEmpty(obj.get("*Unique ID"))) {
-						GoodsPlat goodsPlat = goodsPlatService.find(obj.get("*Unique ID"));
+					String csvSku = obj.get("*Unique ID");
+					if (StringUtils.isNotEmpty(csvSku)) {
+						int flag = csvSku.indexOf("*");
+						String sku = csvSku;
+						if(flag > 0){
+							sku = csvSku.substring(0, flag);
+						}
+						GoodsPlat goodsPlat = goodsPlatService.find(sku);
 						if (goodsPlat == null) {
 							goodsPlat = new GoodsPlat();
 						}
 						for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-							if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
-								ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
+							if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
+								if("*Unique ID".equals(key)){
+									ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), sku);
+								} else{
+									ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
+								}
 							}
 						}
+						
+						
 						goodsPlat.setModifyId(user.getUserId());
 						goodsPlat.setModifyer(user.getName());
 						goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
@@ -379,25 +391,25 @@ public class ExcelController extends BaseController {
 			BigDecimal price = goodsService.getPrice(platform, goods, shippingPrice);
 			BigDecimal msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
 
-			if ("Wish".equals(platform.getName())) {
+			if (Constant.Wish.equals(platform.getName())) {
 				if (StringUtils.isEmpty(map.get("*Quantity"))) {
 					map.put("*Quantity", "9999");
 				}
 				if (StringUtils.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
 					map.put("Shipping Time(enter without \" \", just the estimated days )", "15-35");
 				}
-				map.put("*Shipping", shippingPrice.toString());
+				map.put("*Shipping", "1");
 				map.put("*Price", price.toString());
 				map.put("*Unique ID", listingSku);
 				map.put("Parent Unique ID", goods.getParentSku());
-			} else if ("Joom".equals(platform.getName())) {
+			} else if (Constant.Joom.equals(platform.getName())) {
 				if (StringUtils.isEmpty(map.get("inventory"))) {
 					map.put("inventory", "9999");
 				}
 				if (StringUtils.isEmpty(map.get("shipping days"))) {
 					map.put("shipping days", "15-35");
 				}
-				map.put("shipping price", shippingPrice.toString());
+				map.put("shipping price", "0");
 				map.put("price", price.toString());
 				map.put("msrp", msrp.toString());
 				map.put("SKU", listingSku);

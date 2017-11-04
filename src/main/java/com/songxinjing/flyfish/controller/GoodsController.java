@@ -88,7 +88,7 @@ public class GoodsController extends BaseController {
 			page = 1;
 		}
 		if (pageSize == null) {
-			pageSize = 10;
+			pageSize = Constant.PAGE_SIZE;;
 		}
 		int total = 0;
 
@@ -109,9 +109,9 @@ public class GoodsController extends BaseController {
 		if (storeId == 0) {
 			hql = "select goods from Goods as goods where 1=1 ";
 		} else if (storeId == -1) {
-			hql = "select goods from Goods as goods left join goods.stores as store where store.id is null ";
+			hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id is null ";
 		} else {
-			hql = "select goods from Goods as goods left join goods.stores as store where (store.id is null or store.id != :storeId) ";
+			hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where (store.id is null or store.id != :storeId) ";
 			paraMap.put("storeId", storeId);
 		}
 
@@ -229,6 +229,19 @@ public class GoodsController extends BaseController {
 		goodsService.delete(sku);
 		goodsPlatService.delete(sku);
 		goodsImgService.delete(sku);
+		return "redirect:/goods/list.html";
+	}
+	
+	@RequestMapping(value = "goods/deleteall", method = RequestMethod.GET)
+	public String deleteall(String skus) {
+		logger.info("批量删除商品信息");
+		for (String sku : skus.split(",")) {
+			if (StringUtils.isNotEmpty(sku)) {
+				goodsService.delete(sku.trim());
+				goodsPlatService.delete(sku.trim());
+				goodsImgService.delete(sku.trim());
+			}
+		}
 		return "redirect:/goods/list.html";
 	}
 

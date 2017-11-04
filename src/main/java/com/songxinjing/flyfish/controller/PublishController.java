@@ -83,10 +83,8 @@ public class PublishController extends BaseController {
 
 	@RequestMapping(value = "publish/remove", method = RequestMethod.GET)
 	public String remove(Model model, Integer storeId, String sku) {
-		StoreGoods sg = new StoreGoods();
-		sg.setStore(storeService.find(storeId));
-		sg.setGoods(goodsService.find(sku));
-		List<StoreGoods> list = storeGoodsService.find(sg);
+		String hql = "select sg from StoreGoods as sg left join sg.store as store left join sg.goods as goods where store.id = ? and goods.sku = ? ";
+		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, sku);
 		String batchNo = null;
 		if (!list.isEmpty()) {
 			batchNo = list.get(0).getBatchNo();
@@ -97,10 +95,9 @@ public class PublishController extends BaseController {
 
 	@RequestMapping(value = "publish/removeall", method = RequestMethod.GET)
 	public String removeall(Model model, Integer storeId, String batchNo) {
-		StoreGoods sg = new StoreGoods();
-		sg.setBatchNo(batchNo);
-		sg.setStore(storeService.find(storeId));
-		storeGoodsService.delete(storeGoodsService.find(sg));
+		String hql = "select sg from StoreGoods as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
+		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, batchNo);
+		storeGoodsService.delete(list);
 		return list(model, storeId, null);
 	}
 

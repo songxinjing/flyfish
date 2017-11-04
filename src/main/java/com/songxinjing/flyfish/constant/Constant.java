@@ -15,7 +15,7 @@ public class Constant {
 	/**
 	 * 分页组件：每页显示数目
 	 */
-	public static final int PAGE_SIZE = 10;
+	public static final int PAGE_SIZE = 50;
 
 	/**
 	 * 汇率代码：美元／人民币

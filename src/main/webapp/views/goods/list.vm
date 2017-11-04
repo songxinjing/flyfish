@@ -124,6 +124,7 @@
 						-->
 						<button type="submit" class="btn btn-info">查询</button>
 						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#joinStoreModal'>加入店铺</button>
+						<button type="button" class="btn btn-danger" onclick="delall()">批量删除</button>
 						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#importModal'>普源导入</button>
 						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#wishImportModal'>Wish导入</button>
 					</div>
@@ -176,7 +177,7 @@
 						<td><input name="btnSelectItem" type="checkbox" value="$!{rec.goods.sku}"></td>
 						<td>
 							<button type="button" class="btn btn-warning btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button>
-							<button type="button" class="btn btn-danger btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/delete.html?sku=$!{rec.goods.sku}'">删除</button>
+							<button type="button" class="btn btn-danger btn-sm margin-bottom" onclick="del('$!{rec.goods.sku}')">删除</button>
 						</td>
 						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"
 							/></td>
@@ -363,6 +364,26 @@
 			}
 			return false;
 		}
+	}
+	
+	function del(sku) {
+		base.confirm("您确定要删除该商品吗？",function () {
+			window.location.href="${rc.contextPath}/goods/delete.html?sku="+sku;
+		}, function () {
+		});
+	}
+	
+	function delall() {
+		base.confirm("您确定要删除选中的所有商品吗？",function () {
+			var skus = "";
+	        $("input[name='btnSelectItem']").each(function() {
+	            if($(this).is(':checked')){
+					skus = skus + $(this).val() + ",";
+				}
+	        });
+			window.location.href="${rc.contextPath}/goods/deleteall.html?skus="+skus;
+		}, function () {
+		});
 	}
 
 	$("#btnImport").on("click", function () {

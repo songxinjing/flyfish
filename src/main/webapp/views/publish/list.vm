@@ -51,8 +51,8 @@
 	            	</select>
 	            </div>
 	            <div class="col-sm-7">
-	            	<button type="button" class="btn btn-danger" onclick="window.location.href='${rc.contextPath}/publish/removeall.html?storeId=$!{store.id}&batchNo=$!{batchNo}'">移除批次</button>
-					<button type="button" class="btn btn-info margin-bottom" onclick="window.open('${rc.contextPath}/export.html?storeId=$!{store.id}&batchNo=$!{batchNo}')">导出刊登</button>
+	            	<button type="button" class="btn btn-danger" onclick="removeall('$!{store.id}','$!{batchNo}')">移除批次</button>
+					<button type="button" class="btn btn-info" onclick="window.open('${rc.contextPath}/export.html?storeId=$!{store.id}&batchNo=$!{batchNo}')">导出刊登</button>
 				</div>
 			</div>
 			</form>
@@ -101,8 +101,8 @@
 					#end #foreach($rec in $!goodsForms)
 					<tr>
 						<td>
-							<button type="button" class="btn btn-warning btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button>
-							<button type="button" class="btn btn-danger btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/publish/remove.html?storeId=$!{store.id}&sku=$!{rec.goods.sku}'">移除</button>
+							<button type="button" class="btn btn-warning btn-sm" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button>
+							<button type="button" class="btn btn-danger btn-sm" onclick="remove('$!{store.id}','$!{rec.goods.sku}')">移除</button>
 						</td>
 						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"
 							/></td>
@@ -175,5 +175,19 @@
 		var batchNo = $(this).children('option:selected').val();
 		window.location.href="${rc.contextPath}/publish/list.html?storeId=$!{store.id}&batchNo=" + batchNo;
 	})
+	
+	function remove(storeId,sku) {
+		base.confirm("您确定要从店铺中移除该商品吗？",function () {
+			window.location.href="${rc.contextPath}/publish/remove.html?storeId="+storeId+"&sku="+sku;
+		}, function () {
+		});
+	}
+	
+	function removeall(storeId,batchNo) {
+		base.confirm("您确定要从店铺中移除该批次所有商品吗？",function () {
+			window.location.href="${rc.contextPath}/publish/removeall.html?storeId="+storeId+"&batchNo="+batchNo;
+		}, function () {
+		});
+	}
 
 </script>
