@@ -162,12 +162,8 @@
         url: "${rc.contextPath}/platform/add.html",
         data: $("#addForm").serialize(),
         async: false,
-        error: function(request) {
-        	$("#addModal").modal('hide')
-            base.alert("保存失败!");
-        },
         success: function(data) {
-        	$("#addModal").modal('hide')
+        	$("#addModal").modal('hide');
             window.location.reload();
         }
     });
@@ -185,12 +181,8 @@
         url: "${rc.contextPath}/platform/modify.html",
         data: $("#modifyForm").serialize(),
         async: false,
-        error: function(request) {
-        	$("#modifyModal").modal('hide')
-            base.alert("保存失败!");
-        },
         success: function(data) {
-        	$("#modifyModal").modal('hide')
+        	$("#modifyModal").modal('hide');
             window.location.reload();
         }
     });
@@ -218,7 +210,6 @@
 	function del(id) {
 		base.confirm("您确定要删除该平台吗？",function () {
 			window.location.href="${rc.contextPath}/platform/delete.html?id="+id;
-		}, function () {
 		});
 	}
 

@@ -29,7 +29,7 @@ public class ExcelTemp {
 
 	static {
 		COMMON_FIELD.put("操作类型", "");
-		COMMON_FIELD.put("商品编码", "parentSku");
+		COMMON_FIELD.put("商品编码", "");
 		COMMON_FIELD.put("SKU", "sku");
 		COMMON_FIELD.put("sku", "sku");
 		COMMON_FIELD.put("多款式", "isMoreSytle");

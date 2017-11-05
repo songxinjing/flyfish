@@ -311,7 +311,6 @@
 	function del(id,platId) {
 		base.confirm("您确定要删除该物流方式吗？",function () {
 			window.location.href="${rc.contextPath}/logis/del.html?id="+id+"&platId="+platId;
-		}, function () {
 		});
 	}
 

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +48,7 @@ import com.songxinjing.flyfish.util.ReflectionUtil;
 import com.songxinjing.flyfish.util.SftpUtil;
 
 /**
- * 主页控制类
+ * 商品导入导出控制类
  * 
  * @author songxinjing
  * 
@@ -68,17 +68,9 @@ public class ExcelController extends BaseController {
 	@Autowired
 	private StoreService storeService;
 
-	/**
-	 * 普源数据导入
-	 * 
-	 * @param request
-	 * @param file
-	 * @return
-	 */
 	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
 	public String load(HttpServletRequest request, MultipartFile file) {
-		logger.info("Excel导入common模版数据");
-
+		logger.info("Excel导入普源模版数据");
 		if (!file.isEmpty()) {
 			try {
 				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
@@ -93,7 +85,7 @@ public class ExcelController extends BaseController {
 							goods = new Goods();
 						}
 						for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
-							if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)) {
+							if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)) {
 								ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
 							}
 						}
@@ -107,6 +99,30 @@ public class ExcelController extends BaseController {
 						} else {
 							goodsService.update(goods);
 						}
+
+						for (Goods moreGoods : goodsService.findMoreSku(sku + "*")) {
+							String skuMore = moreGoods.getSku();
+							int num = Integer.parseInt(skuMore.split("*")[1]);
+							for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
+								if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)
+										&& !"sku".equals(ExcelTemp.COMMON_FIELD.get(key))) {
+									if ("weight".equals(ExcelTemp.COMMON_FIELD.get(key))) {
+										BigDecimal bgWeight = new BigDecimal(obj.get(key));
+										moreGoods.setWeight(bgWeight.multiply(new BigDecimal(num)).toString());
+									} else if ("costPrice".equals(ExcelTemp.COMMON_FIELD.get(key))) {
+										BigDecimal bgCostPrice = new BigDecimal(obj.get(key));
+										moreGoods.setCostPrice(bgCostPrice.multiply(new BigDecimal(num)).toString());
+									} else {
+										ReflectionUtil.setFieldValue(moreGoods, ExcelTemp.COMMON_FIELD.get(key),
+												obj.get(key));
+									}
+								}
+							}
+							moreGoods.setModifyId(user.getUserId());
+							moreGoods.setModifyer(user.getName());
+							moreGoods.setModifyTm(new Timestamp(System.currentTimeMillis()));
+							goodsService.update(moreGoods);
+						}
 					}
 				}
 			} catch (IOException e) {
@@ -114,49 +130,6 @@ public class ExcelController extends BaseController {
 			}
 		}
 		return "redirect:/goods/list.html";
-	}
-
-	/**
-	 * 普源数据导出
-	 * 
-	 * @param response
-	 */
-	@RequestMapping(value = "excel/export/common", method = RequestMethod.GET)
-	public void exportCommon(HttpServletResponse response) {
-		logger.info("Excel导出模版数据");
-
-		List<Goods> goodses = goodsService.find();
-
-		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-		for (Goods goods : goodses) {
-			Map<String, String> map = new HashMap<String, String>();
-			for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
-				if (!StringUtils.isEmpty(ExcelTemp.COMMON_FIELD.get(key))) {
-					Object obj = ReflectionUtil.getFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key));
-					map.put(key, obj.toString());
-				}
-			}
-			data.add(map);
-		}
-
-		String temp = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.COMMON;
-
-		try {
-			Workbook workbook = ExcelUtil.writeExcel(new FileInputStream(temp), data);
-			response.setContentType("multipart/form-data");
-			response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("商品信息.xls", "UTF-8"));
-			OutputStream os = new BufferedOutputStream(response.getOutputStream());
-			workbook.write(os);
-			os.flush();
-			os.close();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@RequestMapping(value = "csv/import/wish", method = RequestMethod.POST)
@@ -168,57 +141,67 @@ public class ExcelController extends BaseController {
 				String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
 				List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
 				for (Map<String, String> obj : data) {
-					String csvSku = obj.get("*Unique ID");
-					if (StringUtils.isNotEmpty(csvSku)) {
-						int flag = csvSku.indexOf("*");
-						String sku = csvSku;
-						if(flag > 0){
-							sku = csvSku.substring(0, flag);
-						}
-						GoodsPlat goodsPlat = goodsPlatService.find(sku);
-						if (goodsPlat == null) {
-							goodsPlat = new GoodsPlat();
-						}
-						for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-							if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
-								if("*Unique ID".equals(key)){
-									ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), sku);
-								} else{
-									ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
+					String sku = obj.get("*Unique ID");
+					if (StringUtils.isNotEmpty(sku)) {
+						Goods goods = goodsService.find(sku);
+						if (goods == null) {
+							if (sku.contains("*")) {
+								String mainSku = sku.split("\\*")[0];
+								int num = Integer.parseInt(sku.split("\\*")[1]);
+								Goods mainGoods = goodsService.find(mainSku);
+								if (mainGoods != null) {
+									Goods temp = new Goods();
+									BeanUtils.copyProperties(mainGoods, temp);
+									temp.setSku(sku);
+									BigDecimal bgWeight = new BigDecimal(mainGoods.getWeight());
+									temp.setWeight(bgWeight.multiply(new BigDecimal(num)).toString());
+									BigDecimal bgCostPrice = new BigDecimal(mainGoods.getCostPrice());
+									temp.setCostPrice(bgCostPrice.multiply(new BigDecimal(num)).toString());
+									temp.setStoreGoodses(null);
+									goodsService.save(temp);
+									goods = goodsService.find(sku);
 								}
 							}
 						}
-						
-						
-						goodsPlat.setModifyId(user.getUserId());
-						goodsPlat.setModifyer(user.getName());
-						goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
-						if (goodsService.find(obj.get("*Unique ID")) == null) {
-							goodsPlatService.save(goodsPlat);
-						} else {
-							goodsPlatService.update(goodsPlat);
-						}
+						if (goods != null) {
+							GoodsPlat goodsPlat = goodsPlatService.find(sku);
+							if (goodsPlat == null) {
+								goodsPlat = new GoodsPlat();
+							}
+							for (String key : ExcelTemp.WISH_FIELD.keySet()) {
+								if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
+									ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key),
+											obj.get(key));
+								}
+							}
+							if (goodsPlatService.find(sku) == null) {
+								goodsPlatService.save(goodsPlat);
+							} else {
+								goodsPlatService.update(goodsPlat);
+							}
 
-						GoodsImg goodsImg = goodsImgService.find(goodsPlat.getSku());
-						if (goodsImg == null) {
-							goodsImg = new GoodsImg();
-						}
-						goodsImg.setSku(goodsPlat.getSku());
-						goodsImg.setParentSku(goodsPlat.getParentSku());
-						for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-							if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
-								if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
-									SftpUtil.startFTP(obj.get(key),
-											goodsPlat.getSku() + "-" + ExcelTemp.WISH_FIELD.get(key) + ".jpg");
-									ReflectionUtil.setFieldValue(goodsImg, ExcelTemp.WISH_FIELD.get(key),
-											goodsPlat.getSku() + "-" + ExcelTemp.WISH_FIELD.get(key) + ".jpg");
+							GoodsImg goodsImg = goodsImgService.find(sku);
+							if (goodsImg == null) {
+								goodsImg = new GoodsImg();
+							}
+							goodsImg.setSku(sku);
+							for (String key : ExcelTemp.WISH_FIELD.keySet()) {
+								if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
+									if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
+										SftpUtil.startFTP(sku,ExcelTemp.WISH_FIELD.get(key),obj.get(key));
+									}
 								}
 							}
-						}
-						if (goodsImgService.find(goodsPlat.getSku()) == null) {
-							goodsImgService.save(goodsImg);
-						} else {
-							goodsImgService.update(goodsImg);
+							if (goodsImgService.find(sku) == null) {
+								goodsImgService.save(goodsImg);
+							} else {
+								goodsImgService.update(goodsImg);
+							}
+
+							goods.setModifyId(user.getUserId());
+							goods.setModifyer(user.getName());
+							goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
+							goodsService.update(goods);
 						}
 					}
 				}
@@ -227,127 +210,6 @@ public class ExcelController extends BaseController {
 			}
 		}
 		return "redirect:/goods/list.html";
-	}
-
-	@RequestMapping(value = "csv/export/wish", method = RequestMethod.GET)
-	public void exportWish(HttpServletResponse response) {
-		logger.info("导出Wish模版数据");
-		List<GoodsPlat> goodses = goodsPlatService.find();
-		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-		for (GoodsPlat goods : goodses) {
-			Map<String, String> map = new HashMap<String, String>();
-			for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-				if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
-					Object obj = ReflectionUtil.getFieldValue(goods, ExcelTemp.WISH_FIELD.get(key));
-					map.put(key, obj.toString());
-				}
-			}
-			data.add(map);
-		}
-		String file = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.WISH;
-		String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
-		File csvFile = ExcelUtil.writeCSV(file, data, headers);
-		try {
-			response.setContentType("multipart/form-data");
-			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode("商品信息-WISH.csv", "UTF-8"));
-			OutputStream os = new BufferedOutputStream(response.getOutputStream());
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
-			byte[] buff = new byte[2048];
-			while (true) {
-				int bytesRead;
-				if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
-					break;
-				os.write(buff, 0, bytesRead);
-			}
-			bis.close();
-			os.flush();
-			os.close();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@RequestMapping(value = "csv/import/joom", method = RequestMethod.POST)
-	public String loadJoom(HttpServletRequest request, MultipartFile file) {
-		logger.info("CSV导入Joom模版数据");
-		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
-		if (!file.isEmpty()) {
-			try {
-				String[] headers = ExcelTemp.JOOM_FIELD.keySet().toArray(new String[] {});
-				List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
-				int i = 0;
-				for (Map<String, String> obj : data) {
-					if (StringUtils.isNotEmpty(obj.get("SKU")) && goodsPlatService.find(obj.get("SKU")) == null) {
-						GoodsPlat goodsPlat = new GoodsPlat();
-						for (String key : ExcelTemp.JOOM_FIELD.keySet()) {
-							if (!StringUtils.isEmpty(ExcelTemp.JOOM_FIELD.get(key)) && obj.containsKey(key)) {
-								ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.JOOM_FIELD.get(key), obj.get(key));
-							}
-						}
-						goodsPlat.setModifyId(user.getUserId());
-						goodsPlat.setModifyer(user.getName());
-						goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
-						goodsPlatService.save(goodsPlat);
-					}
-					i++;
-					if (i == 100) {
-						Thread.sleep(1000);
-						i = 0;
-					}
-				}
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return "redirect:/goods/list.html";
-	}
-
-	@RequestMapping(value = "csv/export/joom", method = RequestMethod.GET)
-	public void exportJoom(HttpServletResponse response) {
-		logger.info("导出Joom模版数据");
-		List<GoodsPlat> goodses = goodsPlatService.find();
-		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
-		for (GoodsPlat goods : goodses) {
-			Map<String, String> map = new HashMap<String, String>();
-			for (String key : ExcelTemp.JOOM_FIELD.keySet()) {
-				if (!StringUtils.isEmpty(ExcelTemp.JOOM_FIELD.get(key))) {
-					Object obj = ReflectionUtil.getFieldValue(goods, ExcelTemp.JOOM_FIELD.get(key));
-					map.put(key, obj.toString());
-				}
-			}
-			data.add(map);
-		}
-		String file = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.JOOM;
-		String[] headers = ExcelTemp.JOOM_FIELD.keySet().toArray(new String[] {});
-		File csvFile = ExcelUtil.writeCSV(file, data, headers);
-		try {
-			response.setContentType("multipart/form-data");
-			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode("商品信息-JOOM.csv", "UTF-8"));
-			OutputStream os = new BufferedOutputStream(response.getOutputStream());
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
-			byte[] buff = new byte[2048];
-			while (true) {
-				int bytesRead;
-				if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
-					break;
-				os.write(buff, 0, bytesRead);
-			}
-			bis.close();
-			os.flush();
-			os.close();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@RequestMapping(value = "export", method = RequestMethod.GET)
@@ -363,59 +225,63 @@ public class ExcelController extends BaseController {
 		for (Goods goods : goodses) {
 			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
 			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
-			String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
-			Map<String, String> map = new HashMap<String, String>();
-			for (String key : tempFiledMap.keySet()) {
-				if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
-					if (goodsImg != null && (key.contains("image") || key.contains("Image"))) {
-						String img = (String) ReflectionUtil.getFieldValue(goodsImg, tempFiledMap.get(key));
-						map.put(key, "http://" + store.getDomainName() + "/" + img);
-					} else if (goodsPlat != null) {
-						Object obj = ReflectionUtil.getFieldValue(goodsPlat, tempFiledMap.get(key));
-						if (obj != null) {
-							map.put(key, obj.toString());
+			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice()) 
+					&& StringUtils.isNotEmpty(goodsPlat.getTitle()) && StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
+				String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
+				String listingParentSku = BaseUtil.changeSku(goodsPlat.getParentSku(), store.getMove());
+				Map<String, String> map = new HashMap<String, String>();
+				for (String key : tempFiledMap.keySet()) {
+					if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
+						if (goodsImg != null && (key.contains("image") || key.contains("Image"))) {
+							String img = (String) ReflectionUtil.getFieldValue(goodsImg, tempFiledMap.get(key));
+							map.put(key, "http://" + store.getDomainName() + "/" + img);
+						} else if (goodsPlat != null) {
+							Object obj = ReflectionUtil.getFieldValue(goodsPlat, tempFiledMap.get(key));
+							if (obj != null) {
+								map.put(key, obj.toString());
+							}
 						}
 					}
 				}
-			}
 
-			String weight = goods.getWeight();
-			if (StringUtils.isEmpty(weight)) {
-				weight = "0";
-			}
+				String weight = goods.getWeight();
+				if (StringUtils.isEmpty(weight)) {
+					weight = "0";
+				}
 
-			BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
-			if (shippingPrice == null) {
-				shippingPrice = new BigDecimal(0);
-			}
-			BigDecimal price = goodsService.getPrice(platform, goods, shippingPrice);
-			BigDecimal msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
+				BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
+				if (shippingPrice == null) {
+					shippingPrice = new BigDecimal(0);
+				}
+				BigDecimal price = goodsService.getPrice(platform, goods, shippingPrice);
+				BigDecimal msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
 
-			if (Constant.Wish.equals(platform.getName())) {
-				if (StringUtils.isEmpty(map.get("*Quantity"))) {
-					map.put("*Quantity", "9999");
+				if (Constant.Wish.equals(platform.getName())) {
+					if (StringUtils.isEmpty(map.get("*Quantity"))) {
+						map.put("*Quantity", "9999");
+					}
+					if (StringUtils.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
+						map.put("Shipping Time(enter without \" \", just the estimated days )", "15-35");
+					}
+					map.put("*Shipping", "1");
+					map.put("*Price", price.toString());
+					map.put("*Unique ID", listingSku);
+					map.put("Parent Unique ID", listingParentSku);
+				} else if (Constant.Joom.equals(platform.getName())) {
+					if (StringUtils.isEmpty(map.get("inventory"))) {
+						map.put("inventory", "9999");
+					}
+					if (StringUtils.isEmpty(map.get("shipping days"))) {
+						map.put("shipping days", "15-35");
+					}
+					map.put("shipping price", "0");
+					map.put("price", price.toString());
+					map.put("msrp", msrp.toString());
+					map.put("SKU", listingSku);
+					map.put("Parent SKU", listingParentSku);
 				}
-				if (StringUtils.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
-					map.put("Shipping Time(enter without \" \", just the estimated days )", "15-35");
-				}
-				map.put("*Shipping", "1");
-				map.put("*Price", price.toString());
-				map.put("*Unique ID", listingSku);
-				map.put("Parent Unique ID", goods.getParentSku());
-			} else if (Constant.Joom.equals(platform.getName())) {
-				if (StringUtils.isEmpty(map.get("inventory"))) {
-					map.put("inventory", "9999");
-				}
-				if (StringUtils.isEmpty(map.get("shipping days"))) {
-					map.put("shipping days", "15-35");
-				}
-				map.put("shipping price", "0");
-				map.put("price", price.toString());
-				map.put("msrp", msrp.toString());
-				map.put("SKU", listingSku);
-				map.put("Parent SKU", goods.getParentSku());
+				data.add(map);
 			}
-			data.add(map);
 		}
 		String file = ConfigUtil.getValue("/config.properties", "workDir")
 				+ ExcelTemp.PLATFORM_TEMP_FILE.get(platform.getName());
@@ -423,8 +289,8 @@ public class ExcelController extends BaseController {
 		File csvFile = ExcelUtil.writeCSV(file, data, headers);
 		try {
 			response.setContentType("multipart/form-data");
-			response.setHeader("Content-Disposition", "attachment;filename="
-					+ URLEncoder.encode("刊登商品信息-" + platform.getName() + "-" + store.getName() + ".csv", "UTF-8"));
+			response.setHeader("Content-Disposition",
+					"attachment;filename=" + URLEncoder.encode(store.getName() + "-" + batchNo + ".csv", "UTF-8"));
 			OutputStream os = new BufferedOutputStream(response.getOutputStream());
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
 			byte[] buff = new byte[2048];

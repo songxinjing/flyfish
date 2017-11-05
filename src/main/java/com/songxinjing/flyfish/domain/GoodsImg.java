@@ -25,12 +25,6 @@ public class GoodsImg implements Serializable {
 	private String sku;
 
 	/**
-	 * 商品编码
-	 */
-	@Column(length = 32)
-	private String parentSku;
-
-	/**
 	 * main image URL
 	 */
 	@Column(length = 128)
@@ -114,14 +108,6 @@ public class GoodsImg implements Serializable {
 
 	public void setSku(String sku) {
 		this.sku = sku;
-	}
-
-	public String getParentSku() {
-		return parentSku;
-	}
-
-	public void setParentSku(String parentSku) {
-		this.parentSku = parentSku;
 	}
 
 	public String getMainImgUrl() {

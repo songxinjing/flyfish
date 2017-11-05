@@ -6,21 +6,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.songxinjing.flyfish.domain.User;
-
 public abstract class BaseController {
 
 	protected static Logger logger = LoggerFactory.getLogger(BaseController.class);
-
-	/**
-	 * 获取当前登录用户信息
-	 * 
-	 * @param request
-	 * @return
-	 */
-	public User getLoginUser(HttpServletRequest request) {
-		return null;
-	}	
 
 	/**
 	 * 获取当前登录用户的IP地址

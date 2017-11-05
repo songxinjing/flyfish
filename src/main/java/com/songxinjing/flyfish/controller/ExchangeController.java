@@ -14,7 +14,7 @@ import com.songxinjing.flyfish.domain.Exchange;
 import com.songxinjing.flyfish.service.ExchangeService;
 
 /**
- * 商品管理控制类
+ * 汇率管理控制类
  * 
  * @author songxinjing
  * 
@@ -27,11 +27,9 @@ public class ExchangeController extends BaseController {
 
 	@RequestMapping(value = "exchange/list", method = RequestMethod.GET)
 	public String prodList(Model model) {
-		logger.info("进入物流产品列表页面");
-
+		logger.info("进入汇率列表页面");
 		List<Exchange> recList = exchangeService.find();
 		model.addAttribute("recList", recList);
-
 		return "exchange/list";
 	}
 

@@ -1,7 +1,6 @@
 package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -151,25 +150,6 @@ public class GoodsPlat implements Serializable {
 	 */
 	@Column(length = 128)
 	private String eImgUrl10;
-
-
-	/**
-	 * 最后修改人ID
-	 */
-	@Column(length = 16)
-	private String modifyId;
-
-	/**
-	 * 最后修改人
-	 */
-	@Column(length = 16)
-	private String modifyer;
-
-	/**
-	 * 最后修改时间
-	 */
-	@Column
-	private Timestamp modifyTm;
 
 	public String getSku() {
 		return sku;
@@ -345,30 +325,6 @@ public class GoodsPlat implements Serializable {
 
 	public void seteImgUrl10(String eImgUrl10) {
 		this.eImgUrl10 = eImgUrl10;
-	}
-
-	public String getModifyId() {
-		return modifyId;
-	}
-
-	public void setModifyId(String modifyId) {
-		this.modifyId = modifyId;
-	}
-
-	public String getModifyer() {
-		return modifyer;
-	}
-
-	public void setModifyer(String modifyer) {
-		this.modifyer = modifyer;
-	}
-
-	public Timestamp getModifyTm() {
-		return modifyTm;
-	}
-
-	public void setModifyTm(Timestamp modifyTm) {
-		this.modifyTm = modifyTm;
 	}
 
 }

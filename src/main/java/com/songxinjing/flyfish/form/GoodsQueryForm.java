@@ -7,9 +7,14 @@ public class GoodsQueryForm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 商品编码列表（分号隔开）
+	 * sku列表（分号隔开）
 	 */
-	private String parentSkus;
+	private String skus;
+
+	/**
+	 * 商品名称
+	 */
+	private String name;
 
 	/**
 	 * 大类名称
@@ -55,18 +60,18 @@ public class GoodsQueryForm implements Serializable {
 	 * 创建时间（结束）
 	 */
 	private String createTmEnd;
-	
+
 	/**
 	 * 排除店铺ID
 	 */
 	private int storeId;
 
-	public String getParentSkus() {
-		return parentSkus;
+	public String getSkus() {
+		return skus;
 	}
 
-	public void setParentSkus(String parentSkus) {
-		this.parentSkus = parentSkus;
+	public void setSkus(String skus) {
+		this.skus = skus;
 	}
 
 	public String getBigCataName() {
@@ -148,5 +153,13 @@ public class GoodsQueryForm implements Serializable {
 	public void setStoreId(int storeId) {
 		this.storeId = storeId;
 	}
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

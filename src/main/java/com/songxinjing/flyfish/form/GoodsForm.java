@@ -19,6 +19,8 @@ public class GoodsForm implements Serializable {
 	
 	private String listingSku;
 	
+	private String listingParentSku;
+	
 	private BigDecimal wishPrice;
 	
 	private BigDecimal smtPrice;
@@ -140,5 +142,13 @@ public class GoodsForm implements Serializable {
 	public void setShopeePrice(BigDecimal shopeePrice) {
 		this.shopeePrice = shopeePrice;
 	}
-	
+
+	public String getListingParentSku() {
+		return listingParentSku;
+	}
+
+	public void setListingParentSku(String listingParentSku) {
+		this.listingParentSku = listingParentSku;
+	}
+
 }

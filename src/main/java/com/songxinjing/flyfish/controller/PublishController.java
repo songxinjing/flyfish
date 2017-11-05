@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.GoodsImg;
+import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.StoreGoods;
 import com.songxinjing.flyfish.form.GoodsForm;
@@ -47,8 +49,12 @@ public class PublishController extends BaseController {
 	private StoreGoodsService storeGoodsService;
 
 	@RequestMapping(value = "publish/list")
-	public String list(Model model, Integer storeId, String batchNo) {
+	public String list(Model model, Integer storeId, String batchNo, Boolean dataFlag) {
 		logger.info("进入刊登店铺列表页面");
+
+		if (dataFlag == null) {
+			dataFlag = true;
+		}
 
 		Store store = storeService.find(storeId);
 
@@ -63,18 +69,31 @@ public class PublishController extends BaseController {
 		hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
 		List<Goods> goodses = goodsService.findHql(hql, storeId, batchNo);
 
-		List<GoodsForm> list = new ArrayList<GoodsForm>();
+		List<GoodsForm> listT = new ArrayList<GoodsForm>();
+		List<GoodsForm> listF = new ArrayList<GoodsForm>();
 		for (Goods goods : goodses) {
 			GoodsForm goodsForm = new GoodsForm();
+			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
+			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
 			goodsForm.setGoods(goods);
-			goodsForm.setGoodsPlat(goodsPlatService.find(goods.getSku()));
-			goodsForm.setGoodsImg(goodsImgService.find(goods.getSku()));
+			goodsForm.setGoodsPlat(goodsPlat);
+			goodsForm.setGoodsImg(goodsImg);
 			goodsForm.setListingSku(BaseUtil.changeSku(goods.getSku(), store.getMove()));
-			list.add(goodsForm);
+			goodsForm.setListingParentSku(BaseUtil.changeSku(goodsPlat.getParentSku(), store.getMove()));
+			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice()) 
+					&& StringUtils.isNotEmpty(goodsPlat.getTitle()) && StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
+				listT.add(goodsForm);
+			} else {
+				listF.add(goodsForm);
+			}
 		}
-
-		model.addAttribute("goodsForms", list);
+		if (dataFlag) {
+			model.addAttribute("goodsForms", listT);
+		} else {
+			model.addAttribute("goodsForms", listF);
+		}
 		model.addAttribute("batchNo", batchNo);
+		model.addAttribute("dataFlag", dataFlag);
 		model.addAttribute("batchNos", batchNos);
 		model.addAttribute("store", store);
 
@@ -82,7 +101,7 @@ public class PublishController extends BaseController {
 	}
 
 	@RequestMapping(value = "publish/remove", method = RequestMethod.GET)
-	public String remove(Model model, Integer storeId, String sku) {
+	public String remove(Model model, Integer storeId, String sku, Boolean dataFlag) {
 		String hql = "select sg from StoreGoods as sg left join sg.store as store left join sg.goods as goods where store.id = ? and goods.sku = ? ";
 		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, sku);
 		String batchNo = null;
@@ -90,7 +109,7 @@ public class PublishController extends BaseController {
 			batchNo = list.get(0).getBatchNo();
 			storeGoodsService.delete(list);
 		}
-		return list(model, storeId, batchNo);
+		return list(model, storeId, batchNo,dataFlag);
 	}
 
 	@RequestMapping(value = "publish/removeall", method = RequestMethod.GET)
@@ -98,7 +117,7 @@ public class PublishController extends BaseController {
 		String hql = "select sg from StoreGoods as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
 		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, batchNo);
 		storeGoodsService.delete(list);
-		return list(model, storeId, null);
+		return list(model, storeId, null,null);
 	}
 
 }

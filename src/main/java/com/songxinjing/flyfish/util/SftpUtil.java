@@ -46,8 +46,6 @@ public class SftpUtil {
 		} catch (FileSystemException e) {
 			e.printStackTrace();
 		}
-
-		
 		
 		for (int index = 0; index < 3; index++) {
 			Runnable sftper = new Runnable() {
@@ -70,18 +68,21 @@ public class SftpUtil {
 	private static LinkedBlockingQueue<SftpJob> sftpJobs = new LinkedBlockingQueue<SftpJob>();
 
 	private static class SftpJob {
-		private String url;
+		
+		private String sku;
 		private String name;
+		private String url;
 
-		private SftpJob(String url, String name) {
-			this.url = url;
+		private SftpJob(String sku, String name, String url) {
+			this.sku = sku;
 			this.name = name;
+			this.url = url;
 		}
 	}
 
-	public static void startFTP(String url, String name) {
+	public static void startFTP(String sku, String name, String url) {
 
-		SftpJob sftpJob = new SftpJob(url, name);
+		SftpJob sftpJob = new SftpJob(sku,name,url);
 		try {
 			sftpJobs.put(sftpJob);
 		} catch (InterruptedException e) {
@@ -94,15 +95,17 @@ public class SftpUtil {
 
 		try {
 			URL fileUrl = new URL(sftpJob.url);
-			String path = remoteDirectory + "/" + sftpJob.name;
+			String path = remoteDirectory + "/" + sftpJob.sku + "-" +sftpJob.name + ".jpg";
 			URI sftpUri = new URI("sftp", userInfo, serverAddress, -1, path, null, null);
 			FileObject remoteFile = manager.resolveFile(sftpUri.toString(), opts);
 			// Create local file object
 			FileObject localFile = manager.resolveFile(fileUrl);
 			// Copy local file to sftp server
 			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
+			
 		} catch (MalformedURLException | FileSystemException | URISyntaxException e) {
 			e.printStackTrace();
+			return;
 		}
 	}
 	

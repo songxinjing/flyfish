@@ -103,12 +103,8 @@
         url: "${rc.contextPath}/logisprod/add.html",
         data: $("#addForm").serialize(),
         async: false,
-        error: function(request) {
-        	$("#addModal").modal('hide')
-            base.alert("保存失败!");
-        },
         success: function(data) {
-        	$("#addModal").modal('hide')
+        	$("#addModal").modal('hide');
             window.location.reload();
         }
     });
@@ -126,12 +122,8 @@
         url: "${rc.contextPath}/logisprod/modify.html",
         data: $("#modifyForm").serialize(),
         async: false,
-        error: function(request) {
-        	$("#modifyModal").modal('hide')
-            base.alert("保存失败!");
-        },
         success: function(data) {
-        	$("#modifyModal").modal('hide')
+        	$("#modifyModal").modal('hide');
             window.location.reload();
         }
     });
@@ -149,7 +141,6 @@
 	function del(id) {
 		base.confirm("您确定要删除该物流产品吗？",function () {
 			window.location.href="${rc.contextPath}/logisprod/delete.html?id="+id;
-		}, function () {
 		});
 	}
 

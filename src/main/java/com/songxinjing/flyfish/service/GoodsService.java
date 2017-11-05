@@ -2,6 +2,7 @@ package com.songxinjing.flyfish.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,11 @@ public class GoodsService extends BaseService<Goods, String> {
 			price = price.setScale(2, RoundingMode.HALF_UP);
 		}
 		return price;
+	}
+	
+	public List<Goods> findMoreSku(String skuTemp){
+		String hql = "from Goods where sku like ?";
+		return this.findHql(hql, "skuTemp%");
 	}
 
 }

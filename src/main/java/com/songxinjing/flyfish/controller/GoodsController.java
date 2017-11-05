@@ -83,7 +83,6 @@ public class GoodsController extends BaseController {
 	@RequestMapping(value = "goods/list")
 	public String list(Model model, Integer page, Integer pageSize, GoodsQueryForm form) {
 		logger.info("进入商品列表页面");
-
 		if (page == null) {
 			page = 1;
 		}
@@ -91,7 +90,7 @@ public class GoodsController extends BaseController {
 			pageSize = Constant.PAGE_SIZE;;
 		}
 		int total = 0;
-
+		String name = "";
 		String bigCataName = "";
 		String smallCataName = "";
 		String bussOwner1 = "";
@@ -101,8 +100,7 @@ public class GoodsController extends BaseController {
 		String isElectric = "";
 		String createTmBegin = "";
 		String createTmEnd = "";
-		String parentSkus = "";
-
+		String skus = "";
 		int storeId = form.getStoreId();
 		String hql = "";
 		Map<String, Object> paraMap = new HashMap<String, Object>();
@@ -114,42 +112,41 @@ public class GoodsController extends BaseController {
 			hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where (store.id is null or store.id != :storeId) ";
 			paraMap.put("storeId", storeId);
 		}
-
+		if (StringUtils.isNotEmpty(form.getName())) {
+			name = form.getName().trim();
+			hql = hql + "and goods.name like :name ";
+			paraMap.put("name", "%" + name + "%");
+		}
 		if (StringUtils.isNotEmpty(form.getBigCataName())) {
 			bigCataName = form.getBigCataName().trim();
-			hql = hql + "and goods.bigCataName like :bigCataName ";
-			paraMap.put("bigCataName", "%" + bigCataName + "%");
+			hql = hql + "and goods.bigCataName = :bigCataName ";
+			paraMap.put("bigCataName", bigCataName);
 		}
 		if (StringUtils.isNotEmpty(form.getSmallCataName())) {
 			smallCataName = form.getSmallCataName().trim();
-			hql = hql + "and goods.smallCataName like :smallCataName ";
-			paraMap.put("smallCataName", "%" + smallCataName + "%");
+			hql = hql + "and goods.smallCataName = :smallCataName ";
+			paraMap.put("smallCataName", smallCataName);
 		}
-
 		if (StringUtils.isNotEmpty(form.getBussOwner1())) {
 			bussOwner1 = form.getBussOwner1().trim();
-			hql = hql + "and goods.bussOwner1 like :bussOwner1 ";
-			paraMap.put("bussOwner1", "%" + bussOwner1 + "%");
+			hql = hql + "and goods.bussOwner1 = :bussOwner1 ";
+			paraMap.put("bussOwner1", bussOwner1);
 		}
-
 		if (StringUtils.isNotEmpty(form.getBussOwner2())) {
 			bussOwner2 = form.getBussOwner2().trim();
-			hql = hql + "and goods.bussOwner2 like :bussOwner2 ";
-			paraMap.put("bussOwner2", "%" + bussOwner2 + "%");
+			hql = hql + "and goods.bussOwner2 = :bussOwner2 ";
+			paraMap.put("bussOwner2", bussOwner2);
 		}
-
 		if (StringUtils.isNotEmpty(form.getBuyer())) {
 			buyer = form.getBuyer().trim();
-			hql = hql + "and goods.buyer like :buyer ";
-			paraMap.put("buyer", "%" + buyer + "%");
+			hql = hql + "and goods.buyer = :buyer ";
+			paraMap.put("buyer", buyer);
 		}
-
 		if (StringUtils.isNotEmpty(form.getState())) {
 			state = form.getState().trim();
 			hql = hql + "and goods.state = :state ";
 			paraMap.put("state", state);
 		}
-
 		if (StringUtils.isNotEmpty(form.getIsElectric())) {
 			isElectric = form.getIsElectric().trim();
 			hql = hql + "and goods.isElectric = :isElectric ";
@@ -164,13 +161,13 @@ public class GoodsController extends BaseController {
 			paraMap.put("createTmEnd", createTmEnd);
 		}
 
-		if (StringUtils.isNotEmpty(form.getParentSkus())) {
-			parentSkus = form.getParentSkus().replaceAll("，", ",");
+		if (StringUtils.isNotEmpty(form.getSkus())) {
+			skus = form.getSkus().replaceAll("，", ",");
 			List<String> inParas = new ArrayList<String>();
-			for (String inPara : parentSkus.split(",")) {
+			for (String inPara : skus.split(",")) {
 				inParas.add(inPara.trim());
 			}
-			hql = hql + "and goods.parentSku in  (:inParas) ";
+			hql = hql + "and goods.sku in  (:inParas) ";
 			paraMap.put("inParas", inParas);
 		}
 		total = goodsService.findHql(hql, paraMap).size();
@@ -182,8 +179,8 @@ public class GoodsController extends BaseController {
 		pageModel.setUrl("goods/list.html");
 		pageModel.setPara("?bigCataName=" + bigCataName + "&smallCataName=" + smallCataName + "&bussOwner1="
 				+ bussOwner1 + "&bussOwner2=" + bussOwner2 + "&buyer=" + buyer + "&state=" + state + "&isElectric="
-				+ isElectric + "&createTmBegin=" + createTmBegin + "&createTmEnd=" + createTmEnd + "&parentSkus="
-				+ parentSkus + "&pageSize=" + pageSize + "&");
+				+ isElectric + "&createTmBegin=" + createTmBegin + "&createTmEnd=" + createTmEnd + "&skus="
+				+ skus + "&pageSize=" + pageSize + "&");
 
 		List<Goods> goodses = new ArrayList<Goods>();
 		goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
@@ -197,6 +194,21 @@ public class GoodsController extends BaseController {
 		}
 
 		pageModel.setRecList(list);
+		
+		hql = "select distinct bigCataName from Goods where length(bigCataName) > 0";
+		List<Object> bigCataNames = goodsService.findHqlObject(hql);
+		
+		hql = "select distinct smallCataName from Goods  where length(smallCataName) > 0";
+		List<Object> smallCataNames = goodsService.findHqlObject(hql);
+		
+		hql = "select distinct bussOwner1 from Goods  where length(bussOwner1) > 0";
+		List<Object> bussOwner1s = goodsService.findHqlObject(hql);
+		
+		hql = "select distinct bussOwner2 from Goods  where length(bussOwner2) > 0";
+		List<Object> bussOwner2s = goodsService.findHqlObject(hql);
+		
+		hql = "select distinct buyer from Goods  where length(buyer) > 0";
+		List<Object> buyers = goodsService.findHqlObject(hql);
 
 		model.addAttribute("pageModel", pageModel);
 		model.addAttribute("page", page);
@@ -205,6 +217,12 @@ public class GoodsController extends BaseController {
 		model.addAttribute("platforms", platformService.find());
 		model.addAttribute("domains", domainService.find());
 		model.addAttribute("prods", logisProdService.find());
+		
+		model.addAttribute("bigCataNames", bigCataNames);
+		model.addAttribute("smallCataNames", smallCataNames);
+		model.addAttribute("bussOwner1s", bussOwner1s);
+		model.addAttribute("bussOwner2s", bussOwner2s);
+		model.addAttribute("buyers", buyers);
 		return "goods/list";
 	}
 
@@ -291,13 +309,28 @@ public class GoodsController extends BaseController {
 		goods.setModifyId(user.getUserId());
 		goods.setModifyer(user.getName());
 		goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-
-		goodsPlat.setModifyId(user.getUserId());
-		goodsPlat.setModifyer(user.getName());
-		goodsPlat.setModifyTm(new Timestamp(System.currentTimeMillis()));
-
+		
 		goodsService.update(goods);
 		goodsPlatService.update(goodsPlat);
+		return true;
+	}
+	
+	@RequestMapping(value = "goods/add", method = RequestMethod.POST)
+	@ResponseBody
+	public boolean add(HttpServletRequest request, Model model, String sku) {
+		logger.info("新增商品");
+		Goods goods = goodsService.find(sku);
+		if (goods != null) {
+			return false;
+		}
+		goods = new Goods();
+		goods.setSku(sku);
+		// 获取用户登录信息
+		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+		goods.setModifyId(user.getUserId());
+		goods.setModifyer(user.getName());
+		goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
+		goodsService.save(goods);
 		return true;
 	}
 
@@ -307,7 +340,7 @@ public class GoodsController extends BaseController {
 		logger.info("重新获取图片");
 		GoodsPlat goodsPlat = goodsPlatService.find(sku);
 		String imgUrl = (String) ReflectionUtil.getFieldValue(goodsPlat, imgName);
-		SftpUtil.startFTP(imgUrl, sku + "-" + imgName + ".jpg");
+		//SftpUtil.startFTP(imgUrl, sku + "-" + imgName + ".jpg");
 		return true;
 	}
 

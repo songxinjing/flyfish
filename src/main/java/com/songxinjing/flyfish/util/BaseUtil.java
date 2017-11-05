@@ -7,18 +7,30 @@ public class BaseUtil {
 	
 	protected static final Logger logger = LoggerFactory.getLogger(BaseUtil.class);
 	
-	private static String charOfSku = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static String charOfSku = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
 	public static String changeSku(String sku , int move) {
 		String newSku = "";
 		for( char c : sku.toCharArray()){
 			int index = charOfSku.indexOf(c);
 			if(index >= 0){
-				int newIndex = index + move;
-				if(newIndex >= charOfSku.length()){
-					newIndex = newIndex - sku.length();
+				int m1 = move/26;
+				int m2 = move%26;
+				String str1 = "";
+				String str2 = "";
+				if(m1 > 0){
+					int newIndex1 = index + m1;
+					if(newIndex1 >= charOfSku.length()){
+						newIndex1 = newIndex1 - sku.length();
+					}
+					str1 = charOfSku.charAt(newIndex1) + "";
 				}
-				newSku = newSku + charOfSku.charAt(newIndex);
+				int newIndex2 = index + m2;
+				if(newIndex2 >= charOfSku.length()){
+					newIndex2 = newIndex2 - sku.length();
+				}
+				str2 = charOfSku.charAt(newIndex2) + "";
+				newSku = newSku + str1 + str2;
 			}else{
 				newSku = newSku + c;
 			}
@@ -27,7 +39,7 @@ public class BaseUtil {
 	}
 	
 	public static void main(String[] args){
-		changeSku("BELT-A002",1);
+		System.out.println(changeSku("BELT-A002*4",56));
 	}
 
 }

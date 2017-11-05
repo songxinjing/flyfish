@@ -75,12 +75,8 @@
         url: "${rc.contextPath}/domain/add.html",
         data: $("#addForm").serialize(),
         async: false,
-        error: function(request) {
-        	$("#addModal").modal('hide')
-            base.alert("保存失败!");
-        },
         success: function(data) {
-        	$("#addModal").modal('hide')
+        	$("#addModal").modal('hide');
             window.location.reload();
         }
     });
@@ -89,9 +85,7 @@
   function del(name) {
 		base.confirm("您确定要删除该域名吗？",function () {
 			window.location.href="${rc.contextPath}/domain/delete.html?name="+name;
-		}, function () {
 		});
 	}
   
-
 </script>

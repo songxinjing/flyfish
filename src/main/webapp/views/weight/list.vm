@@ -163,7 +163,6 @@
 	function del(id) {
 		base.confirm("您确定要删除该国家权重吗？",function () {
 			window.location.href="${rc.contextPath}/weight/del.html?id="+id;
-		}, function () {
 		});
 	}
 </script>

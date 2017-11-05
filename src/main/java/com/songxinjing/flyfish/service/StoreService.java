@@ -20,5 +20,15 @@ public class StoreService extends BaseService<Store, Integer>{
 	public void setSuperDao(StoreDao dao) {
 		super.setDao(dao);
 	}
+	
+	public int getNextMove(int platformId){
+		String hql = "select max(move) from Store where platform.id = ? ";
+		Object max = this.findHqlAObject(hql, platformId);
+		int iMax = 0;
+		if(max != null){
+			iMax = (Integer)max;
+		}
+		return iMax+1;
+	}
 
 }

@@ -29,10 +29,10 @@ public class Goods implements Serializable {
 	private String sku;
 
 	/**
-	 * 商品编码
+	 * 关联SKU
 	 */
-	@Column(length = 32)
-	private String parentSku;
+	@Column(length = 255)
+	private String relaSkus;
 
 	/**
 	 * 多款式（是、否）
@@ -328,14 +328,6 @@ public class Goods implements Serializable {
 
 	public void setSku(String sku) {
 		this.sku = sku;
-	}
-
-	public String getParentSku() {
-		return parentSku;
-	}
-
-	public void setParentSku(String parentSku) {
-		this.parentSku = parentSku;
 	}
 
 	public String getIsMoreSytle() {
@@ -722,4 +714,12 @@ public class Goods implements Serializable {
 		this.storeGoodses = storeGoodses;
 	}
 
+	public String getRelaSkus() {
+		return relaSkus;
+	}
+
+	public void setRelaSkus(String relaSkus) {
+		this.relaSkus = relaSkus;
+	}
+	
 }

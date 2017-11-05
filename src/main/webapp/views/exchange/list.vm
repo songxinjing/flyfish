@@ -90,12 +90,8 @@
         url: "${rc.contextPath}/exchange/modify.html",
         data: $("#modifyForm").serialize(),
         async: false,
-        error: function(request) {
-        	$("#modifyModal").modal('hide')
-            base.alert("保存失败!");
-        },
         success: function(data) {
-        	$("#modifyModal").modal('hide')
+        	$("#modifyModal").modal('hide');
             window.location.reload();
         }
     });

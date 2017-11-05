@@ -14,7 +14,7 @@ import com.songxinjing.flyfish.domain.Country;
 import com.songxinjing.flyfish.service.CountryService;
 
 /**
- * 商品管理控制类
+ * 国家管理控制类
  * 
  * @author songxinjing
  * 
@@ -23,15 +23,13 @@ import com.songxinjing.flyfish.service.CountryService;
 public class CountryController extends BaseController {
 
 	@Autowired
-	CountryService countryService;
+	private CountryService countryService;
 
 	@RequestMapping(value = "country/list", method = RequestMethod.GET)
 	public String prodList(Model model) {
-		logger.info("进入物流产品列表页面");
-
+		logger.info("进入国家列表页面");
 		List<Country> recList = countryService.find();
 		model.addAttribute("recList", recList);
-
 		return "country/list";
 	}
 

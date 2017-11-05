@@ -3,12 +3,18 @@
  */
 (function() {
 	var Base = function() {
-		var _alert = function(msg) {
+		var _alert = function(msg,success) {
 			var $alertModal = $("#alertModal");
 			if ($alertModal.length > 0) {
 				$alertModal.modal('show');
 				$(".modal-body", $alertModal).html(
 						"<p class='alert-content'>" + msg + "</p>");
+				$(".modal-footer button", $alertModal).click(function() {
+					if (typeof (success) === "function") {
+						success.call();
+					}
+					$alertModal.modal('hide');
+				});
 			} else {
 				// Modal not Exist!
 				alert(msg);

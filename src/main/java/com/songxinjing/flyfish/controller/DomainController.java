@@ -14,7 +14,7 @@ import com.songxinjing.flyfish.domain.Domain;
 import com.songxinjing.flyfish.service.DomainService;
 
 /**
- * 商品管理控制类
+ * 域名管理控制类
  * 
  * @author songxinjing
  * 
@@ -23,24 +23,20 @@ import com.songxinjing.flyfish.service.DomainService;
 public class DomainController extends BaseController {
 
 	@Autowired
-	DomainService domainService;
+	private DomainService domainService;
 
 	@RequestMapping(value = "domain/list", method = RequestMethod.GET)
 	public String prodList(Model model) {
-		logger.info("进入物流产品列表页面");
-
+		logger.info("进入域名列表页面");
 		List<Domain> recList = domainService.find();
 		model.addAttribute("recList", recList);
-
 		return "domain/list";
 	}
 
 	@RequestMapping(value = "domain/add", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodAdd(Domain form) {
-		String name = (String) domainService.save(form);
-		Domain domain = domainService.find(name);
-		domainService.update(domain);
+		domainService.save(form);
 		return true;
 	}
 

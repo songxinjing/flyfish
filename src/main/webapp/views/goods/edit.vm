@@ -22,8 +22,8 @@
 				<legend>基本信息</legend>
 				<div class="form-group">
 					<label class="col-sm-2 control-label">商品编码</label>
-					<p class="col-sm-2 form-control-static">$!{form.goods.parentSku}</p>
-					<input name="parentSku" type="hidden" value="$!{form.goods.parentSku}">
+					<p class="col-sm-2 form-control-static">$!{form.goodsPlat.parentSku}</p>
+					<input name="parentSku" type="hidden" value="$!{form.goodsPlat.parentSku}">
 					<label class="col-sm-2 control-label">大类名称</label>
 					<div class="col-sm-2">
 						<input name="bigCataName" class="form-control" value="$!{form.goods.bigCataName}" maxlength="20">
@@ -50,7 +50,7 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">关联SKU</label>
 					<div class="col-sm-2">
-						<input name="" class="form-control" value="">
+						<input name="" class="form-control" value="$!{form.goods.relaSkus}">
 					</div>
 					<label class="col-sm-2 control-label">重量（G）</label>
 					<div class="col-sm-2">
@@ -429,8 +429,6 @@
 				</div>
 			</fieldset>
 
-			
-
 		</form>
 	</div>
 </div>
@@ -502,7 +500,6 @@
 <script>
 
 	$().ready(function () {
-
 		$("#editForm").validate();
 		$("#mainImgSelect").imagepicker();
 		$("img").on("error",function(){
@@ -523,9 +520,6 @@
 			url: "${rc.contextPath}/goods/save.html",
 			data: $("#editForm").serialize(),
 			async: false,
-			error: function (request) {
-				base.alert("保存失败!");
-			},
 			success: function (data) {
 				base.alert("保存成功!");
 			}
@@ -547,9 +541,6 @@
 			url: "${rc.contextPath}/goods/reget.html",
 			data: { sku: sku, imgName: imgName },
 			async: false,
-			error: function (request) {
-				base.alert("操作失败!");
-			},
 			success: function (data) {
 				base.alert("尝试重新获取，请稍后刷新！");
 			}
@@ -565,11 +556,8 @@
 			url: "${rc.contextPath}/goods/setmain.html",
 			data: { sku: sku, imgName: imgName },
 			async: false,
-			error: function (request) {
-				base.alert("操作失败!");
-			},
 			success: function (data) {
-				$("#mainImgModal").modal('hide')
+				$("#mainImgModal").modal('hide');
             	window.location.reload();
 			}
 		});
@@ -594,11 +582,8 @@
 			processData : false, 
 			contentType : false,
 			async: false,
-			error: function (request) {
-				base.alert("操作失败!");
-			},
 			success: function (data) {
-				$("#uploadImgModal").modal('hide')
+				$("#uploadImgModal").modal('hide');
             	window.location.reload();
 			}
 		});

@@ -57,12 +57,12 @@ public class StoreController extends BaseController {
 	}
 
 	@RequestMapping(value = "store/add", method = RequestMethod.POST)
-	public String add(HttpServletRequest request, Model model, int platformId, String name, String domainName,Integer move) {
+	public String add(HttpServletRequest request, Model model, int platformId, String name, String domainName) {
 		Store store = new Store();
 		store.setPlatform(platformService.find(platformId));
 		store.setName(name);
 		store.setDomainName(domainName);
-		store.setMove(move);
+		store.setMove(storeService.getNextMove(platformId));
 		// 获取用户登录信息
 		storeService.save(store);
 		request.getSession().setAttribute(Constant.SESSION_STORES,storeService.find());
@@ -70,17 +70,15 @@ public class StoreController extends BaseController {
 	}
 
 	@RequestMapping(value = "store/modify", method = RequestMethod.POST)
-	public String modify(HttpServletRequest request, Model model, int id, int platformId, String name,
-			String domainName,Integer move) {
+	public String modify(HttpServletRequest request, Model model, int id, String name,
+			String domainName) {
 		Store store = storeService.find(id);
-		store.setPlatform(platformService.find(platformId));
 		store.setName(name);
 		store.setDomainName(domainName);
-		store.setMove(move);
 		// 获取用户登录信息
 		storeService.update(store);
 		request.getSession().setAttribute(Constant.SESSION_STORES,storeService.find());
-		return list(model, platformId);
+		return list(model, store.getPlatform().getId());
 	}
 
 	@RequestMapping(value = "store/del", method = RequestMethod.GET)
