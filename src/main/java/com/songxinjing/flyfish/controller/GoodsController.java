@@ -42,10 +42,10 @@ import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
+import com.songxinjing.flyfish.service.SftpService;
 import com.songxinjing.flyfish.service.StoreGoodsService;
 import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.util.ReflectionUtil;
-import com.songxinjing.flyfish.util.SftpUtil;
 
 /**
  * 商品管理控制类
@@ -80,6 +80,9 @@ public class GoodsController extends BaseController {
 	@Autowired
 	private StoreGoodsService storeGoodsService;
 
+	@Autowired
+	private SftpService sftpService;
+
 	@RequestMapping(value = "goods/list")
 	public String list(Model model, Integer page, Integer pageSize, GoodsQueryForm form) {
 		logger.info("进入商品列表页面");
@@ -87,7 +90,8 @@ public class GoodsController extends BaseController {
 			page = 1;
 		}
 		if (pageSize == null) {
-			pageSize = Constant.PAGE_SIZE;;
+			pageSize = Constant.PAGE_SIZE;
+			;
 		}
 		int total = 0;
 		String name = "";
@@ -179,8 +183,8 @@ public class GoodsController extends BaseController {
 		pageModel.setUrl("goods/list.html");
 		pageModel.setPara("?bigCataName=" + bigCataName + "&smallCataName=" + smallCataName + "&bussOwner1="
 				+ bussOwner1 + "&bussOwner2=" + bussOwner2 + "&buyer=" + buyer + "&state=" + state + "&isElectric="
-				+ isElectric + "&createTmBegin=" + createTmBegin + "&createTmEnd=" + createTmEnd + "&skus="
-				+ skus + "&pageSize=" + pageSize + "&");
+				+ isElectric + "&createTmBegin=" + createTmBegin + "&createTmEnd=" + createTmEnd + "&skus=" + skus
+				+ "&pageSize=" + pageSize + "&");
 
 		List<Goods> goodses = new ArrayList<Goods>();
 		goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
@@ -194,19 +198,19 @@ public class GoodsController extends BaseController {
 		}
 
 		pageModel.setRecList(list);
-		
+
 		hql = "select distinct bigCataName from Goods where length(bigCataName) > 0";
 		List<Object> bigCataNames = goodsService.findHqlObject(hql);
-		
+
 		hql = "select distinct smallCataName from Goods  where length(smallCataName) > 0";
 		List<Object> smallCataNames = goodsService.findHqlObject(hql);
-		
+
 		hql = "select distinct bussOwner1 from Goods  where length(bussOwner1) > 0";
 		List<Object> bussOwner1s = goodsService.findHqlObject(hql);
-		
+
 		hql = "select distinct bussOwner2 from Goods  where length(bussOwner2) > 0";
 		List<Object> bussOwner2s = goodsService.findHqlObject(hql);
-		
+
 		hql = "select distinct buyer from Goods  where length(buyer) > 0";
 		List<Object> buyers = goodsService.findHqlObject(hql);
 
@@ -217,7 +221,7 @@ public class GoodsController extends BaseController {
 		model.addAttribute("platforms", platformService.find());
 		model.addAttribute("domains", domainService.find());
 		model.addAttribute("prods", logisProdService.find());
-		
+
 		model.addAttribute("bigCataNames", bigCataNames);
 		model.addAttribute("smallCataNames", smallCataNames);
 		model.addAttribute("bussOwner1s", bussOwner1s);
@@ -249,7 +253,7 @@ public class GoodsController extends BaseController {
 		goodsImgService.delete(sku);
 		return "redirect:/goods/list.html";
 	}
-	
+
 	@RequestMapping(value = "goods/deleteall", method = RequestMethod.GET)
 	public String deleteall(String skus) {
 		logger.info("批量删除商品信息");
@@ -309,12 +313,12 @@ public class GoodsController extends BaseController {
 		goods.setModifyId(user.getUserId());
 		goods.setModifyer(user.getName());
 		goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-		
+
 		goodsService.update(goods);
 		goodsPlatService.update(goodsPlat);
 		return true;
 	}
-	
+
 	@RequestMapping(value = "goods/add", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean add(HttpServletRequest request, Model model, String sku) {
@@ -340,7 +344,7 @@ public class GoodsController extends BaseController {
 		logger.info("重新获取图片");
 		GoodsPlat goodsPlat = goodsPlatService.find(sku);
 		String imgUrl = (String) ReflectionUtil.getFieldValue(goodsPlat, imgName);
-		//SftpUtil.startFTP(imgUrl, sku + "-" + imgName + ".jpg");
+		sftpService.startFTP(sku, imgName, imgUrl);
 		return true;
 	}
 
@@ -356,7 +360,7 @@ public class GoodsController extends BaseController {
 		try {
 			File temp = File.createTempFile("temp", ".jpg");
 			file.transferTo(temp);
-			SftpUtil.doFTP(name, temp);
+			sftpService.doFTP(name, temp);
 		} catch (IllegalStateException | IOException e) {
 			e.printStackTrace();
 		}

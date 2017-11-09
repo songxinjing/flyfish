@@ -42,17 +42,16 @@
 		<div class="col-md-12">
 			<form class="form-horizontal" action="${rc.contextPath}/goods/list.html?page=$!page" method="post">
 				<div class="form-group">
-					<div class="col-sm-7">
+					<div class="col-sm-6">
 						<button type="submit" class="btn btn-info">查询</button>
 						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#joinStoreModal'>加入店铺</button>
 						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#importModal'>普源导入</button>
 						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#wishImportModal'>Wish导入</button>
-						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#skuImportModal'>关联SKU导入</button>
-						<button type="button" class="btn btn-danger" onclick="delall()">批量删除</button>
+						<button type="button" class="btn btn-danger" onclick="delall()">删除</button>
 						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#addModal'>新增</button>
 					</div>
-					<div class="col-sm-5">
-    					<label class="col-sm-3 control-label">排除已加入：</label>
+					<div class="col-sm-6">
+    					<label class="col-sm-3 control-label">排除店铺：</label>
     					<div class="col-sm-4">
     						<select name="storeId" class="form-control">
     		                <option value="0" #if($!{queryForm.storeId}=='0') selected#end>不排除</option>

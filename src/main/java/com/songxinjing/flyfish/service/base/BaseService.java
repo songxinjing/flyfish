@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.songxinjing.flyfish.dao.base.BaseDao;
 
 /**
@@ -14,6 +17,8 @@ import com.songxinjing.flyfish.dao.base.BaseDao;
  * 
  */
 public abstract class BaseService<T, PK extends Serializable> {
+	
+	protected static Logger logger = LoggerFactory.getLogger(BaseService.class);
 
 	protected BaseDao<T, PK> dao;
 

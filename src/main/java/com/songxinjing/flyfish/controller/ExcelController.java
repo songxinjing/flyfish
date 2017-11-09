@@ -41,11 +41,11 @@ import com.songxinjing.flyfish.excel.ExcelUtil;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
+import com.songxinjing.flyfish.service.SftpService;
 import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.util.BaseUtil;
 import com.songxinjing.flyfish.util.ConfigUtil;
 import com.songxinjing.flyfish.util.ReflectionUtil;
-import com.songxinjing.flyfish.util.SftpUtil;
 
 /**
  * 商品导入导出控制类
@@ -67,6 +67,9 @@ public class ExcelController extends BaseController {
 
 	@Autowired
 	private StoreService storeService;
+	
+	@Autowired
+	private SftpService sftpService;
 
 	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
 	public String load(HttpServletRequest request, MultipartFile file) {
@@ -188,7 +191,7 @@ public class ExcelController extends BaseController {
 							for (String key : ExcelTemp.WISH_FIELD.keySet()) {
 								if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
 									if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
-										SftpUtil.startFTP(sku,ExcelTemp.WISH_FIELD.get(key),obj.get(key));
+										sftpService.startFTP(sku,ExcelTemp.WISH_FIELD.get(key),obj.get(key));
 									}
 								}
 							}
