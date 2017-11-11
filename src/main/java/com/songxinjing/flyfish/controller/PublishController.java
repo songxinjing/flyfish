@@ -1,5 +1,6 @@
 package com.songxinjing.flyfish.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,12 +75,26 @@ public class PublishController extends BaseController {
 		for (Goods goods : goodses) {
 			GoodsForm goodsForm = new GoodsForm();
 			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
+			if(goodsPlat == null){
+				goodsPlat = new GoodsPlat();
+			}
 			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
+			if(goodsImg == null){
+				goodsImg = new GoodsImg();
+			}
 			goodsForm.setGoods(goods);
 			goodsForm.setGoodsPlat(goodsPlat);
 			goodsForm.setGoodsImg(goodsImg);
 			goodsForm.setListingSku(BaseUtil.changeSku(goods.getSku(), store.getMove()));
-			goodsForm.setListingParentSku(BaseUtil.changeSku(goodsPlat.getParentSku(), store.getMove()));
+			if(StringUtils.isNotEmpty(goodsPlat.getParentSku())){
+				goodsForm.setListingParentSku(BaseUtil.changeSku(goodsPlat.getParentSku(), store.getMove()));
+			}
+			BigDecimal shippingPrice = goodsService.getShippingPrice(store.getPlatform(), goods);
+			if (shippingPrice == null) {
+				shippingPrice = new BigDecimal(0);
+			}
+			BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
+			goodsForm.setJoomPrice(price);
 			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice()) 
 					&& StringUtils.isNotEmpty(goodsPlat.getTitle()) && StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
 				listT.add(goodsForm);

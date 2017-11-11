@@ -228,6 +228,9 @@ public class ExcelController extends BaseController {
 		for (Goods goods : goodses) {
 			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
 			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
+			if(goodsPlat == null || goodsImg == null){
+				continue;
+			}
 			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice()) 
 					&& StringUtils.isNotEmpty(goodsPlat.getTitle()) && StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
 				String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
