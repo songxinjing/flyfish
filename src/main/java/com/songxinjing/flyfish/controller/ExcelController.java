@@ -67,7 +67,7 @@ public class ExcelController extends BaseController {
 
 	@Autowired
 	private StoreService storeService;
-	
+
 	@Autowired
 	private SftpService sftpService;
 
@@ -146,6 +146,15 @@ public class ExcelController extends BaseController {
 				for (Map<String, String> obj : data) {
 					String sku = obj.get("*Unique ID");
 					if (StringUtils.isNotEmpty(sku)) {
+						if (sku.contains("\\")) {
+							String skuH = sku.split("\\\\")[0];
+							String skuB = sku.split("\\\\")[1];
+							if (skuB.contains("*")) {
+								sku = skuH + "*" + skuB.split("\\*")[1];
+							} else {
+								sku = skuH;
+							}
+						}
 						Goods goods = goodsService.find(sku);
 						if (goods == null) {
 							if (sku.contains("*")) {
@@ -177,6 +186,13 @@ public class ExcelController extends BaseController {
 											obj.get(key));
 								}
 							}
+							
+							String parentSku = obj.get("Parent Unique ID");
+							if (parentSku.contains("\\")) {
+								parentSku = parentSku.split("\\\\")[0];
+							}
+							goodsPlat.setParentSku(parentSku);
+							
 							if (goodsPlatService.find(sku) == null) {
 								goodsPlatService.save(goodsPlat);
 							} else {
@@ -191,7 +207,7 @@ public class ExcelController extends BaseController {
 							for (String key : ExcelTemp.WISH_FIELD.keySet()) {
 								if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
 									if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
-										sftpService.startFTP(sku,ExcelTemp.WISH_FIELD.get(key),obj.get(key));
+										sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
 									}
 								}
 							}
@@ -228,11 +244,12 @@ public class ExcelController extends BaseController {
 		for (Goods goods : goodses) {
 			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
 			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
-			if(goodsPlat == null || goodsImg == null){
+			if (goodsPlat == null || goodsImg == null) {
 				continue;
 			}
-			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice()) 
-					&& StringUtils.isNotEmpty(goodsPlat.getTitle()) && StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
+			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
+					&& StringUtils.isNotEmpty(goodsPlat.getTitle())
+					&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
 				String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
 				String listingParentSku = BaseUtil.changeSku(goodsPlat.getParentSku(), store.getMove());
 				Map<String, String> map = new HashMap<String, String>();

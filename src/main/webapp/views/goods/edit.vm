@@ -202,23 +202,30 @@
 				</div>
 				
 				<div class="form-group">
-					<label class="col-sm-2 control-label">商品名称</label>
-					<div class="col-sm-2">
-						<input name="name" class="form-control" value="$!{form.goods.name}" maxlength="20">
-					</div>
-					<label class="col-sm-2 control-label">是否停售</label>
-					<div class="col-sm-2">
-						<select name="state" class="form-control">
-							<option value="">请选择</option>
-							<option value="True" #if($!{form.goods.state}=='True' ) selected#end>True</option>
-							<option value="False" #if($!{form.goods.state}=='False' ) selected#end>False</option>
-						</select>
-					</div>
-					<label class="col-sm-2 control-label">开发日期</label>
-					<div class="col-sm-2">
-						<input name="bussDate" class="form-control" value="$!{form.goods.bussDate}" dateISO="true">
-					</div>
-					
+					<div class="col-sm-6">
+    					<label class="col-sm-3 control-label">商品名称</label>
+    					<div class="col-sm-4">
+    						<input name="name" class="form-control" value="$!{form.goods.name}" maxlength="20">
+    					</div>
+						<label class="col-sm-2 control-label">款式</label>
+    					<div class="col-sm-3">
+    						<input name="style" class="form-control" value="$!{form.goods.style}" maxlength="20">
+    					</div>
+					</div>	
+					<div class="col-sm-6">
+    					<label class="col-sm-3 control-label">是否停售</label>
+    					<div class="col-sm-3">
+    						<select name="state" class="form-control">
+    							<option value="">请选择</option>
+    							<option value="True" #if($!{form.goods.state}=='True' ) selected#end>True</option>
+    							<option value="False" #if($!{form.goods.state}=='False' ) selected#end>False</option>
+    						</select>
+    					</div>
+    					<label class="col-sm-3 control-label">开发日期</label>
+    					<div class="col-sm-3">
+    						<input name="bussDate" class="form-control" value="$!{form.goods.bussDate}" dateISO="true">
+    					</div>
+					</div>	
 				</div>
 				
 			</fieldset>	

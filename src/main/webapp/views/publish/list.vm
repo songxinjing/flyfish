@@ -48,7 +48,6 @@
 					<th width="60px">虚拟SKU</th>
 					<th width="80px">虚拟<br>商品编码</th>
 					<th width="60px">SKU</th>
-					<th width="60px">商品<br>编码</th>
 					<th >标题</th>
 					<th width="100px">商品<br>名称</th>
 					<th width="60px">重量<br>（G）</th>
@@ -76,7 +75,6 @@
 					<td>$!{rec.listingSku}</td>
 					<td>$!{rec.listingParentSku}</td>
 					<td>$!{rec.goods.sku}</td>
-					<td>$!{rec.goodsPlat.parentSku}</td>
 					<td>$!{rec.goodsPlat.title}</td>
 					<td>$!{rec.goods.name}</td>
 					<td>$!{rec.goods.weight}</td>
