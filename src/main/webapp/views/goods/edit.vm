@@ -67,8 +67,8 @@
 					<div class="col-sm-2">
 						<select name="isMoreSytle" class="form-control">
 							<option value="">请选择</option>
-							<option value="True" #if($!{form.goods.isMoreSytle}=='True' ) selected#end>True</option>
-							<option value="False" #if($!{form.goods.isMoreSytle}=='False' ) selected#end>False</option>
+							<option value="1" #if($!{form.goods.isMoreSytle}=='1' ) selected#end>是</option>
+							<option value="0" #if($!{form.goods.isMoreSytle}=='0' ) selected#end>否</option>
 						</select>
 					</div>
 					<label class="col-sm-2 control-label">成本单件（元）</label>
@@ -86,8 +86,8 @@
 					<div class="col-sm-2">
 						<select name="isElectric" class="form-control">
 							<option value="">请选择</option>
-							<option value="True" #if($!{form.goods.isElectric}=='True' ) selected#end>True</option>
-							<option value="False" #if($!{form.goods.isElectric}=='False' ) selected#end>False</option>
+							<option value="1" #if($!{form.goods.isElectric}=='1' ) selected#end>是</option>
+							<option value="0" #if($!{form.goods.isElectric}=='0' ) selected#end>否</option>
 						</select>
 					</div>
 					<label class="col-sm-2 control-label">所有库存数量</label>
@@ -105,8 +105,8 @@
 					<div class="col-sm-2">
 						<select name="hasSample" class="form-control">
 							<option value="">请选择</option>
-							<option value="True" #if($!{form.goods.hasSample}=='True' ) selected#end>True</option>
-							<option value="False" #if($!{form.goods.hasSample}=='False' ) selected#end>False</option>
+							<option value="1" #if($!{form.goods.hasSample}=='1' ) selected#end>是</option>
+							<option value="0" #if($!{form.goods.hasSample}=='0' ) selected#end>否</option>
 						</select>
 					</div>
 					<label class="col-sm-2 control-label">批发价格（美元）</label>
@@ -217,8 +217,8 @@
     					<div class="col-sm-3">
     						<select name="state" class="form-control">
     							<option value="">请选择</option>
-    							<option value="True" #if($!{form.goods.state}=='True' ) selected#end>True</option>
-    							<option value="False" #if($!{form.goods.state}=='False' ) selected#end>False</option>
+    							<option value="1" #if($!{form.goods.state}=='1' ) selected#end>是</option>
+    							<option value="0" #if($!{form.goods.state}=='0' ) selected#end>否</option>
     						</select>
     					</div>
     					<label class="col-sm-3 control-label">开发日期</label>

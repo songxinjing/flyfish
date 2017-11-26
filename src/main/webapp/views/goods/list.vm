@@ -79,16 +79,16 @@
 						<div class="col-sm-3">
 							<select name="state" class="form-control">
 			                <option value="">所有</option>
-			                <option value="True" #if($!{queryForm.state}=='True') selected#end>True</option>
-			                <option value="False" #if($!{queryForm.state}=='False') selected#end>False</option>
+			                <option value="1" #if($!{queryForm.state}=='1') selected#end>是</option>
+			                <option value="0" #if($!{queryForm.state}=='0') selected#end>否</option>
 			            </select>
 						</div>
 						<label class="col-sm-3 control-label">是否带电：</label>
 						<div class="col-sm-3">
 							<select name="isElectric" class="form-control">
 			                <option value="">所有</option>
-			                <option value="True" #if($!{queryForm.isElectric}=='True') selected#end>True</option>
-			                <option value="False" #if($!{queryForm.isElectric}=='False') selected#end>False</option>
+			                <option value="1" #if($!{queryForm.isElectric}=='1') selected#end>是</option>
+			                <option value="0" #if($!{queryForm.isElectric}=='0') selected#end>否</option>
 			            </select>
 						</div>
 					</div>
