@@ -182,17 +182,21 @@ public class ExcelController extends BaseController {
 							}
 							for (String key : ExcelTemp.WISH_FIELD.keySet()) {
 								if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
-									ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key),
-											obj.get(key));
+									if (ExcelTemp.WISH_FIELD.get(key).equals("sku")) {
+										ReflectionUtil.setFieldValue(goodsPlat, "sku", sku);
+									} else {
+										ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key),
+												obj.get(key));
+									}
 								}
 							}
-							
+
 							String parentSku = obj.get("Parent Unique ID");
 							if (parentSku.contains("\\")) {
 								parentSku = parentSku.split("\\\\")[0];
 							}
 							goodsPlat.setParentSku(parentSku);
-							
+
 							if (goodsPlatService.find(sku) == null) {
 								goodsPlatService.save(goodsPlat);
 							} else {
