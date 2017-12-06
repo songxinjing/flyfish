@@ -306,6 +306,8 @@ public class ExcelController extends BaseController {
 					map.put("msrp", msrp.toString());
 					map.put("SKU", listingSku);
 					map.put("Parent SKU", listingParentSku);
+					String smallTitel = map.get("product name").toLowerCase();
+					map.put("product name", smallTitel);
 				}
 				data.add(map);
 			}
