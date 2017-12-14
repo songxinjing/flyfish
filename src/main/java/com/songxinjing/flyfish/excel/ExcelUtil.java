@@ -131,7 +131,7 @@ public class ExcelUtil {
 		}
 		return titles;
 	}
-	
+
 	/**
 	 * 读取csv列表数据
 	 * 
@@ -145,14 +145,12 @@ public class ExcelUtil {
 		// CSVFormat format =
 		// CSVFormat.DEFAULT.withHeader(headers).withSkipHeaderRecord();
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(temp));
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-
-		// 创建CSVFormat（header mapping）
-		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader(headers).withSkipHeaderRecord();
-
 		CSVParser csvFileParser = null;
+		// 创建CSVFormat（header mapping）
 		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(temp, "GBK"));
+			CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader(headers).withSkipHeaderRecord();
 			csvFileParser = new CSVParser(br, csvFileFormat);
 			List<CSVRecord> records = csvFileParser.getRecords();
 			for (CSVRecord record : records) {
@@ -191,9 +189,9 @@ public class ExcelUtil {
 			csvFileOutputStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "UTF-8"),
 					1024);
 			csvPrinter = new CSVPrinter(csvFileOutputStream, csvFileFormat);
-			
-			for(Map<String, String> map : data){
-				for(String header :headers){
+
+			for (Map<String, String> map : data) {
+				for (String header : headers) {
 					csvPrinter.print(map.get(header));
 				}
 				csvPrinter.println();// 换行
