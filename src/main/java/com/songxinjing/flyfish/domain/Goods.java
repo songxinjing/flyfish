@@ -27,12 +27,24 @@ public class Goods implements Serializable {
 	@Id
 	@Column(length = 32)
 	private String sku;
+	
+	/**
+	 * 商品编码
+	 */
+	@Column(length = 32)
+	private String parentSku;
 
 	/**
 	 * 关联SKU
 	 */
 	@Column(length = 255)
 	private String relaSkus;
+	
+	/**
+	 * 虚拟SKU
+	 */
+	@Column(length = 255)
+	private String virtSkus;
 
 	/**
 	 * 多款式（是、否）
@@ -328,6 +340,14 @@ public class Goods implements Serializable {
 
 	public void setSku(String sku) {
 		this.sku = sku;
+	}
+
+	public String getParentSku() {
+		return parentSku;
+	}
+
+	public void setParentSku(String parentSku) {
+		this.parentSku = parentSku;
 	}
 
 	public String getIsMoreSytle() {
@@ -720,6 +740,14 @@ public class Goods implements Serializable {
 
 	public void setRelaSkus(String relaSkus) {
 		this.relaSkus = relaSkus;
+	}
+
+	public String getVirtSkus() {
+		return virtSkus;
+	}
+
+	public void setVirtSkus(String virtSkus) {
+		this.virtSkus = virtSkus;
 	}
 	
 }

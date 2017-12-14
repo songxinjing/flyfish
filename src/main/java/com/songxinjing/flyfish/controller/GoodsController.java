@@ -9,11 +9,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,6 +48,7 @@ import com.songxinjing.flyfish.service.PlatformService;
 import com.songxinjing.flyfish.service.SftpService;
 import com.songxinjing.flyfish.service.StoreGoodsService;
 import com.songxinjing.flyfish.service.StoreService;
+import com.songxinjing.flyfish.util.BaseUtil;
 import com.songxinjing.flyfish.util.ReflectionUtil;
 
 /**
@@ -397,6 +401,15 @@ public class GoodsController extends BaseController {
 						if (storeGoodsService.findHql(hql, storeId, sku).isEmpty()) {
 							sg.setBatchNo(batchNo);
 							storeGoodsService.save(sg);
+							String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
+							Set<String> temp = new HashSet<String>();
+							if (StringUtils.isNotEmpty(goods.getVirtSkus())) {
+								CollectionUtils.addAll(temp, goods.getVirtSkus().split(","));
+							}
+							temp.add(listingSku);
+							String virtSkus = StringUtils.join(temp, ",");
+							goods.setVirtSkus(virtSkus);
+							goodsService.update(goods);
 						}
 					}
 				}
@@ -404,6 +417,22 @@ public class GoodsController extends BaseController {
 			return true;
 		}
 		return false;
+	}
+	
+	@RequestMapping(value = "goods/relasku", method = RequestMethod.GET)
+	public String relasku(Model model) {
+		String hql = "from Goods where length(relaSkus) > 0";
+		List<Goods> recList = goodsService.findHql(hql);
+		model.addAttribute("recList", recList);
+		return "goods/relasku";
+	}
+	
+	@RequestMapping(value = "goods/virtsku", method = RequestMethod.GET)
+	public String virtsku(Model model) {
+		String hql = "from Goods where length(virtSkus) > 0";
+		List<Goods> recList = goodsService.findHql(hql);
+		model.addAttribute("recList", recList);
+		return "goods/virtsku";
 	}
 
 }

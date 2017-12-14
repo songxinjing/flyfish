@@ -14,13 +14,17 @@ import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -103,6 +107,7 @@ public class ExcelController extends BaseController {
 							goodsService.update(goods);
 						}
 
+						// 更新带*SKU
 						for (Goods moreGoods : goodsService.findMoreSku(sku + "*")) {
 							String skuMore = moreGoods.getSku();
 							int num = Integer.parseInt(skuMore.split("*")[1]);
@@ -138,7 +143,6 @@ public class ExcelController extends BaseController {
 	@RequestMapping(value = "csv/import/wish", method = RequestMethod.POST)
 	public String loadWish(HttpServletRequest request, MultipartFile file) {
 		logger.info("CSV导入Wish模版数据");
-		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
 		if (!file.isEmpty()) {
 			try {
 				String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
@@ -146,6 +150,7 @@ public class ExcelController extends BaseController {
 				for (Map<String, String> obj : data) {
 					String sku = obj.get("*Unique ID");
 					if (StringUtils.isNotEmpty(sku)) {
+						// 去除"\"部分
 						if (sku.contains("\\")) {
 							String skuH = sku.split("\\\\")[0];
 							String skuB = sku.split("\\\\")[1];
@@ -155,77 +160,45 @@ public class ExcelController extends BaseController {
 								sku = skuH;
 							}
 						}
+
 						Goods goods = goodsService.find(sku);
-						if (goods == null) {
-							if (sku.contains("*")) {
+						if (sku.contains("*")) { // 包含"*"
+							if (goods != null) { // 带*SKU存在
+								this.wishUpdate(sku, obj); // 更新已存在带*SKU
+							} else { // 带*SKU不存在
 								String mainSku = sku.split("\\*")[0];
 								int num = Integer.parseInt(sku.split("\\*")[1]);
 								Goods mainGoods = goodsService.find(mainSku);
-								if (mainGoods != null) {
-									Goods temp = new Goods();
-									BeanUtils.copyProperties(mainGoods, temp);
-									temp.setSku(sku);
-									BigDecimal bgWeight = new BigDecimal(mainGoods.getWeight());
-									temp.setWeight(bgWeight.multiply(new BigDecimal(num)).toString());
-									BigDecimal bgCostPrice = new BigDecimal(mainGoods.getCostPrice());
-									temp.setCostPrice(bgCostPrice.multiply(new BigDecimal(num)).toString());
-									temp.setStoreGoodses(null);
-									goodsService.save(temp);
-									goods = goodsService.find(sku);
-								}
-							}
-						}
-						if (goods != null) {
-							GoodsPlat goodsPlat = goodsPlatService.find(sku);
-							if (goodsPlat == null) {
-								goodsPlat = new GoodsPlat();
-							}
-							for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-								if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
-									if (ExcelTemp.WISH_FIELD.get(key).equals("sku")) {
-										ReflectionUtil.setFieldValue(goodsPlat, "sku", sku);
-									} else {
-										ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key),
-												obj.get(key));
+								if (mainGoods != null) { // 去*SKU存在，新增带*SKU，复制信息
+									this.wishNewStar(mainGoods, num, obj);
+								} else { // 去*SKU不存在
+									String hql = "from Goods where relaSkus like ?";
+									List<Goods> list = goodsService.findHql(hql, "%" + mainSku + "%");
+									if (!list.isEmpty()) { // 关联SKU存在
+										goods = list.get(0);
+										String skuStar = goods.getSku() + "*" + num;
+										Goods starGoods = goodsService.find(skuStar);
+										if (starGoods != null) { // 带*SKU存在
+											this.wishUpdate(skuStar, obj); // 更新已存在带*SKU
+										} else { // 带*SKU不存在，新增带*SKU，复制信息
+											this.wishNewStar(goods, num, obj);
+										}
 									}
 								}
 							}
-
-							String parentSku = obj.get("Parent Unique ID");
-							if (parentSku.contains("\\")) {
-								parentSku = parentSku.split("\\\\")[0];
-							}
-							goodsPlat.setParentSku(parentSku);
-
-							if (goodsPlatService.find(sku) == null) {
-								goodsPlatService.save(goodsPlat);
-							} else {
-								goodsPlatService.update(goodsPlat);
-							}
-
-							GoodsImg goodsImg = goodsImgService.find(sku);
-							if (goodsImg == null) {
-								goodsImg = new GoodsImg();
-							}
-							goodsImg.setSku(sku);
-							for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-								if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
-									if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
-										sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
-									}
+						} else { // 不包含"*"
+							if (goods != null) { // SKU存在
+								this.wishUpdate(sku, obj); // 更新已存在SKU
+							} else { // SKU不存在
+								String hql = "from Goods where relaSkus like ?";
+								List<Goods> list = goodsService.findHql(hql, "%" + sku + "%");
+								if (!list.isEmpty()) { // 关联SKU存在
+									goods = list.get(0);
+									this.wishUpdate(goods.getSku(), obj);
 								}
 							}
-							if (goodsImgService.find(sku) == null) {
-								goodsImgService.save(goodsImg);
-							} else {
-								goodsImgService.update(goodsImg);
-							}
-
-							goods.setModifyId(user.getUserId());
-							goods.setModifyer(user.getName());
-							goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-							goodsService.update(goods);
 						}
+
 					}
 				}
 			} catch (IOException e) {
@@ -255,7 +228,7 @@ public class ExcelController extends BaseController {
 					&& StringUtils.isNotEmpty(goodsPlat.getTitle())
 					&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
 				String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
-				String listingParentSku = BaseUtil.changeSku(goodsPlat.getParentSku(), store.getMove());
+				String listingParentSku = BaseUtil.changeSku(goods.getParentSku(), store.getMove());
 				Map<String, String> map = new HashMap<String, String>();
 				for (String key : tempFiledMap.keySet()) {
 					if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
@@ -339,6 +312,145 @@ public class ExcelController extends BaseController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@RequestMapping(value = "excel/export/virtsku", method = RequestMethod.GET)
+	public void exportVirtsku(HttpServletResponse response, Integer storeId, String batchNo) {
+
+		String hql = "from Goods where length(virtSkus) > 0";
+		List<Goods> goodses = goodsService.findHql(hql);
+
+		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		for (Goods goods : goodses) {
+			Set<String> temp = new HashSet<String>();
+			if (StringUtils.isNotEmpty(goods.getVirtSkus())) {
+				CollectionUtils.addAll(temp, goods.getVirtSkus().split(","));
+			}
+			for (String virtsku : temp) {
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("sku", goods.getSku());
+				map.put("关联SKU", virtsku);
+				data.add(map);
+			}
+		}
+
+		String temp = ConfigUtil.getValue("/config.properties", "workDir") + ExcelTemp.VIRTSKU;
+
+		try {
+			Workbook workbook = ExcelUtil.writeExcel(new FileInputStream(temp), data);
+			response.setContentType("multipart/form-data");
+			response.setHeader("Content-Disposition",
+					"attachment;filename=" + URLEncoder.encode("虚拟SKU列表.xlsx", "UTF-8"));
+			OutputStream os = new BufferedOutputStream(response.getOutputStream());
+			workbook.write(os);
+			os.flush();
+			os.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@RequestMapping(value = "excel/import/relasku", method = RequestMethod.POST)
+	public String loadRelaSku(HttpServletRequest request, MultipartFile file) {
+		if (!file.isEmpty()) {
+			try {
+				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
+				Map<String, Set<String>> relaSkuMap = new HashMap<String, Set<String>>();
+				for (Map<String, String> obj : data) {
+					String sku = obj.get("sku");
+					String relaSku = obj.get("关联SKU");
+					if (StringUtils.isNotEmpty(sku) && StringUtils.isNotEmpty(relaSku)) {
+						if (relaSkuMap.containsKey(sku)) {
+							relaSkuMap.get(sku).add(relaSku);
+						} else {
+							Set<String> set = new HashSet<String>();
+							set.add(relaSku);
+							relaSkuMap.put(sku, set);
+						}
+					}
+				}
+				for (String sku : relaSkuMap.keySet()) {
+					Goods goods = goodsService.find(sku);
+					if (goods != null) {
+						Set<String> temp = new HashSet<String>();
+						if (StringUtils.isNotEmpty(goods.getRelaSkus())) {
+							CollectionUtils.addAll(temp, goods.getRelaSkus().split(","));
+						}
+						temp.addAll(relaSkuMap.get(sku));
+						String relaSkus = StringUtils.join(temp, ",");
+						goods.setRelaSkus(relaSkus);
+						goodsService.update(goods);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return "redirect:/goods/relasku.html";
+	}
+
+	// 根据Excel数据新增或更新GoodsPlat和GoodsImg
+	private void wishUpdate(String sku, Map<String, String> obj) {
+
+		GoodsPlat goodsPlat = goodsPlatService.find(sku);
+		if (goodsPlat == null) {
+			goodsPlat = new GoodsPlat();
+		}
+		for (String key : ExcelTemp.WISH_FIELD.keySet()) {
+			if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
+				if (ExcelTemp.WISH_FIELD.get(key).equals("sku")) {
+					ReflectionUtil.setFieldValue(goodsPlat, "sku", sku);
+				} else {
+					ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
+				}
+			}
+		}
+		if (goodsPlatService.find(sku) == null) {
+			goodsPlatService.save(goodsPlat);
+		} else {
+			goodsPlatService.update(goodsPlat);
+		}
+
+		// 更新GoodsImg
+		GoodsImg goodsImg = goodsImgService.find(sku);
+		if (goodsImg == null) {
+			goodsImg = new GoodsImg();
+		}
+		goodsImg.setSku(sku);
+		for (String key : ExcelTemp.WISH_FIELD.keySet()) {
+			if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
+				if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
+					sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
+				}
+			}
+		}
+		if (goodsImgService.find(sku) == null) {
+			goodsImgService.save(goodsImg);
+		} else {
+			goodsImgService.update(goodsImg);
+		}
+	}
+
+	// 根据SKU复制新增带*SKU
+	private void wishNewStar(Goods goods, int num, Map<String, String> obj) {
+		String skuStar = goods.getSku() + "*" + num;
+		Goods temp = new Goods();
+		BeanUtils.copyProperties(goods, temp);
+		temp.setSku(skuStar);
+		BigDecimal bgWeight = new BigDecimal(goods.getWeight());
+		temp.setWeight(bgWeight.multiply(new BigDecimal(num)).toString());
+		BigDecimal bgCostPrice = new BigDecimal(goods.getCostPrice());
+		temp.setCostPrice(bgCostPrice.multiply(new BigDecimal(num)).toString());
+		temp.setStoreGoodses(null);
+		temp.setRelaSkus("");
+		temp.setVirtSkus("");
+		temp.setModifyTm(new Timestamp(System.currentTimeMillis()));
+		goodsService.save(temp);
+		this.wishUpdate(skuStar, obj);
 	}
 
 }
