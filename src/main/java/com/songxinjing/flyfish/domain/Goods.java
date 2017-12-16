@@ -229,7 +229,7 @@ public class Goods implements Serializable {
 	/**
 	 * 品牌
 	 */
-	@Column(length = 16)
+	@Column(length = 64)
 	private String make;
 
 	/**
