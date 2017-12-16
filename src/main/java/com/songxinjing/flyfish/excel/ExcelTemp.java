@@ -21,6 +21,12 @@ public class ExcelTemp {
 	 * JOOM模版文件
 	 */
 	public static final String JOOM = "/excelTemp/joom.csv";
+	
+	
+	/**
+	 * 虚拟SKU模版文件
+	 */
+	public static final String VIRTSKU = "/excelTemp/virtsku.xlsx";
 
 	/**
 	 * 普通模版字段映射
@@ -29,7 +35,7 @@ public class ExcelTemp {
 
 	static {
 		COMMON_FIELD.put("操作类型", "");
-		COMMON_FIELD.put("商品编码", "");
+		COMMON_FIELD.put("商品编码", "parentSku");
 		COMMON_FIELD.put("SKU", "sku");
 		COMMON_FIELD.put("sku", "sku");
 		COMMON_FIELD.put("多款式", "isMoreSytle");
@@ -167,7 +173,7 @@ public class ExcelTemp {
 	public static final Map<String, String> WISH_FIELD = new LinkedHashMap<String, String>();
 
 	static {
-		WISH_FIELD.put("Parent Unique ID", "parentSku");
+		WISH_FIELD.put("Parent Unique ID", "");
 		WISH_FIELD.put("*Product Name", "title");
 		WISH_FIELD.put("Description", "descp");
 		WISH_FIELD.put("*Tags", "tags");
@@ -199,7 +205,7 @@ public class ExcelTemp {
 	public static final Map<String, String> JOOM_FIELD = new LinkedHashMap<String, String>();
 
 	static {
-		JOOM_FIELD.put("Parent SKU", "parentSku");
+		JOOM_FIELD.put("Parent SKU", "");
 		JOOM_FIELD.put("SKU", "sku");
 		JOOM_FIELD.put("product name", "title");
 		JOOM_FIELD.put("description", "descp");

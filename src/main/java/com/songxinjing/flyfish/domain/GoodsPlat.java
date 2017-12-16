@@ -25,12 +25,6 @@ public class GoodsPlat implements Serializable {
 	private String sku;
 	
 	/**
-	 * 商品编码
-	 */
-	@Column(length = 32)
-	private String parentSku;
-	
-	/**
 	 * title
 	 */
 	@Column(length = 255)
@@ -157,14 +151,6 @@ public class GoodsPlat implements Serializable {
 
 	public void setSku(String sku) {
 		this.sku = sku;
-	}
-
-	public String getParentSku() {
-		return parentSku;
-	}
-
-	public void setParentSku(String parentSku) {
-		this.parentSku = parentSku;
 	}
 
 	public String getTitle() {

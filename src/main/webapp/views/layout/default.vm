@@ -80,6 +80,12 @@
                                 <li>
                                     <a href="${rc.contextPath}/goods/list.html">商品列表</a>
                                 </li>
+                                <li>
+                                    <a href="${rc.contextPath}/goods/relasku.html">关联SKU</a>
+                                </li>
+                                <li>
+                                    <a href="${rc.contextPath}/goods/virtsku.html">虚拟SKU</a>
+                                </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>

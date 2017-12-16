@@ -75,19 +75,19 @@ public class PublishController extends BaseController {
 		for (Goods goods : goodses) {
 			GoodsForm goodsForm = new GoodsForm();
 			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
-			if(goodsPlat == null){
+			if (goodsPlat == null) {
 				goodsPlat = new GoodsPlat();
 			}
 			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
-			if(goodsImg == null){
+			if (goodsImg == null) {
 				goodsImg = new GoodsImg();
 			}
 			goodsForm.setGoods(goods);
 			goodsForm.setGoodsPlat(goodsPlat);
 			goodsForm.setGoodsImg(goodsImg);
 			goodsForm.setListingSku(BaseUtil.changeSku(goods.getSku(), store.getMove()));
-			if(StringUtils.isNotEmpty(goodsPlat.getParentSku())){
-				goodsForm.setListingParentSku(BaseUtil.changeSku(goodsPlat.getParentSku(), store.getMove()));
+			if (StringUtils.isNotEmpty(goods.getParentSku())) {
+				goodsForm.setListingParentSku(BaseUtil.changeSku(goods.getParentSku(), store.getMove()));
 			}
 			BigDecimal shippingPrice = goodsService.getShippingPrice(store.getPlatform(), goods);
 			if (shippingPrice == null) {
@@ -95,8 +95,9 @@ public class PublishController extends BaseController {
 			}
 			BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
 			goodsForm.setJoomPrice(price);
-			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice()) 
-					&& StringUtils.isNotEmpty(goodsPlat.getTitle()) && StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
+			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
+					&& StringUtils.isNotEmpty(goodsPlat.getTitle())
+					&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
 				listT.add(goodsForm);
 			} else {
 				listF.add(goodsForm);
@@ -124,7 +125,7 @@ public class PublishController extends BaseController {
 			batchNo = list.get(0).getBatchNo();
 			storeGoodsService.delete(list);
 		}
-		return list(model, storeId, batchNo,dataFlag);
+		return list(model, storeId, batchNo, dataFlag);
 	}
 
 	@RequestMapping(value = "publish/removeall", method = RequestMethod.GET)
@@ -132,7 +133,7 @@ public class PublishController extends BaseController {
 		String hql = "select sg from StoreGoods as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
 		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, batchNo);
 		storeGoodsService.delete(list);
-		return list(model, storeId, null,null);
+		return list(model, storeId, null, null);
 	}
 
 }

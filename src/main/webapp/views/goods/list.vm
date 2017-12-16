@@ -213,7 +213,7 @@
 						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"
 							/></td>
 						<td>$!{rec.goods.sku}</td>
-						<td>$!{rec.goodsPlat.parentSku}</td>
+						<td>$!{rec.goods.parentSku}</td>
 						<td>$!{rec.goods.name}</td>
 						<td>$!{rec.goods.style}</td>
 						<td>$!{rec.goods.bigCataName}</td>
