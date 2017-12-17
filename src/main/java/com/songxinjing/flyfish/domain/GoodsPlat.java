@@ -25,10 +25,22 @@ public class GoodsPlat implements Serializable {
 	private String sku;
 	
 	/**
-	 * title
+	 * WISH title
 	 */
 	@Column(length = 255)
 	private String title;
+	
+	/**
+	 * Ebay title(75)
+	 */
+	@Column(length = 255)
+	private String ebayTitle;
+	
+	/**
+	 * other title(90)
+	 */
+	@Column(length = 255)
+	private String otherTitle;
 	
 	/**
 	 * descp
@@ -311,6 +323,22 @@ public class GoodsPlat implements Serializable {
 
 	public void seteImgUrl10(String eImgUrl10) {
 		this.eImgUrl10 = eImgUrl10;
+	}
+
+	public String getEbayTitle() {
+		return ebayTitle;
+	}
+
+	public void setEbayTitle(String ebayTitle) {
+		this.ebayTitle = ebayTitle;
+	}
+
+	public String getOtherTitle() {
+		return otherTitle;
+	}
+
+	public void setOtherTitle(String otherTitle) {
+		this.otherTitle = otherTitle;
 	}
 
 }

@@ -410,28 +410,26 @@ public class ExcelController extends BaseController {
 			}
 		}
 		if (goodsPlatService.find(sku) == null) {
+			goodsPlat.setEbayTitle(goodsPlat.getTitle());
+			goodsPlat.setOtherTitle(goodsPlat.getTitle());
 			goodsPlatService.save(goodsPlat);
 		} else {
 			goodsPlatService.update(goodsPlat);
 		}
 
-		// 更新GoodsImg
+		// 只新增GoodsImg,已存在的不更新
 		GoodsImg goodsImg = goodsImgService.find(sku);
 		if (goodsImg == null) {
 			goodsImg = new GoodsImg();
-		}
-		goodsImg.setSku(sku);
-		for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-			if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
-				if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
-					sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
+			goodsImg.setSku(sku);
+			for (String key : ExcelTemp.WISH_FIELD.keySet()) {
+				if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
+					if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
+						sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
+					}
 				}
 			}
-		}
-		if (goodsImgService.find(sku) == null) {
 			goodsImgService.save(goodsImg);
-		} else {
-			goodsImgService.update(goodsImg);
 		}
 	}
 
