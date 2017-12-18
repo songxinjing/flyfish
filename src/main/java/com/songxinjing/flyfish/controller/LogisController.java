@@ -106,6 +106,7 @@ public class LogisController extends BaseController {
 	@RequestMapping(value = "logis/add", method = RequestMethod.POST)
 	public String add(HttpServletRequest request, Model model, int prodId, int countryId, int method, BigDecimal paraA,
 			BigDecimal paraB, BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
+		logger.info("新增物流方式");
 		if (method == 1) {
 			if (paraA == null) {
 				paraA = new BigDecimal(0);
@@ -149,6 +150,7 @@ public class LogisController extends BaseController {
 	@RequestMapping(value = "logis/modify", method = RequestMethod.POST)
 	public String modify(HttpServletRequest request, Model model, int id, int prodId, int countryId, int method,
 			BigDecimal paraA, BigDecimal paraB, BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
+		logger.info("修改物流方式");
 		if (method == 1) {
 			if (paraA == null) {
 				paraA = new BigDecimal(0);
@@ -191,6 +193,7 @@ public class LogisController extends BaseController {
 
 	@RequestMapping(value = "logis/del", method = RequestMethod.GET)
 	public String del(Model model, int id, int platId) {
+		logger.info("删除物流方式");
 		Logis logis = logisService.find(id);
 		int queryProdId = logis.getProd().getId();
 		logisService.delete(logis);
@@ -201,16 +204,15 @@ public class LogisController extends BaseController {
 	@RequestMapping(value = "logisprod/list", method = RequestMethod.GET)
 	public String prodList(Model model) {
 		logger.info("进入物流产品列表页面");
-
 		List<LogisProd> recList = logisProdService.find();
 		model.addAttribute("recList", recList);
-
 		return "logisprod/list";
 	}
 
 	@RequestMapping(value = "logisprod/add", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodAdd(LogisProd form) {
+		logger.info("新增物流产品");
 		int id = (Integer) logisProdService.save(form);
 		LogisProd logisProd = logisProdService.find(id);
 		logisProd.setOrderNum(id);
@@ -221,6 +223,7 @@ public class LogisController extends BaseController {
 	@RequestMapping(value = "logisprod/modify", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodModify(LogisProd form) {
+		logger.info("修改物流产品");
 		LogisProd logisProd = logisProdService.find(form.getId());
 		logisProd.setName(form.getName());
 		logisProdService.update(logisProd);
@@ -229,6 +232,7 @@ public class LogisController extends BaseController {
 
 	@RequestMapping(value = "logisprod/delete", method = RequestMethod.GET)
 	public String delete(Integer id) {
+		logger.info("删除物流产品");
 		logisProdService.delete(id);
 		return "redirect:/logisprod/list.html";
 	}

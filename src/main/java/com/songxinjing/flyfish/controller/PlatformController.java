@@ -31,8 +31,7 @@ public class PlatformController extends BaseController {
 
 	@RequestMapping(value = "platform/list", method = RequestMethod.GET)
 	public String prodList(Model model) {
-		logger.info("进入物流产品列表页面");
-
+		logger.info("进入平台列表页面");
 		List<Platform> recList = platformService.find();
 		model.addAttribute("recList", recList);
 		model.addAttribute("prods", logisProdService.find());
@@ -42,6 +41,7 @@ public class PlatformController extends BaseController {
 	@RequestMapping(value = "platform/add", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodAdd(Platform form) {
+		logger.info("新增平台");
 		int id = (Integer) platformService.save(form);
 		Platform platform = platformService.find(id);
 		platform.setOrderNum(id);
@@ -52,6 +52,7 @@ public class PlatformController extends BaseController {
 	@RequestMapping(value = "platform/modify", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodModify(Platform form) {
+		logger.info("修改平台");
 		Platform platform = platformService.find(form.getId());
 		platform.setName(form.getName());
 		platform.setRate(form.getRate());
@@ -65,6 +66,7 @@ public class PlatformController extends BaseController {
 
 	@RequestMapping(value = "platform/delete", method = RequestMethod.GET)
 	public String delete(Integer id) {
+		logger.info("删除平台");
 		platformService.delete(id);
 		return "redirect:/platform/list.html";
 	}

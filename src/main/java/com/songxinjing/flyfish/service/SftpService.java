@@ -35,7 +35,7 @@ public class SftpService extends BaseService<Goods, String> {
 	@Autowired
 	private GoodsImgService goodsImgService;
 
-	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
+	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(1);
 
 	private static StandardFileSystemManager manager = new StandardFileSystemManager();
 	private static FileSystemOptions opts = new FileSystemOptions();
@@ -55,7 +55,7 @@ public class SftpService extends BaseService<Goods, String> {
 			SftpFileSystemConfigBuilder.getInstance().setUserDirIsRoot(opts, true);
 			SftpFileSystemConfigBuilder.getInstance().setTimeout(opts, 10000);
 		} catch (FileSystemException e) {
-			e.printStackTrace();
+			logger.error("图片上传初始化失败！", e);
 		}
 	}
 
@@ -77,33 +77,34 @@ public class SftpService extends BaseService<Goods, String> {
 	private static boolean isInit = false;
 
 	private void init() {
-		for (int index = 0; index < 3; index++) {
-			Runnable sftper = new Runnable() {
-				public void run() {
-					while (true) {
-						try {
-							SftpJob job = sftpJobs.take();
-							logger.debug("上传图片：" + job.name);
-							doFTP(job);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+		isInit = true;
+		Runnable sftper = new Runnable() {
+			public void run() {
+				while (true) {
+					try {
+						SftpJob job = sftpJobs.take();
+						doFTP(job);
+					} catch (InterruptedException e) {
+						logger.error("图片上传任务终止！", e);
 					}
 				}
-			};
-			fixedThreadPool.submit(sftper);
-		}
+			}
+		};
+		fixedThreadPool.submit(sftper);
 	}
 
 	public void startFTP(String sku, String name, String url) {
 		if (!isInit) {
 			init();
 		}
+		if (url.contains("?")) {
+			url = url.substring(0, url.indexOf("?"));
+		}
 		SftpJob sftpJob = new SftpJob(sku, name, url);
 		try {
 			sftpJobs.put(sftpJob);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error("图片上传任务终止！", e);
 		}
 	}
 
@@ -113,6 +114,7 @@ public class SftpService extends BaseService<Goods, String> {
 			tempSku = tempSku.replace("*", "_");
 		}
 		try {
+			logger.info("批量导入上传图片：" + sftpJob.sku + " " + sftpJob.name + " " + sftpJob.url);
 			URL fileUrl = new URL(sftpJob.url);
 			String path = remoteDirectory + "/" + tempSku + "-" + sftpJob.name + ".jpg";
 			URI sftpUri = new URI("sftp", userInfo, serverAddress, -1, path, null, null);
@@ -125,13 +127,13 @@ public class SftpService extends BaseService<Goods, String> {
 			ReflectionUtil.setFieldValue(img, sftpJob.name, tempSku + "-" + sftpJob.name + ".jpg");
 			goodsImgService.update(img);
 		} catch (MalformedURLException | FileSystemException | URISyntaxException e) {
-			e.printStackTrace();
+			logger.error("图片上传失败！" + sftpJob.sku + " " + sftpJob.name + " " + sftpJob.url, e);
 			return;
 		}
 	}
 
 	public void doFTP(String name, File image) {
-
+		logger.info("人工上传图片：" + name);
 		try {
 			String path = remoteDirectory + "/" + name;
 			URI sftpUri = new URI("sftp", userInfo, serverAddress, -1, path, null, null);
@@ -141,7 +143,7 @@ public class SftpService extends BaseService<Goods, String> {
 			// Copy local file to sftp server
 			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
 		} catch (FileSystemException | URISyntaxException e) {
-			e.printStackTrace();
+			logger.error("图片上传失败！" + name, e);
 			return;
 		}
 

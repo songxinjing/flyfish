@@ -36,6 +36,7 @@ public class CountryController extends BaseController {
 	@RequestMapping(value = "country/add", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodAdd(Country form) {
+		logger.info("新增国家");
 		int id = (Integer) countryService.save(form);
 		Country country = countryService.find(id);
 		country.setOrderNum(id);
@@ -46,6 +47,7 @@ public class CountryController extends BaseController {
 	@RequestMapping(value = "country/modify", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodModify(Country form) {
+		logger.info("修改国家");
 		Country country = countryService.find(form.getId());
 		country.setName(form.getName());
 		countryService.update(country);
@@ -54,6 +56,7 @@ public class CountryController extends BaseController {
 
 	@RequestMapping(value = "country/delete", method = RequestMethod.GET)
 	public String delete(Integer id) {
+		logger.info("删除国家");
 		countryService.delete(id);
 		return "redirect:/country/list.html";
 	}

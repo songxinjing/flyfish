@@ -6,6 +6,11 @@ public class Constant {
 	 * 登录用户信息在Session中的Key
 	 */
 	public static final String SESSION_LOGIN_USER = "session_login_user";
+	
+	/**
+	 * 商品查询条件
+	 */
+	public static final String SESSION_GOODS_QUERY = "session_goods_query";
 
 	/**
 	 * 店铺信息

@@ -10,34 +10,40 @@ import com.songxinjing.flyfish.domain.GoodsPlat;
 public class GoodsForm implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Goods goods;
-	
+
 	private GoodsPlat goodsPlat;
-	
+
 	private GoodsImg goodsImg;
-	
+
 	private String listingSku;
-	
+
 	private String listingParentSku;
-	
+
+	private String platformTitle;
+
+	private boolean titleRed;
+
 	private BigDecimal wishPrice;
-	
-	private BigDecimal smtPrice;
-	
+
+	private BigDecimal aliExpressPrice;
+
 	private BigDecimal dhPrice;
-	
+
 	private BigDecimal joomPrice;
-	
+
 	private BigDecimal amazonPrice;
-	
+
 	private BigDecimal lazadaPrice;
-	
+
 	private BigDecimal ebayPrice;
-	
+
 	private BigDecimal cdPrice;
-	
+
 	private BigDecimal shopeePrice;
+
+	private BigDecimal platformPrice;
 
 	public Goods getGoods() {
 		return goods;
@@ -79,12 +85,12 @@ public class GoodsForm implements Serializable {
 		this.wishPrice = wishPrice;
 	}
 
-	public BigDecimal getSmtPrice() {
-		return smtPrice;
+	public BigDecimal getAliExpressPrice() {
+		return aliExpressPrice;
 	}
 
-	public void setSmtPrice(BigDecimal smtPrice) {
-		this.smtPrice = smtPrice;
+	public void setAliExpressPrice(BigDecimal aliExpressPrice) {
+		this.aliExpressPrice = aliExpressPrice;
 	}
 
 	public BigDecimal getDhPrice() {
@@ -149,6 +155,30 @@ public class GoodsForm implements Serializable {
 
 	public void setListingParentSku(String listingParentSku) {
 		this.listingParentSku = listingParentSku;
+	}
+
+	public BigDecimal getPlatformPrice() {
+		return platformPrice;
+	}
+
+	public void setPlatformPrice(BigDecimal platformPrice) {
+		this.platformPrice = platformPrice;
+	}
+
+	public String getPlatformTitle() {
+		return platformTitle;
+	}
+
+	public void setPlatformTitle(String platformTitle) {
+		this.platformTitle = platformTitle;
+	}
+
+	public boolean isTitleRed() {
+		return titleRed;
+	}
+
+	public void setTitleRed(boolean titleRed) {
+		this.titleRed = titleRed;
 	}
 
 }

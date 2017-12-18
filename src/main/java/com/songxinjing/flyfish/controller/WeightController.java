@@ -60,6 +60,7 @@ public class WeightController extends BaseController {
 
 	@RequestMapping(value = "weight/add", method = RequestMethod.POST)
 	public String add(HttpServletRequest request, Model model, int countryId, int platformId, BigDecimal rate) {
+		logger.info("新增国家权重");
 		Weight weight = new Weight();
 		weight.setCountry(countryService.find(countryId));
 		weight.setPlatform(platformService.find(platformId));
@@ -76,6 +77,7 @@ public class WeightController extends BaseController {
 	@RequestMapping(value = "weight/modify", method = RequestMethod.POST)
 	public String modify(HttpServletRequest request, Model model, int id, int countryId, int platformId,
 			BigDecimal rate) {
+		logger.info("修改国家权重");
 		Weight weight = weightService.find(id);
 		weight.setCountry(countryService.find(countryId));
 		weight.setPlatform(platformService.find(platformId));
@@ -91,6 +93,7 @@ public class WeightController extends BaseController {
 
 	@RequestMapping(value = "weight/del", method = RequestMethod.GET)
 	public String del(Model model, int id) {
+		logger.info("删除国家权重");
 		Weight weight = weightService.find(id);
 		int platId = weight.getPlatform().getId();
 		weightService.delete(weight);

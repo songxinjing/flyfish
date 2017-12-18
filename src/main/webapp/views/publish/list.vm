@@ -68,10 +68,8 @@
 						<button type="button" class="btn btn-warning btn-sm" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button>
 						<button type="button" class="btn btn-danger btn-sm" onclick="remove('$!{store.id}','$!{rec.goods.sku}','$!dataFlag')">移除</button>
 					</td>
-					<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"
-						/></td>
-					<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"
-						/></td>
+					<td><img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"/></td>
+					<td><img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"/></td>
 					<td>$!{rec.listingSku}</td>
 					<td>$!{rec.listingParentSku}</td>
 					<td>$!{rec.goods.sku}</td>
@@ -79,7 +77,7 @@
 					<td>$!{rec.goods.name}</td>
 					<td>$!{rec.goods.weight}</td>
 					<td>$!{rec.goods.costPrice}</td>
-					<td>$!{rec.joomPrice}</td>
+					<td>$!{rec.platformPrice}</td>
 				</tr>
 				#end
 			</tbody>
@@ -87,9 +85,6 @@
 	</div>
 </div>
 <script>
-	$(function () {
-		$("img.lazy").lazyload();
-	});
 	
 	$("#batchNoSelect").on("change", function () {
 		var batchNo = $(this).children('option:selected').val();

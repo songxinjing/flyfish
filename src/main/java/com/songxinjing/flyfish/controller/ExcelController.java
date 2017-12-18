@@ -4,10 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
@@ -79,6 +77,7 @@ public class ExcelController extends BaseController {
 	public String load(HttpServletRequest request, MultipartFile file) {
 		logger.info("Excel导入普源模版数据");
 		if (!file.isEmpty()) {
+			logger.info("文件检查成功，开始导入！");
 			try {
 				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
 				for (Map<String, String> obj : data) {
@@ -87,6 +86,7 @@ public class ExcelController extends BaseController {
 						sku = obj.get("sku");
 					}
 					if (StringUtils.isNotEmpty(sku)) {
+						logger.info("开始导入商品SKU：" + sku);
 						Goods goods = goodsService.find(sku);
 						if (goods == null) {
 							goods = new Goods();
@@ -134,7 +134,7 @@ public class ExcelController extends BaseController {
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("读取文件失败", e);
 			}
 		}
 		return "redirect:/goods/list.html";
@@ -144,12 +144,14 @@ public class ExcelController extends BaseController {
 	public String loadWish(HttpServletRequest request, MultipartFile file) {
 		logger.info("CSV导入Wish模版数据");
 		if (!file.isEmpty()) {
+			logger.info("文件检查成功，开始导入！");
 			try {
 				String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
 				List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
 				for (Map<String, String> obj : data) {
 					String sku = obj.get("*Unique ID");
 					if (StringUtils.isNotEmpty(sku)) {
+						logger.info("开始导入商品SKU：" + sku);
 						// 去除"\"部分
 						if (sku.contains("\\")) {
 							String skuH = sku.split("\\\\")[0];
@@ -202,7 +204,7 @@ public class ExcelController extends BaseController {
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("读取文件失败", e);
 			}
 		}
 		return "redirect:/goods/list.html";
@@ -210,7 +212,7 @@ public class ExcelController extends BaseController {
 
 	@RequestMapping(value = "export", method = RequestMethod.GET)
 	public void export(HttpServletResponse response, Integer storeId, String batchNo) {
-
+		logger.info("导出刊登");
 		Store store = storeService.find(storeId);
 		Platform platform = store.getPlatform();
 		String hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
@@ -305,18 +307,14 @@ public class ExcelController extends BaseController {
 			bis.close();
 			os.flush();
 			os.close();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("导出文件失败", e);
 		}
 	}
 
 	@RequestMapping(value = "excel/export/virtsku", method = RequestMethod.GET)
 	public void exportVirtsku(HttpServletResponse response, Integer storeId, String batchNo) {
-
+		logger.info("导出虚拟SKU列表");
 		String hql = "from Goods where length(virtSkus) > 0";
 		List<Goods> goodses = goodsService.findHql(hql);
 
@@ -345,17 +343,14 @@ public class ExcelController extends BaseController {
 			workbook.write(os);
 			os.flush();
 			os.close();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("导出文件失败", e);
 		}
 	}
 
 	@RequestMapping(value = "excel/import/relasku", method = RequestMethod.POST)
 	public String loadRelaSku(HttpServletRequest request, MultipartFile file) {
+		logger.info("导入关联SKU列表");
 		if (!file.isEmpty()) {
 			try {
 				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
@@ -387,7 +382,7 @@ public class ExcelController extends BaseController {
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("导出文件失败", e);
 			}
 		}
 		return "redirect:/goods/relasku.html";
@@ -423,8 +418,8 @@ public class ExcelController extends BaseController {
 			goodsImg = new GoodsImg();
 			goodsImg.setSku(sku);
 			for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-				if (!StringUtils.isEmpty(ExcelTemp.WISH_FIELD.get(key))) {
-					if (ExcelTemp.WISH_FIELD.get(key).contains("Img")) {
+				if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key))) {
+					if (ExcelTemp.WISH_FIELD.get(key).contains("Img") && StringUtils.isNotEmpty(obj.get(key))) {
 						sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
 					}
 				}

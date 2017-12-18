@@ -47,7 +47,7 @@
 						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#joinStoreModal'>加入店铺</button>
 						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#importModal'>普源导入</button>
 						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#wishImportModal'>Wish导入</button>
-						<button type="button" class="btn btn-danger" onclick="delall()">删除</button>
+						<button type="button" class="btn btn-danger" onclick="delall('$!pageSize','$!page')">删除</button>
 						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#addModal'>新增</button>
 					</div>
 					<div class="col-sm-6">
@@ -150,11 +150,25 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="col-sm-8">
+					<div class="col-sm-4">
+						<input id="name" type="text" class="form-control" name="sku" value="$!{queryForm.sku}" placeholder="SKU模糊查询">
+					</div>
+					<div class="col-sm-4">
 						<input id="skus" type="text" class="form-control" name="skus" value="$!{queryForm.skus}" placeholder="SKU：多个请用,隔开">
 					</div>
 					<div class="col-sm-4">
 						<input id="name" type="text" class="form-control" name="name" value="$!{queryForm.name}" placeholder="商品名称">
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-4">
+						<input id="skus" type="text" class="form-control" name="parentSkus" value="$!{queryForm.parentSkus}" placeholder="父SKU：多个请用,隔开">
+					</div>
+					<div class="col-sm-4">
+						<input id="skus" type="text" class="form-control" name="relaSkus" value="$!{queryForm.relaSkus}" placeholder="关联SKU：多个请用,隔开">
+					</div>
+					<div class="col-sm-4">
+						<input id="skus" type="text" class="form-control" name="virtSkus" value="$!{queryForm.virtSkus}" placeholder="虚拟SKU：多个请用,隔开">
 					</div>
 				</div>
 			</form>
@@ -205,12 +219,12 @@
 					<tr>
 						<td><input name="btnSelectItem" type="checkbox" value="$!{rec.goods.sku}"></td>
 						<td>
-							<button type="button" class="btn btn-warning btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button>
-							<button type="button" class="btn btn-danger btn-sm margin-bottom" onclick="del('$!{rec.goods.sku}')">删除</button>
+							<button type="button" class="btn btn-warning btn-sm margin-bottom" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}&pageSize=$!pageSize&page=$!page'">修改</button>
+							<button type="button" class="btn btn-danger btn-sm margin-bottom" onclick="del('$!{rec.goods.sku}','$!pageSize','$!page')">删除</button>
 						</td>
-						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"
+						<td><img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"
 							/></td>
-						<td><img class="lazy" height="40px" width="40px" data-original="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"
+						<td><img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"
 							/></td>
 						<td>$!{rec.goods.sku}</td>
 						<td>$!{rec.goods.parentSku}</td>
@@ -354,7 +368,6 @@
       });
 
 	$(function () {
-		$("img.lazy").lazyload();
 		$.datetimepicker.setLocale('zh');
 		$("#dateBegin").datetimepicker({
           format:'Y-m-d',
@@ -404,13 +417,13 @@
 		}
 	}
 	
-	function del(sku) {
+	function del(sku,pageSize,page) {
 		base.confirm("您确定要删除该商品吗？",function () {
-			window.location.href="${rc.contextPath}/goods/delete.html?sku="+sku;
+			window.location.href="${rc.contextPath}/goods/delete.html?sku="+sku+"&pageSize="+pageSize+"&page="+page;
 		});
 	}
 	
-	function delall() {
+	function delall(pageSize,page) {
 		base.confirm("您确定要删除选中的所有商品吗？",function () {
 			var skus = "";
 	        $("input[name='btnSelectItem']").each(function() {
@@ -418,7 +431,7 @@
 					skus = skus + $(this).val() + ",";
 				}
 	        });
-			window.location.href="${rc.contextPath}/goods/deleteall.html?skus="+skus;
+			window.location.href="${rc.contextPath}/goods/deleteall.html?skus="+skus+"&pageSize="+pageSize+"&page="+page;
 		});
 	}
 

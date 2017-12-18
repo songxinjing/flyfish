@@ -36,6 +36,7 @@ public class ExchangeController extends BaseController {
 	@RequestMapping(value = "exchange/modify", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodModify(Exchange form) {
+		logger.info("修改汇率");
 		Exchange exchange = exchangeService.find(form.getCode());
 		exchange.setRate(form.getRate());
 		exchangeService.update(exchange);

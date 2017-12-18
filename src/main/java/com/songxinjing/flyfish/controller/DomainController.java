@@ -36,12 +36,14 @@ public class DomainController extends BaseController {
 	@RequestMapping(value = "domain/add", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean prodAdd(Domain form) {
+		logger.info("新增域名");
 		domainService.save(form);
 		return true;
 	}
 
 	@RequestMapping(value = "domain/delete", method = RequestMethod.GET)
 	public String delete(String name) {
+		logger.info("删除域名");
 		domainService.delete(name);
 		return "redirect:/domain/list.html";
 	}

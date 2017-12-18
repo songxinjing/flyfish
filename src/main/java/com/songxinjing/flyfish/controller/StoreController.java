@@ -37,7 +37,7 @@ public class StoreController extends BaseController {
 
 	@RequestMapping(value = "store/list", method = RequestMethod.GET)
 	public String list(Model model, Integer platId) {
-		logger.info("进入列表页面");
+		logger.info("进入虚拟店铺列表页面");
 
 		if (platId == null || platId == 0) {
 			platId = 1;
@@ -58,6 +58,7 @@ public class StoreController extends BaseController {
 
 	@RequestMapping(value = "store/add", method = RequestMethod.POST)
 	public String add(HttpServletRequest request, Model model, int platformId, String name, String domainName) {
+		logger.info("新增虚拟店铺");
 		Store store = new Store();
 		store.setPlatform(platformService.find(platformId));
 		store.setName(name);
@@ -72,6 +73,7 @@ public class StoreController extends BaseController {
 	@RequestMapping(value = "store/modify", method = RequestMethod.POST)
 	public String modify(HttpServletRequest request, Model model, int id, String name,
 			String domainName) {
+		logger.info("修改虚拟店铺");
 		Store store = storeService.find(id);
 		store.setName(name);
 		store.setDomainName(domainName);
@@ -83,6 +85,7 @@ public class StoreController extends BaseController {
 
 	@RequestMapping(value = "store/del", method = RequestMethod.GET)
 	public String del(Model model, int id) {
+		logger.info("删除虚拟店铺");
 		Store store = storeService.find(id);
 		int platId = store.getPlatform().getId();
 		storeService.delete(store);

@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
@@ -52,13 +53,10 @@ public class PublishController extends BaseController {
 	@RequestMapping(value = "publish/list")
 	public String list(Model model, Integer storeId, String batchNo, Boolean dataFlag) {
 		logger.info("进入刊登店铺列表页面");
-
 		if (dataFlag == null) {
 			dataFlag = true;
 		}
-
 		Store store = storeService.find(storeId);
-
 		if (StringUtils.isEmpty(batchNo)) {
 			String hql = "select max(batchNo) from StoreGoods where store.id = ? ";
 			batchNo = (String) storeGoodsService.findHqlAObject(hql, storeId);
@@ -94,9 +92,28 @@ public class PublishController extends BaseController {
 				shippingPrice = new BigDecimal(0);
 			}
 			BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
-			goodsForm.setJoomPrice(price);
+			goodsForm.setPlatformPrice(price);
+			if (store.getPlatform().equals(Constant.Wish)) {
+				goodsForm.setPlatformTitle(goodsPlat.getTitle());
+				goodsForm.setTitleRed(false);
+			} else if (store.getPlatform().equals(Constant.Ebay)) {
+				goodsForm.setPlatformTitle(goodsPlat.getEbayTitle());
+				if (StringUtils.isNotEmpty(goodsPlat.getEbayTitle()) && goodsPlat.getEbayTitle().length() > 75) {
+					goodsForm.setTitleRed(true);
+				} else {
+					goodsForm.setTitleRed(false);
+				}
+			} else {
+				goodsForm.setPlatformTitle(goodsPlat.getOtherTitle());
+				if (StringUtils.isNotEmpty(goodsPlat.getOtherTitle()) && goodsPlat.getOtherTitle().length() > 90) {
+					goodsForm.setTitleRed(true);
+				} else {
+					goodsForm.setTitleRed(false);
+				}
+			}
+
 			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
-					&& StringUtils.isNotEmpty(goodsPlat.getTitle())
+					&& StringUtils.isNotEmpty(goodsPlat.getTitle()) && !goodsForm.isTitleRed()
 					&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
 				listT.add(goodsForm);
 			} else {
@@ -118,6 +135,7 @@ public class PublishController extends BaseController {
 
 	@RequestMapping(value = "publish/remove", method = RequestMethod.GET)
 	public String remove(Model model, Integer storeId, String sku, Boolean dataFlag) {
+		logger.info("商品移除店铺");
 		String hql = "select sg from StoreGoods as sg left join sg.store as store left join sg.goods as goods where store.id = ? and goods.sku = ? ";
 		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, sku);
 		String batchNo = null;
@@ -130,6 +148,7 @@ public class PublishController extends BaseController {
 
 	@RequestMapping(value = "publish/removeall", method = RequestMethod.GET)
 	public String removeall(Model model, Integer storeId, String batchNo) {
+		logger.info("商品批量移除店铺");
 		String hql = "select sg from StoreGoods as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
 		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, batchNo);
 		storeGoodsService.delete(list);

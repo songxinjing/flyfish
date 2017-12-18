@@ -88,27 +88,22 @@ public class GoodsController extends BaseController {
 	private SftpService sftpService;
 
 	@RequestMapping(value = "goods/list")
-	public String list(Model model, Integer page, Integer pageSize, GoodsQueryForm form) {
+	public String list(HttpServletRequest request, Model model, Integer page, Integer pageSize, GoodsQueryForm form) {
 		logger.info("进入商品列表页面");
 		if (page == null) {
 			page = 1;
 		}
 		if (pageSize == null) {
 			pageSize = Constant.PAGE_SIZE;
-			;
 		}
+
+		if (form != null) {
+			request.getSession().setAttribute(Constant.SESSION_GOODS_QUERY, form);
+		} else {
+			form = (GoodsQueryForm) request.getSession().getAttribute(Constant.SESSION_GOODS_QUERY);
+		}
+
 		int total = 0;
-		String name = "";
-		String bigCataName = "";
-		String smallCataName = "";
-		String bussOwner1 = "";
-		String bussOwner2 = "";
-		String buyer = "";
-		String state = "";
-		String isElectric = "";
-		String createTmBegin = "";
-		String createTmEnd = "";
-		String skus = "";
 		int storeId = form.getStoreId();
 		String hql = "";
 		Map<String, Object> paraMap = new HashMap<String, Object>();
@@ -121,62 +116,84 @@ public class GoodsController extends BaseController {
 			paraMap.put("storeId", storeId);
 		}
 		if (StringUtils.isNotEmpty(form.getName())) {
-			name = form.getName().trim();
 			hql = hql + "and goods.name like :name ";
-			paraMap.put("name", "%" + name + "%");
+			paraMap.put("name", "%" + form.getName().trim() + "%");
+		}
+		if (StringUtils.isNotEmpty(form.getSku())) {
+			hql = hql + "and goods.sku like :sku ";
+			paraMap.put("sku", "%" + form.getSku().trim() + "%");
 		}
 		if (StringUtils.isNotEmpty(form.getBigCataName())) {
-			bigCataName = form.getBigCataName().trim();
 			hql = hql + "and goods.bigCataName = :bigCataName ";
-			paraMap.put("bigCataName", bigCataName);
+			paraMap.put("bigCataName", form.getBigCataName().trim());
 		}
 		if (StringUtils.isNotEmpty(form.getSmallCataName())) {
-			smallCataName = form.getSmallCataName().trim();
 			hql = hql + "and goods.smallCataName = :smallCataName ";
-			paraMap.put("smallCataName", smallCataName);
+			paraMap.put("smallCataName", form.getSmallCataName().trim());
 		}
 		if (StringUtils.isNotEmpty(form.getBussOwner1())) {
-			bussOwner1 = form.getBussOwner1().trim();
 			hql = hql + "and goods.bussOwner1 = :bussOwner1 ";
-			paraMap.put("bussOwner1", bussOwner1);
+			paraMap.put("bussOwner1", form.getBussOwner1().trim());
 		}
 		if (StringUtils.isNotEmpty(form.getBussOwner2())) {
-			bussOwner2 = form.getBussOwner2().trim();
 			hql = hql + "and goods.bussOwner2 = :bussOwner2 ";
-			paraMap.put("bussOwner2", bussOwner2);
+			paraMap.put("bussOwner2", form.getBussOwner2().trim());
 		}
 		if (StringUtils.isNotEmpty(form.getBuyer())) {
-			buyer = form.getBuyer().trim();
 			hql = hql + "and goods.buyer = :buyer ";
-			paraMap.put("buyer", buyer);
+			paraMap.put("buyer", form.getBuyer().trim());
 		}
 		if (StringUtils.isNotEmpty(form.getState())) {
-			state = form.getState().trim();
 			hql = hql + "and goods.state = :state ";
-			paraMap.put("state", state);
+			paraMap.put("state", form.getState().trim());
 		}
 		if (StringUtils.isNotEmpty(form.getIsElectric())) {
-			isElectric = form.getIsElectric().trim();
 			hql = hql + "and goods.isElectric = :isElectric ";
-			paraMap.put("isElectric", isElectric);
+			paraMap.put("isElectric", form.getIsElectric().trim());
 		}
 
 		if (StringUtils.isNotEmpty(form.getCreateTmBegin()) && StringUtils.isNotEmpty(form.getCreateTmEnd())) {
-			createTmBegin = form.getCreateTmBegin().trim();
-			createTmEnd = form.getCreateTmEnd().trim();
 			hql = hql + "and goods.createTm >= :createTmBegin and goods.createTm <= :createTmEnd ";
-			paraMap.put("createTmBegin", createTmBegin);
-			paraMap.put("createTmEnd", createTmEnd);
+			paraMap.put("createTmBegin", form.getCreateTmBegin().trim());
+			paraMap.put("createTmEnd", form.getCreateTmEnd().trim());
 		}
 
 		if (StringUtils.isNotEmpty(form.getSkus())) {
-			skus = form.getSkus().replaceAll("，", ",");
-			List<String> inParas = new ArrayList<String>();
-			for (String inPara : skus.split(",")) {
-				inParas.add(inPara.trim());
+			String skus = form.getSkus().replaceAll("，", ",");
+			List<String> inSkus = new ArrayList<String>();
+			for (String inSku : skus.split(",")) {
+				inSkus.add(inSku.trim());
 			}
-			hql = hql + "and goods.sku in  (:inParas) ";
-			paraMap.put("inParas", inParas);
+			hql = hql + "and goods.sku in  (:inSkus) ";
+			paraMap.put("inSkus", inSkus);
+		}
+
+		if (StringUtils.isNotEmpty(form.getParentSkus())) {
+			String parentSkus = form.getParentSkus().replaceAll("，", ",");
+			List<String> inParentSkus = new ArrayList<String>();
+			for (String inParentSku : parentSkus.split(",")) {
+				inParentSkus.add(inParentSku.trim());
+			}
+			hql = hql + "and goods.parentSku in  (:inParentSkus) ";
+			paraMap.put("inParentSkus", inParentSkus);
+		}
+
+		if (StringUtils.isNotEmpty(form.getRelaSkus())) {
+			hql = hql + "and ( 1=0 ";
+			String relaSkus = form.getRelaSkus().replaceAll("，", ",");
+			for (String relaSku : relaSkus.split(",")) {
+				hql = hql + "or goods.relaSkus like %" + relaSku + "% ";
+			}
+			hql = hql + ") ";
+		}
+
+		if (StringUtils.isNotEmpty(form.getVirtSkus())) {
+			hql = hql + "and ( 1=0 ";
+			String virtSkus = form.getVirtSkus().replaceAll("，", ",");
+			for (String virtSku : virtSkus.split(",")) {
+				hql = hql + "or goods.virtSkus like %" + virtSku + "% ";
+			}
+			hql = hql + ") ";
 		}
 		total = goodsService.findHql(hql, paraMap).size();
 
@@ -185,11 +202,7 @@ public class GoodsController extends BaseController {
 		pageModel.setPageSize(pageSize);
 		pageModel.init(page, total);
 		pageModel.setUrl("goods/list.html");
-		pageModel.setPara("?bigCataName=" + bigCataName + "&smallCataName=" + smallCataName + "&bussOwner1="
-				+ bussOwner1 + "&bussOwner2=" + bussOwner2 + "&buyer=" + buyer + "&state=" + state + "&isElectric="
-				+ isElectric + "&createTmBegin=" + createTmBegin + "&createTmEnd=" + createTmEnd + "&skus=" + skus
-				+ "&pageSize=" + pageSize + "&");
-
+		pageModel.setPara("?pageSize=" + pageSize + "&");
 		List<Goods> goodses = new ArrayList<Goods>();
 		goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
 		List<GoodsForm> list = new ArrayList<GoodsForm>();
@@ -235,31 +248,46 @@ public class GoodsController extends BaseController {
 	}
 
 	@RequestMapping(value = "goods/edit", method = RequestMethod.GET)
-	public String edit(Model model, String sku) {
+	public String edit(Model model, String sku, Integer page, Integer pageSize) {
 		logger.info("进入商品详情页面");
 		GoodsForm form = new GoodsForm();
 		Goods goods = goodsService.find(sku);
 		form.setGoods(goods);
 		form.setGoodsPlat(goodsPlatService.find(sku));
 		form.setGoodsImg(goodsImgService.find(sku));
-		Platform platform = platformService.findByName(Constant.Joom);
-		BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
-		form.setJoomPrice(goodsService.getPrice(platform, goods, shippingPrice));
+
+		Map<String, BigDecimal> platformShipPrice = new HashMap<String, BigDecimal>();
+		for (Platform platform : platformService.find()) {
+			BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
+			platformShipPrice.put(platform.getName(), shippingPrice);
+		}
+		form.setEbayPrice(goodsService.getPrice(platformService.findByName(Constant.Ebay), goods,
+				platformShipPrice.get(Constant.Ebay)));
+		form.setAmazonPrice(goodsService.getPrice(platformService.findByName(Constant.Amazon), goods,
+				platformShipPrice.get(Constant.Amazon)));
+		form.setAliExpressPrice(goodsService.getPrice(platformService.findByName(Constant.AliExpress), goods,
+				platformShipPrice.get(Constant.AliExpress)));
+		form.setWishPrice(goodsService.getPrice(platformService.findByName(Constant.Wish), goods,
+				platformShipPrice.get(Constant.Wish)));
+		form.setJoomPrice(goodsService.getPrice(platformService.findByName(Constant.Joom), goods,
+				platformShipPrice.get(Constant.Joom)));
 		model.addAttribute("form", form);
+		model.addAttribute("page", page);
+		model.addAttribute("pageSize", pageSize);
 		return "goods/edit";
 	}
 
 	@RequestMapping(value = "goods/delete", method = RequestMethod.GET)
-	public String delete(String sku) {
+	public String delete(String sku, Integer page, Integer pageSize) {
 		logger.info("删除商品信息");
 		goodsService.delete(sku);
 		goodsPlatService.delete(sku);
 		goodsImgService.delete(sku);
-		return "redirect:/goods/list.html";
+		return "redirect:/goods/list.html?pageSize=" + pageSize + "&page=" + page;
 	}
 
 	@RequestMapping(value = "goods/deleteall", method = RequestMethod.GET)
-	public String deleteall(String skus) {
+	public String deleteall(String skus, Integer page, Integer pageSize) {
 		logger.info("批量删除商品信息");
 		for (String sku : skus.split(",")) {
 			if (StringUtils.isNotEmpty(sku)) {
@@ -268,7 +296,7 @@ public class GoodsController extends BaseController {
 				goodsImgService.delete(sku.trim());
 			}
 		}
-		return "redirect:/goods/list.html";
+		return "redirect:/goods/list.html?pageSize=" + pageSize + "&page=" + page;
 	}
 
 	@RequestMapping(value = "goods/save", method = RequestMethod.POST)
@@ -418,17 +446,19 @@ public class GoodsController extends BaseController {
 		}
 		return false;
 	}
-	
+
 	@RequestMapping(value = "goods/relasku", method = RequestMethod.GET)
 	public String relasku(Model model) {
+		logger.info("进入关联SKU列表页面");
 		String hql = "from Goods where length(relaSkus) > 0";
 		List<Goods> recList = goodsService.findHql(hql);
 		model.addAttribute("recList", recList);
 		return "goods/relasku";
 	}
-	
+
 	@RequestMapping(value = "goods/virtsku", method = RequestMethod.GET)
 	public String virtsku(Model model) {
+		logger.info("进入虚拟SKU列表页面");
 		String hql = "from Goods where length(virtSkus) > 0";
 		List<Goods> recList = goodsService.findHql(hql);
 		model.addAttribute("recList", recList);

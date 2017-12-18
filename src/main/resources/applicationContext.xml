@@ -46,7 +46,7 @@
 				<!-- 设置自动创建|更新|验证数据库表结构 validate | update | create | create-drop-->
 				hibernate.hbm2ddl.auto=update
 				<!-- 是否在控制台显示sql -->
-				hibernate.show_sql=true
+				hibernate.show_sql=false
 				<!-- 是否格式化sql，优化显示 -->
 				hibernate.format_sql=true
 				<!-- 是否开启二级缓存 -->

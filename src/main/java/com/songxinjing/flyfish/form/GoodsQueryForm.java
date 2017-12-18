@@ -7,9 +7,29 @@ public class GoodsQueryForm implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * sku
+	 */
+	private String sku;
+
+	/**
 	 * sku列表（分号隔开）
 	 */
 	private String skus;
+
+	/**
+	 * 父sku列表（分号隔开）
+	 */
+	private String parentSkus;
+
+	/**
+	 * 关联sku列表（分号隔开）
+	 */
+	private String relaSkus;
+
+	/**
+	 * 虚拟sku列表（分号隔开）
+	 */
+	private String virtSkus;
 
 	/**
 	 * 商品名称
@@ -160,6 +180,38 @@ public class GoodsQueryForm implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSku() {
+		return sku;
+	}
+
+	public void setSku(String sku) {
+		this.sku = sku;
+	}
+
+	public String getParentSkus() {
+		return parentSkus;
+	}
+
+	public void setParentSkus(String parentSkus) {
+		this.parentSkus = parentSkus;
+	}
+
+	public String getRelaSkus() {
+		return relaSkus;
+	}
+
+	public void setRelaSkus(String relaSkus) {
+		this.relaSkus = relaSkus;
+	}
+
+	public String getVirtSkus() {
+		return virtSkus;
+	}
+
+	public void setVirtSkus(String virtSkus) {
+		this.virtSkus = virtSkus;
 	}
 
 }
