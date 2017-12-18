@@ -68,8 +68,16 @@
 						<button type="button" class="btn btn-warning btn-sm" onclick="window.location.href='${rc.contextPath}/goods/edit.html?sku=$!{rec.goods.sku}'">修改</button>
 						<button type="button" class="btn btn-danger btn-sm" onclick="remove('$!{store.id}','$!{rec.goods.sku}','$!dataFlag')">移除</button>
 					</td>
-					<td><img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"/></td>
-					<td><img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"/></td>
+					<td>
+					#if(!$!{rec.goodsImg.mainImgUrl}) 
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"/>
+					#end
+					</td>
+					<td>
+					#if(!$!{rec.goodsImg.vMainImgUrl}) 
+						<img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"/>
+					#end
+					</td>
 					<td>$!{rec.listingSku}</td>
 					<td>$!{rec.listingParentSku}</td>
 					<td>$!{rec.goods.sku}</td>
