@@ -93,10 +93,10 @@ public class PublishController extends BaseController {
 			}
 			BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
 			goodsForm.setPlatformPrice(price);
-			if (store.getPlatform().equals(Constant.Wish)) {
+			if (store.getPlatform().getName().equals(Constant.Wish)) {
 				goodsForm.setPlatformTitle(goodsPlat.getTitle());
 				goodsForm.setTitleRed(false);
-			} else if (store.getPlatform().equals(Constant.Ebay)) {
+			} else if (store.getPlatform().getName().equals(Constant.Ebay)) {
 				goodsForm.setPlatformTitle(goodsPlat.getEbayTitle());
 				if (StringUtils.isNotEmpty(goodsPlat.getEbayTitle()) && goodsPlat.getEbayTitle().length() > 75) {
 					goodsForm.setTitleRed(true);

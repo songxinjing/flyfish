@@ -226,8 +226,25 @@ public class ExcelController extends BaseController {
 			if (goodsPlat == null || goodsImg == null) {
 				continue;
 			}
+
+			String platformTitle = "";
+			boolean titleRed = false;
+			if (platform.getName().equals(Constant.Wish)) {
+				platformTitle = goodsPlat.getTitle();
+			} else if (platform.getName().equals(Constant.Ebay)) {
+				platformTitle = goodsPlat.getEbayTitle();
+				if (StringUtils.isNotEmpty(platformTitle) && platformTitle.length() > 75) {
+					titleRed = true;
+				}
+			} else {
+				platformTitle = goodsPlat.getOtherTitle();
+				if (StringUtils.isNotEmpty(platformTitle) && platformTitle.length() > 90) {
+					titleRed = true;
+				}
+			}
+
 			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
-					&& StringUtils.isNotEmpty(goodsPlat.getTitle())
+					&& StringUtils.isNotEmpty(platformTitle) && !titleRed
 					&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
 				String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
 				String listingParentSku = BaseUtil.changeSku(goods.getParentSku(), store.getMove());
@@ -269,6 +286,7 @@ public class ExcelController extends BaseController {
 					map.put("*Price", price.toString());
 					map.put("*Unique ID", listingSku);
 					map.put("Parent Unique ID", listingParentSku);
+					map.put("*Product Name", platformTitle);
 				} else if (Constant.Joom.equals(platform.getName())) {
 					if (StringUtils.isEmpty(map.get("inventory"))) {
 						map.put("inventory", "9999");
@@ -281,7 +299,7 @@ public class ExcelController extends BaseController {
 					map.put("msrp", msrp.toString());
 					map.put("SKU", listingSku);
 					map.put("Parent SKU", listingParentSku);
-					String smallTitel = map.get("product name").toLowerCase();
+					String smallTitel = platformTitle.toLowerCase();
 					map.put("product name", smallTitel);
 				}
 				data.add(map);
@@ -399,6 +417,10 @@ public class ExcelController extends BaseController {
 			if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
 				if (ExcelTemp.WISH_FIELD.get(key).equals("sku")) {
 					ReflectionUtil.setFieldValue(goodsPlat, "sku", sku);
+				} else if (ExcelTemp.WISH_FIELD.get(key).equals("tags")) {
+					if (StringUtils.isEmpty(goodsPlat.getTags())) {
+						ReflectionUtil.setFieldValue(goodsPlat, "tags", obj.get(key));
+					}
 				} else {
 					ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
 				}
