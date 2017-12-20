@@ -98,8 +98,10 @@ public class GoodsController extends BaseController {
 		}
 
 		if (form != null) {
+			logger.info("商品查询，有传入查询条件，更新session");
 			request.getSession().setAttribute(Constant.SESSION_GOODS_QUERY, form);
 		} else {
+			logger.info("商品查询，没有传入查询条件，从session中获取");
 			form = (GoodsQueryForm) request.getSession().getAttribute(Constant.SESSION_GOODS_QUERY);
 		}
 
@@ -182,7 +184,7 @@ public class GoodsController extends BaseController {
 			hql = hql + "and ( 1=0 ";
 			String relaSkus = form.getRelaSkus().replaceAll("，", ",");
 			for (String relaSku : relaSkus.split(",")) {
-				hql = hql + "or goods.relaSkus like %" + relaSku + "% ";
+				hql = hql + "or goods.relaSkus like '%" + relaSku + "%' ";
 			}
 			hql = hql + ") ";
 		}
@@ -191,7 +193,7 @@ public class GoodsController extends BaseController {
 			hql = hql + "and ( 1=0 ";
 			String virtSkus = form.getVirtSkus().replaceAll("，", ",");
 			for (String virtSku : virtSkus.split(",")) {
-				hql = hql + "or goods.virtSkus like %" + virtSku + "% ";
+				hql = hql + "or goods.virtSkus like '%" + virtSku + "%' ";
 			}
 			hql = hql + ") ";
 		}
@@ -232,7 +234,7 @@ public class GoodsController extends BaseController {
 		List<Object> buyers = goodsService.findHqlObject(hql);
 
 		model.addAttribute("pageModel", pageModel);
-		model.addAttribute("page", page);
+		model.addAttribute("page", pageModel.getCurrPage());
 		model.addAttribute("pageSize", pageSize);
 		model.addAttribute("queryForm", form);
 		model.addAttribute("platforms", platformService.find());

@@ -223,13 +223,14 @@
 							<button type="button" class="btn btn-danger btn-sm margin-bottom" onclick="del('$!{rec.goods.sku}','$!pageSize','$!page')">删除</button>
 						</td>
 						<td>
-						#if(!$!{rec.goodsImg.mainImgUrl}) 
+						#if("$!{rec.goodsImg.mainImgUrl}" != "") 
 							<img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.mainImgUrl}"/>
 						#end
 						</td>
 						<td>
-						#if(!$!{rec.goodsImg.vMainImgUrl}) 
+						#if("$!{rec.goodsImg.vMainImgUrl}" != "") 
 							<img height="40px" width="40px" src="http://www.bentain.site/$!{rec.goodsImg.vMainImgUrl}"/>
+						#end
 						</td>
 						<td>$!{rec.goods.sku}</td>
 						<td>$!{rec.goods.parentSku}</td>

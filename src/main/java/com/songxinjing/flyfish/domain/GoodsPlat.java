@@ -27,19 +27,19 @@ public class GoodsPlat implements Serializable {
 	/**
 	 * WISH title
 	 */
-	@Column(length = 255)
+	@Column(length = 500)
 	private String title;
 	
 	/**
 	 * Ebay title(75)
 	 */
-	@Column(length = 255)
+	@Column(length = 500)
 	private String ebayTitle;
 	
 	/**
 	 * other title(90)
 	 */
-	@Column(length = 255)
+	@Column(length = 500)
 	private String otherTitle;
 	
 	/**
@@ -82,79 +82,79 @@ public class GoodsPlat implements Serializable {
 	/**
 	 * main image URL
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String mainImgUrl;
 
 	/**
 	 * variant main image URL
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String vMainImgUrl;
 	
 	/**
 	 * extra image URL
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl;
 	
 	/**
 	 * extra image URL1
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl1;
 	
 	/**
 	 * extra image URL2
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl2;
 	
 	/**
 	 * extra image URL3
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl3;
 	
 	/**
 	 * extra image URL4
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl4;
 	
 	/**
 	 * extra image URL5
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl5;
 	
 	/**
 	 * extra image URL6
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl6;
 	
 	/**
 	 * extra image URL7
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl7;
 	
 	/**
 	 * extra image URL8
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl8;
 	
 	/**
 	 * extra image URL9
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl9;
 	
 	/**
 	 * extra image URL10
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String eImgUrl10;
 
 	public String getSku() {

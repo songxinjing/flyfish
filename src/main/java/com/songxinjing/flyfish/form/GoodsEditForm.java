@@ -17,6 +17,16 @@ public class GoodsEditForm implements Serializable {
 	private String parentSku;
 	
 	/**
+	 * 关联SKU
+	 */
+	private String relaSkus;
+	
+	/**
+	 * 虚拟SKU
+	 */
+	private String virtSkus;
+	
+	/**
 	 * 多款式（是、否）
 	 */
 	private String isMoreSytle;
@@ -322,8 +332,17 @@ public class GoodsEditForm implements Serializable {
 	 * 外箱高
 	 */
 	private String outHeight;
-
-
+	
+	/**
+	 * Ebay title(75)
+	 */
+	private String ebayTitle;
+	
+	/**
+	 * other title(90)
+	 */
+	private String otherTitle;
+	
 	public String getSku() {
 		return sku;
 	}
@@ -826,6 +845,38 @@ public class GoodsEditForm implements Serializable {
 
 	public void setOutHeight(String outHeight) {
 		this.outHeight = outHeight;
+	}
+
+	public String getRelaSkus() {
+		return relaSkus;
+	}
+
+	public void setRelaSkus(String relaSkus) {
+		this.relaSkus = relaSkus;
+	}
+
+	public String getVirtSkus() {
+		return virtSkus;
+	}
+
+	public void setVirtSkus(String virtSkus) {
+		this.virtSkus = virtSkus;
+	}
+
+	public String getEbayTitle() {
+		return ebayTitle;
+	}
+
+	public void setEbayTitle(String ebayTitle) {
+		this.ebayTitle = ebayTitle;
+	}
+
+	public String getOtherTitle() {
+		return otherTitle;
+	}
+
+	public void setOtherTitle(String otherTitle) {
+		this.otherTitle = otherTitle;
 	}
 	
 }

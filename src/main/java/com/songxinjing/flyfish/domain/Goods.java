@@ -67,19 +67,19 @@ public class Goods implements Serializable {
 	/**
 	 * 大类名称
 	 */
-	@Column(length = 32)
+	@Column(length = 128)
 	private String bigCataName;
 
 	/**
 	 * 小类名称
 	 */
-	@Column(length = 32)
+	@Column(length = 128)
 	private String smallCataName;
 
 	/**
 	 * 商品名称
 	 */
-	@Column(length = 64)
+	@Column(length = 128)
 	private String name;
 
 	/**
@@ -109,13 +109,13 @@ public class Goods implements Serializable {
 	/**
 	 * 中文申报名
 	 */
-	@Column(length = 32)
+	@Column(length = 128)
 	private String reportNameCn;
 
 	/**
 	 * 英文申报名
 	 */
-	@Column(length = 32)
+	@Column(length = 128)
 	private String reportNameEn;
 
 	/**
@@ -139,25 +139,25 @@ public class Goods implements Serializable {
 	/**
 	 * 业绩归属人1
 	 */
-	@Column(length = 16)
+	@Column(length = 32)
 	private String bussOwner1;
 
 	/**
 	 * 业绩归属人2
 	 */
-	@Column(length = 16)
+	@Column(length = 32)
 	private String bussOwner2;
 
 	/**
 	 * 开发日期
 	 */
-	@Column(length = 16)
+	@Column(length = 32)
 	private String bussDate;
 
 	/**
 	 * 采购员
 	 */
-	@Column(length = 16)
+	@Column(length = 32)
 	private String buyer;
 
 	/**
@@ -169,19 +169,19 @@ public class Goods implements Serializable {
 	/**
 	 * 网页URL
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String url;
 
 	/**
 	 * 网页URL2
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String url2;
 
 	/**
 	 * 网页URL3
 	 */
-	@Column(length = 128)
+	@Column(length = 500)
 	private String url3;
 
 	/**
@@ -217,13 +217,13 @@ public class Goods implements Serializable {
 	/**
 	 * 责任归属人1
 	 */
-	@Column(length = 16)
+	@Column(length = 32)
 	private String respOwner1;
 
 	/**
 	 * 责任归属人2
 	 */
-	@Column(length = 16)
+	@Column(length = 32)
 	private String respOwner2;
 
 	/**
@@ -235,13 +235,13 @@ public class Goods implements Serializable {
 	/**
 	 * 款式
 	 */
-	@Column(length = 16)
+	@Column(length = 128)
 	private String style;
 
 	/**
 	 * 品牌
 	 */
-	@Column(length = 64)
+	@Column(length = 128)
 	private String make;
 
 	/**
@@ -253,7 +253,7 @@ public class Goods implements Serializable {
 	/**
 	 * 供应商名称
 	 */
-	@Column(length = 32)
+	@Column(length = 128)
 	private String supplyName;
 
 	/**
@@ -277,7 +277,7 @@ public class Goods implements Serializable {
 	/**
 	 * 停售原因
 	 */
-	@Column(length = 64)
+	@Column(length = 128)
 	private String stopReson;
 
 	/**
