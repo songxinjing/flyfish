@@ -186,7 +186,7 @@ public class ExcelUtil {
 		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withHeader(headers);
 		try {
 			csvFile = new File(file);
-			csvFileOutputStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "UTF-8"),
+			csvFileOutputStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(csvFile), "GBK"),
 					1024);
 			csvPrinter = new CSVPrinter(csvFileOutputStream, csvFileFormat);
 

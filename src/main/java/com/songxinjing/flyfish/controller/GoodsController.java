@@ -350,6 +350,20 @@ public class GoodsController extends BaseController {
 
 		goodsService.update(goods);
 		goodsPlatService.update(goodsPlat);
+
+		Goods temp = new Goods();
+		temp.setParentSku(goods.getParentSku());
+		List<Goods> list = goodsService.find(temp);
+		for (Goods g : list) {
+			logger.info("更新同一父SKU的标题信息：" + goods.getParentSku() + " -> " + g.getSku());
+			GoodsPlat gp = goodsPlatService.find(g.getSku());
+			if(gp != null){
+				gp.setTitle(goodsPlat.getTitle());
+				gp.setEbayTitle(goodsPlat.getEbayTitle());
+				gp.setOtherTitle(goodsPlat.getOtherTitle());
+				goodsPlatService.update(gp);
+			}
+		}
 		return true;
 	}
 
@@ -378,7 +392,9 @@ public class GoodsController extends BaseController {
 		logger.info("重新获取图片");
 		GoodsPlat goodsPlat = goodsPlatService.find(sku);
 		String imgUrl = (String) ReflectionUtil.getFieldValue(goodsPlat, imgName);
-		sftpService.startFTP(sku, imgName, imgUrl);
+		if (StringUtils.isNotEmpty(imgUrl)) {
+			sftpService.startFTP(sku, imgName, imgUrl);
+		}
 		return true;
 	}
 
@@ -386,19 +402,26 @@ public class GoodsController extends BaseController {
 	@ResponseBody
 	public boolean uploadimg(String sku, String imgName, MultipartFile file) {
 		logger.info("上传图片");
-		GoodsImg goodsImg = goodsImgService.find(sku);
-		String name = sku + "-" + imgName + System.currentTimeMillis() + ".jpg";
-		ReflectionUtil.setFieldValue(goodsImg, imgName, name);
-		goodsImgService.save(goodsImg);
-
+		String tempSku = sku;
+		if (tempSku.contains("*")) {
+			tempSku = tempSku.replace("*", "_");
+		}
 		try {
 			File temp = File.createTempFile("temp", ".jpg");
 			file.transferTo(temp);
+			GoodsImg goodsImg = goodsImgService.find(sku);
+			if (imgName.equals("mainImgUrl")) {
+				Goods goods = goodsService.find(sku);
+				tempSku = goods.getParentSku();
+			}
+			String name = tempSku + "-" + imgName + ".jpg";
 			sftpService.doFTP(name, temp);
+			ReflectionUtil.setFieldValue(goodsImg, imgName, name);
+			goodsImgService.update(goodsImg);
 		} catch (IllegalStateException | IOException e) {
-			e.printStackTrace();
+			logger.error("上传失败：" + sku + " " + imgName);
+			return false;
 		}
-
 		return true;
 	}
 

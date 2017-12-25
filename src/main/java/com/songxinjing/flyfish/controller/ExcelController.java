@@ -253,7 +253,9 @@ public class ExcelController extends BaseController {
 					if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
 						if (goodsImg != null && (key.contains("image") || key.contains("Image"))) {
 							String img = (String) ReflectionUtil.getFieldValue(goodsImg, tempFiledMap.get(key));
-							map.put(key, "http://" + store.getDomainName() + "/" + img);
+							if(StringUtils.isNotEmpty(img)){
+								map.put(key, "http://" + store.getDomainName() + "/" + img);
+							}
 						} else if (goodsPlat != null) {
 							Object obj = ReflectionUtil.getFieldValue(goodsPlat, tempFiledMap.get(key));
 							if (obj != null) {
@@ -439,6 +441,7 @@ public class ExcelController extends BaseController {
 		if (goodsImg == null) {
 			goodsImg = new GoodsImg();
 			goodsImg.setSku(sku);
+			goodsImgService.save(goodsImg);
 			for (String key : ExcelTemp.WISH_FIELD.keySet()) {
 				if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key))) {
 					if (ExcelTemp.WISH_FIELD.get(key).contains("Img") && StringUtils.isNotEmpty(obj.get(key))) {
@@ -446,7 +449,6 @@ public class ExcelController extends BaseController {
 					}
 				}
 			}
-			goodsImgService.save(goodsImg);
 		}
 	}
 

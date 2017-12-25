@@ -323,13 +323,17 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">Listing主图</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.mainImgUrl}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.mainImgUrl}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'  
 						data-sku="$!{form.goods.sku}" data-imgname="mainImgUrl" >上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU主图</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.vMainImgUrl}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.vMainImgUrl}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="vMainImgUrl">上传图片</button>
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#mainImgModal'>设置主图</button>
@@ -340,13 +344,17 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图1</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图2</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl1}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl1}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl1">上传图片</button>
 					</div>
@@ -355,13 +363,17 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图3</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl2}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl2}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl2">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图4</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl3}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl3}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl3">上传图片</button>
 					</div>
@@ -370,13 +382,17 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图5</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl4}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl4}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl4">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图6</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl5}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl5}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl5">上传图片</button>
 					</div>
@@ -385,13 +401,17 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图7</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl6}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl6}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl6">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图8</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl7}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl7}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl7">上传图片</button>
 					</div>
@@ -400,13 +420,17 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图9</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl8}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl8}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl8">上传图片</button>
 					</div>
 					<label class="col-sm-2 control-label">SKU附图10</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl9}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl9}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl9">上传图片</button>
 					</div>
@@ -415,7 +439,9 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">SKU附图11</label>
 					<div class="col-sm-4">
+					#if("$!{form.goodsImg.eImgUrl10}" != "") 
 						<img height="40px" width="40px" src="http://www.bentain.site/$!{form.goodsImg.eImgUrl10}" />
+					#end
 						<button type="button" class="btn btn-info btn-sm" data-toggle='modal' data-target='#uploadImgModal'
 						data-sku="$!{form.goods.sku}" data-imgname="eImgUrl10">上传图片</button>
 					</div>
@@ -462,19 +488,45 @@
 					<div class="form-group">
 						<label>请从已有图片中选择主图</label>
 						<select id="mainImgSelect" class="image-picker show-html">
+						#if("$!{form.goodsImg.mainImgUrl}" != "") 
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.mainImgUrl}" value="mainImgUrl">mainImgUrl</option>
+						#end
+						#if("$!{form.goodsImg.vMainImgUrl}" != "") 
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.vMainImgUrl}" value="vMainImgUrl" selected>vMainImgUrl</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl}" != "") 
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl}" value="eImgUrl">eImgUrl</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl1}" != "")  
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl1}" value="eImgUrl1">eImgUrl1</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl2}" != "")  
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl2}" value="eImgUrl2">eImgUrl2</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl3}" != "")  
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl3}" value="eImgUrl3">eImgUrl3</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl4}" != "")  
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl4}" value="eImgUrl4">eImgUrl4</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl5}" != "")   
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl5}" value="eImgUrl5">eImgUrl5</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl6}" != "")   
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl6}" value="eImgUrl6">eImgUrl6</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl7}" != "")   
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl7}" value="eImgUrl7">eImgUrl7</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl8}" != "")   
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl8}" value="eImgUrl8">eImgUrl8</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl9}" != "")   
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl9}" value="eImgUrl9">eImgUrl9</option>
+						#end
+						#if("$!{form.goodsImg.eImgUrl10}" != "")   
 						  <option data-img-src="http://www.bentain.site/$!{form.goodsImg.eImgUrl10}" value="eImgUrl10">eImgUrl10</option>
+						#end
 						</select>
 					</div>
 				</form>
@@ -518,10 +570,6 @@
 	$().ready(function () {
 		$("#editForm").validate();
 		$("#mainImgSelect").imagepicker();
-		$("img").on("error",function(){
-        	 $(this).hide();
-			 $(this).after('<button type="button" class="btn btn-info btn-sm" onclick="javascript:reget(this);">重新抓取</button>') 
-      	});
 	});
 
 	$("#btnSave").on("click", function () {
@@ -541,27 +589,6 @@
 			}
 		});
 	})
-	
-	
-	function reget(obj) {
-		var img = $(obj).prev();
-		var imgSrc = $(img).attr("src");
-		imgSrc = imgSrc.replace("http://www.bentain.site/", "");
-		imgSrc = imgSrc.replace(".jpg", "");
-		var index = imgSrc.lastIndexOf("-");
-		var sku = $("#sku").val();
-		var imgName = imgSrc.substring(index+1);
-		$.ajax({
-			cache: true,
-			type: "POST",
-			url: "${rc.contextPath}/goods/reget.html",
-			data: { sku: sku, imgName: imgName },
-			async: false,
-			success: function (data) {
-				base.alert("尝试重新获取，请稍后刷新！");
-			}
-		});
-	}
 	
 	$("#btnMainImg").on("click", function () {
 		var sku = $("#sku").val();

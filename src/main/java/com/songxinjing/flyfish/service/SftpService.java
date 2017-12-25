@@ -35,6 +35,9 @@ public class SftpService extends BaseService<Goods, String> {
 	@Autowired
 	private GoodsImgService goodsImgService;
 
+	@Autowired
+	private GoodsService goodsService;
+
 	private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(1);
 
 	private static StandardFileSystemManager manager = new StandardFileSystemManager();
@@ -74,10 +77,10 @@ public class SftpService extends BaseService<Goods, String> {
 		}
 	}
 
+	// 0: 未启动；1: 正在启动； 2: 已启动
 	private static boolean isInit = false;
 
 	private void init() {
-		isInit = true;
 		Runnable sftper = new Runnable() {
 			public void run() {
 				while (true) {
@@ -91,10 +94,12 @@ public class SftpService extends BaseService<Goods, String> {
 			}
 		};
 		fixedThreadPool.submit(sftper);
+		isInit = true;
 	}
 
 	public void startFTP(String sku, String name, String url) {
 		if (!isInit) {
+			logger.info("图片上传初始化……");
 			init();
 		}
 		if (url.contains("?")) {
@@ -112,6 +117,10 @@ public class SftpService extends BaseService<Goods, String> {
 		String tempSku = sftpJob.sku;
 		if (tempSku.contains("*")) {
 			tempSku = tempSku.replace("*", "_");
+		}
+		if (sftpJob.name.equals("mainImgUrl")) {
+			Goods goods = goodsService.find(sftpJob.sku);
+			tempSku = goods.getParentSku();
 		}
 		try {
 			logger.info("批量导入上传图片：" + sftpJob.sku + " " + sftpJob.name + " " + sftpJob.url);
