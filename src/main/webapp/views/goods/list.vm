@@ -40,7 +40,7 @@
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<div class="col-md-12">
-			<form class="form-horizontal" action="${rc.contextPath}/goods/list.html?page=$!page" method="post">
+			<form class="form-horizontal" action="${rc.contextPath}/goods/list.html?isQuery=true" method="post">
 				<div class="form-group">
 					<div class="col-sm-6">
 						<button type="submit" class="btn btn-info">查询</button>

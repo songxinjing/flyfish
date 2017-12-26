@@ -13,8 +13,8 @@
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<button id="btnSave" type="button" class="btn btn-success">保存</button>
 		<button type="button" class="btn btn-info" onclick="window.location.href='${rc.contextPath}/goods/list.html?pageSize=$!pageSize&page=$!page'">返回</button>
+		<button id="btnSave" type="button" class="btn btn-success">保存</button>
 	</div>
 	<div class="panel-body">
 		<form class="form-horizontal" id="editForm">

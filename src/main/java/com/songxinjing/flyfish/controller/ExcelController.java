@@ -253,7 +253,7 @@ public class ExcelController extends BaseController {
 					if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
 						if (goodsImg != null && (key.contains("image") || key.contains("Image"))) {
 							String img = (String) ReflectionUtil.getFieldValue(goodsImg, tempFiledMap.get(key));
-							if(StringUtils.isNotEmpty(img)){
+							if (StringUtils.isNotEmpty(img)) {
 								map.put(key, "http://" + store.getDomainName() + "/" + img);
 							}
 						} else if (goodsPlat != null) {
@@ -434,6 +434,13 @@ public class ExcelController extends BaseController {
 			goodsPlatService.save(goodsPlat);
 		} else {
 			goodsPlatService.update(goodsPlat);
+		}
+
+		// 更新父SKU
+		if (StringUtils.isNotEmpty(obj.get("Parent Unique ID"))) {
+			Goods goods = goodsService.find(sku);
+			goods.setParentSku(obj.get("Parent Unique ID"));
+			goodsService.save(goods);
 		}
 
 		// 只新增GoodsImg,已存在的不更新

@@ -35,6 +35,7 @@ import com.songxinjing.flyfish.domain.Platform;
 import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.StoreGoods;
 import com.songxinjing.flyfish.domain.User;
+import com.songxinjing.flyfish.exception.AppException;
 import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.form.GoodsQueryForm;
@@ -88,164 +89,175 @@ public class GoodsController extends BaseController {
 	private SftpService sftpService;
 
 	@RequestMapping(value = "goods/list")
-	public String list(HttpServletRequest request, Model model, Integer page, Integer pageSize, GoodsQueryForm form) {
-		logger.info("进入商品列表页面");
-		if (page == null) {
-			page = 1;
-		}
-		if (pageSize == null) {
-			pageSize = Constant.PAGE_SIZE;
-		}
-
-		if (form != null) {
-			logger.info("商品查询，有传入查询条件，更新session");
-			request.getSession().setAttribute(Constant.SESSION_GOODS_QUERY, form);
-		} else {
-			logger.info("商品查询，没有传入查询条件，从session中获取");
-			form = (GoodsQueryForm) request.getSession().getAttribute(Constant.SESSION_GOODS_QUERY);
-		}
-
-		int total = 0;
-		int storeId = form.getStoreId();
-		String hql = "";
-		Map<String, Object> paraMap = new HashMap<String, Object>();
-		if (storeId == 0) {
-			hql = "select goods from Goods as goods where 1=1 ";
-		} else if (storeId == -1) {
-			hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id is null ";
-		} else {
-			hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where (store.id is null or store.id != :storeId) ";
-			paraMap.put("storeId", storeId);
-		}
-		if (StringUtils.isNotEmpty(form.getName())) {
-			hql = hql + "and goods.name like :name ";
-			paraMap.put("name", "%" + form.getName().trim() + "%");
-		}
-		if (StringUtils.isNotEmpty(form.getSku())) {
-			hql = hql + "and goods.sku like :sku ";
-			paraMap.put("sku", "%" + form.getSku().trim() + "%");
-		}
-		if (StringUtils.isNotEmpty(form.getBigCataName())) {
-			hql = hql + "and goods.bigCataName = :bigCataName ";
-			paraMap.put("bigCataName", form.getBigCataName().trim());
-		}
-		if (StringUtils.isNotEmpty(form.getSmallCataName())) {
-			hql = hql + "and goods.smallCataName = :smallCataName ";
-			paraMap.put("smallCataName", form.getSmallCataName().trim());
-		}
-		if (StringUtils.isNotEmpty(form.getBussOwner1())) {
-			hql = hql + "and goods.bussOwner1 = :bussOwner1 ";
-			paraMap.put("bussOwner1", form.getBussOwner1().trim());
-		}
-		if (StringUtils.isNotEmpty(form.getBussOwner2())) {
-			hql = hql + "and goods.bussOwner2 = :bussOwner2 ";
-			paraMap.put("bussOwner2", form.getBussOwner2().trim());
-		}
-		if (StringUtils.isNotEmpty(form.getBuyer())) {
-			hql = hql + "and goods.buyer = :buyer ";
-			paraMap.put("buyer", form.getBuyer().trim());
-		}
-		if (StringUtils.isNotEmpty(form.getState())) {
-			hql = hql + "and goods.state = :state ";
-			paraMap.put("state", form.getState().trim());
-		}
-		if (StringUtils.isNotEmpty(form.getIsElectric())) {
-			hql = hql + "and goods.isElectric = :isElectric ";
-			paraMap.put("isElectric", form.getIsElectric().trim());
-		}
-
-		if (StringUtils.isNotEmpty(form.getCreateTmBegin()) && StringUtils.isNotEmpty(form.getCreateTmEnd())) {
-			hql = hql + "and goods.createTm >= :createTmBegin and goods.createTm <= :createTmEnd ";
-			paraMap.put("createTmBegin", form.getCreateTmBegin().trim());
-			paraMap.put("createTmEnd", form.getCreateTmEnd().trim());
-		}
-
-		if (StringUtils.isNotEmpty(form.getSkus())) {
-			String skus = form.getSkus().replaceAll("，", ",");
-			List<String> inSkus = new ArrayList<String>();
-			for (String inSku : skus.split(",")) {
-				inSkus.add(inSku.trim());
+	public String list(HttpServletRequest request, Model model, Integer page, Integer pageSize, Boolean isQuery, GoodsQueryForm form)
+			throws AppException {
+		try {
+			logger.info("进入商品列表页面");
+			if (page == null) {
+				page = 1;
 			}
-			hql = hql + "and goods.sku in  (:inSkus) ";
-			paraMap.put("inSkus", inSkus);
-		}
-
-		if (StringUtils.isNotEmpty(form.getParentSkus())) {
-			String parentSkus = form.getParentSkus().replaceAll("，", ",");
-			List<String> inParentSkus = new ArrayList<String>();
-			for (String inParentSku : parentSkus.split(",")) {
-				inParentSkus.add(inParentSku.trim());
+			if (pageSize == null) {
+				pageSize = Constant.PAGE_SIZE;
 			}
-			hql = hql + "and goods.parentSku in  (:inParentSkus) ";
-			paraMap.put("inParentSkus", inParentSkus);
-		}
-
-		if (StringUtils.isNotEmpty(form.getRelaSkus())) {
-			hql = hql + "and ( 1=0 ";
-			String relaSkus = form.getRelaSkus().replaceAll("，", ",");
-			for (String relaSku : relaSkus.split(",")) {
-				hql = hql + "or goods.relaSkus like '%" + relaSku + "%' ";
+			if (isQuery == null) {
+				isQuery = false;
 			}
-			hql = hql + ") ";
-		}
-
-		if (StringUtils.isNotEmpty(form.getVirtSkus())) {
-			hql = hql + "and ( 1=0 ";
-			String virtSkus = form.getVirtSkus().replaceAll("，", ",");
-			for (String virtSku : virtSkus.split(",")) {
-				hql = hql + "or goods.virtSkus like '%" + virtSku + "%' ";
+			if(isQuery){
+				logger.info("商品查询，有传入查询条件，更新session");
+				request.getSession().setAttribute(Constant.SESSION_GOODS_QUERY, form);
+			} else {
+				logger.info("商品查询，没有传入查询条件，从session中获取");
+				form = (GoodsQueryForm) request.getSession().getAttribute(Constant.SESSION_GOODS_QUERY);
+				if (form == null) {
+					form = new GoodsQueryForm();
+				}
 			}
-			hql = hql + ") ";
+
+			int storeId = form.getStoreId();
+			int total = 0;
+			String hql = "";
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			if (storeId == 0) {
+				hql = "select goods from Goods as goods where 1=1 ";
+			} else if (storeId == -1) {
+				hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id is null ";
+			} else {
+				hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where (store.id is null or store.id != :storeId) ";
+				paraMap.put("storeId", storeId);
+			}
+			if (StringUtils.isNotEmpty(form.getName())) {
+				hql = hql + "and goods.name like :name ";
+				paraMap.put("name", "%" + form.getName().trim() + "%");
+			}
+			if (StringUtils.isNotEmpty(form.getSku())) {
+				hql = hql + "and goods.sku like :sku ";
+				paraMap.put("sku", "%" + form.getSku().trim() + "%");
+			}
+			if (StringUtils.isNotEmpty(form.getBigCataName())) {
+				hql = hql + "and goods.bigCataName = :bigCataName ";
+				paraMap.put("bigCataName", form.getBigCataName().trim());
+			}
+			if (StringUtils.isNotEmpty(form.getSmallCataName())) {
+				hql = hql + "and goods.smallCataName = :smallCataName ";
+				paraMap.put("smallCataName", form.getSmallCataName().trim());
+			}
+			if (StringUtils.isNotEmpty(form.getBussOwner1())) {
+				hql = hql + "and goods.bussOwner1 = :bussOwner1 ";
+				paraMap.put("bussOwner1", form.getBussOwner1().trim());
+			}
+			if (StringUtils.isNotEmpty(form.getBussOwner2())) {
+				hql = hql + "and goods.bussOwner2 = :bussOwner2 ";
+				paraMap.put("bussOwner2", form.getBussOwner2().trim());
+			}
+			if (StringUtils.isNotEmpty(form.getBuyer())) {
+				hql = hql + "and goods.buyer = :buyer ";
+				paraMap.put("buyer", form.getBuyer().trim());
+			}
+			if (StringUtils.isNotEmpty(form.getState())) {
+				hql = hql + "and goods.state = :state ";
+				paraMap.put("state", form.getState().trim());
+			}
+			if (StringUtils.isNotEmpty(form.getIsElectric())) {
+				hql = hql + "and goods.isElectric = :isElectric ";
+				paraMap.put("isElectric", form.getIsElectric().trim());
+			}
+
+			if (StringUtils.isNotEmpty(form.getCreateTmBegin()) && StringUtils.isNotEmpty(form.getCreateTmEnd())) {
+				hql = hql + "and goods.createTm >= :createTmBegin and goods.createTm <= :createTmEnd ";
+				paraMap.put("createTmBegin", form.getCreateTmBegin().trim());
+				paraMap.put("createTmEnd", form.getCreateTmEnd().trim());
+			}
+
+			if (StringUtils.isNotEmpty(form.getSkus())) {
+				String skus = form.getSkus().replaceAll("，", ",");
+				List<String> inSkus = new ArrayList<String>();
+				for (String inSku : skus.split(",")) {
+					inSkus.add(inSku.trim());
+				}
+				hql = hql + "and goods.sku in  (:inSkus) ";
+				paraMap.put("inSkus", inSkus);
+			}
+
+			if (StringUtils.isNotEmpty(form.getParentSkus())) {
+				String parentSkus = form.getParentSkus().replaceAll("，", ",");
+				List<String> inParentSkus = new ArrayList<String>();
+				for (String inParentSku : parentSkus.split(",")) {
+					inParentSkus.add(inParentSku.trim());
+				}
+				hql = hql + "and goods.parentSku in  (:inParentSkus) ";
+				paraMap.put("inParentSkus", inParentSkus);
+			}
+
+			if (StringUtils.isNotEmpty(form.getRelaSkus())) {
+				hql = hql + "and ( 1=0 ";
+				String relaSkus = form.getRelaSkus().replaceAll("，", ",");
+				for (String relaSku : relaSkus.split(",")) {
+					hql = hql + "or goods.relaSkus like '%" + relaSku + "%' ";
+				}
+				hql = hql + ") ";
+			}
+
+			if (StringUtils.isNotEmpty(form.getVirtSkus())) {
+				hql = hql + "and ( 1=0 ";
+				String virtSkus = form.getVirtSkus().replaceAll("，", ",");
+				for (String virtSku : virtSkus.split(",")) {
+					hql = hql + "or goods.virtSkus like '%" + virtSku + "%' ";
+				}
+				hql = hql + ") ";
+			}
+			total = goodsService.findHql(hql, paraMap).size();
+
+			// 分页代码
+			PageModel<GoodsForm> pageModel = new PageModel<GoodsForm>();
+			pageModel.setPageSize(pageSize);
+			pageModel.init(page, total);
+			pageModel.setUrl("goods/list.html");
+			pageModel.setPara("?pageSize=" + pageSize + "&");
+			List<Goods> goodses = new ArrayList<Goods>();
+			goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
+			List<GoodsForm> list = new ArrayList<GoodsForm>();
+			for (Goods goods : goodses) {
+				GoodsForm goodsForm = new GoodsForm();
+				goodsForm.setGoods(goods);
+				goodsForm.setGoodsPlat(goodsPlatService.find(goods.getSku()));
+				goodsForm.setGoodsImg(goodsImgService.find(goods.getSku()));
+				list.add(goodsForm);
+			}
+
+			pageModel.setRecList(list);
+
+			hql = "select distinct bigCataName from Goods where length(bigCataName) > 0";
+			List<Object> bigCataNames = goodsService.findHqlObject(hql);
+
+			hql = "select distinct smallCataName from Goods  where length(smallCataName) > 0";
+			List<Object> smallCataNames = goodsService.findHqlObject(hql);
+
+			hql = "select distinct bussOwner1 from Goods  where length(bussOwner1) > 0";
+			List<Object> bussOwner1s = goodsService.findHqlObject(hql);
+
+			hql = "select distinct bussOwner2 from Goods  where length(bussOwner2) > 0";
+			List<Object> bussOwner2s = goodsService.findHqlObject(hql);
+
+			hql = "select distinct buyer from Goods  where length(buyer) > 0";
+			List<Object> buyers = goodsService.findHqlObject(hql);
+
+			model.addAttribute("pageModel", pageModel);
+			model.addAttribute("page", pageModel.getCurrPage());
+			model.addAttribute("pageSize", pageSize);
+			model.addAttribute("queryForm", form);
+			model.addAttribute("platforms", platformService.find());
+			model.addAttribute("domains", domainService.find());
+			model.addAttribute("prods", logisProdService.find());
+
+			model.addAttribute("bigCataNames", bigCataNames);
+			model.addAttribute("smallCataNames", smallCataNames);
+			model.addAttribute("bussOwner1s", bussOwner1s);
+			model.addAttribute("bussOwner2s", bussOwner2s);
+			model.addAttribute("buyers", buyers);
+		} catch (Exception e) {
+			logger.error("系统错误", e);
+			throw new AppException();
 		}
-		total = goodsService.findHql(hql, paraMap).size();
-
-		// 分页代码
-		PageModel<GoodsForm> pageModel = new PageModel<GoodsForm>();
-		pageModel.setPageSize(pageSize);
-		pageModel.init(page, total);
-		pageModel.setUrl("goods/list.html");
-		pageModel.setPara("?pageSize=" + pageSize + "&");
-		List<Goods> goodses = new ArrayList<Goods>();
-		goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
-		List<GoodsForm> list = new ArrayList<GoodsForm>();
-		for (Goods goods : goodses) {
-			GoodsForm goodsForm = new GoodsForm();
-			goodsForm.setGoods(goods);
-			goodsForm.setGoodsPlat(goodsPlatService.find(goods.getSku()));
-			goodsForm.setGoodsImg(goodsImgService.find(goods.getSku()));
-			list.add(goodsForm);
-		}
-
-		pageModel.setRecList(list);
-
-		hql = "select distinct bigCataName from Goods where length(bigCataName) > 0";
-		List<Object> bigCataNames = goodsService.findHqlObject(hql);
-
-		hql = "select distinct smallCataName from Goods  where length(smallCataName) > 0";
-		List<Object> smallCataNames = goodsService.findHqlObject(hql);
-
-		hql = "select distinct bussOwner1 from Goods  where length(bussOwner1) > 0";
-		List<Object> bussOwner1s = goodsService.findHqlObject(hql);
-
-		hql = "select distinct bussOwner2 from Goods  where length(bussOwner2) > 0";
-		List<Object> bussOwner2s = goodsService.findHqlObject(hql);
-
-		hql = "select distinct buyer from Goods  where length(buyer) > 0";
-		List<Object> buyers = goodsService.findHqlObject(hql);
-
-		model.addAttribute("pageModel", pageModel);
-		model.addAttribute("page", pageModel.getCurrPage());
-		model.addAttribute("pageSize", pageSize);
-		model.addAttribute("queryForm", form);
-		model.addAttribute("platforms", platformService.find());
-		model.addAttribute("domains", domainService.find());
-		model.addAttribute("prods", logisProdService.find());
-
-		model.addAttribute("bigCataNames", bigCataNames);
-		model.addAttribute("smallCataNames", smallCataNames);
-		model.addAttribute("bussOwner1s", bussOwner1s);
-		model.addAttribute("bussOwner2s", bussOwner2s);
-		model.addAttribute("buyers", buyers);
 		return "goods/list";
 	}
 
@@ -355,12 +367,13 @@ public class GoodsController extends BaseController {
 		temp.setParentSku(goods.getParentSku());
 		List<Goods> list = goodsService.find(temp);
 		for (Goods g : list) {
-			logger.info("更新同一父SKU的标题信息：" + goods.getParentSku() + " -> " + g.getSku());
+			logger.info("更新同一父SKU的标题和标签信息：" + goods.getParentSku() + " -> " + g.getSku());
 			GoodsPlat gp = goodsPlatService.find(g.getSku());
-			if(gp != null){
+			if (gp != null) {
 				gp.setTitle(goodsPlat.getTitle());
 				gp.setEbayTitle(goodsPlat.getEbayTitle());
 				gp.setOtherTitle(goodsPlat.getOtherTitle());
+				gp.setTags(goodsPlat.getTags());
 				goodsPlatService.update(gp);
 			}
 		}
