@@ -23,58 +23,63 @@ public class GoodsPlat implements Serializable {
 	@Id
 	@Column(length = 32)
 	private String sku;
-	
+
 	/**
 	 * WISH title
 	 */
 	@Column(length = 500)
 	private String title;
-	
+
 	/**
 	 * Ebay title(75)
 	 */
 	@Column(length = 500)
 	private String ebayTitle;
-	
+
 	/**
 	 * other title(90)
 	 */
 	@Column(length = 500)
 	private String otherTitle;
-	
+
 	/**
 	 * descp
 	 */
 	@Column(length = 102400)
 	private String descp;
-	
+
 	/**
 	 * tags
 	 */
 	@Column(length = 102400)
 	private String tags;
-	
+
+	/**
+	 * titleWords
+	 */
+	@Column(length = 500)
+	private String titleWords;
+
 	/**
 	 * color
 	 */
 	@Column(length = 32)
 	private String color;
 
-	
 	/**
 	 * size
 	 */
 	@Column(length = 32)
 	private String size;
-	
+
 	/**
 	 * Quantity
 	 */
 	@Column(length = 8)
-	private String quantity;	
+	private String quantity;
 
 	/**
-	 * shipping days 
+	 * shipping days
 	 */
 	@Column(length = 8)
 	private String shipDays;
@@ -90,67 +95,67 @@ public class GoodsPlat implements Serializable {
 	 */
 	@Column(length = 500)
 	private String vMainImgUrl;
-	
+
 	/**
 	 * extra image URL
 	 */
 	@Column(length = 500)
 	private String eImgUrl;
-	
+
 	/**
 	 * extra image URL1
 	 */
 	@Column(length = 500)
 	private String eImgUrl1;
-	
+
 	/**
 	 * extra image URL2
 	 */
 	@Column(length = 500)
 	private String eImgUrl2;
-	
+
 	/**
 	 * extra image URL3
 	 */
 	@Column(length = 500)
 	private String eImgUrl3;
-	
+
 	/**
 	 * extra image URL4
 	 */
 	@Column(length = 500)
 	private String eImgUrl4;
-	
+
 	/**
 	 * extra image URL5
 	 */
 	@Column(length = 500)
 	private String eImgUrl5;
-	
+
 	/**
 	 * extra image URL6
 	 */
 	@Column(length = 500)
 	private String eImgUrl6;
-	
+
 	/**
 	 * extra image URL7
 	 */
 	@Column(length = 500)
 	private String eImgUrl7;
-	
+
 	/**
 	 * extra image URL8
 	 */
 	@Column(length = 500)
 	private String eImgUrl8;
-	
+
 	/**
 	 * extra image URL9
 	 */
 	@Column(length = 500)
 	private String eImgUrl9;
-	
+
 	/**
 	 * extra image URL10
 	 */
@@ -236,7 +241,7 @@ public class GoodsPlat implements Serializable {
 	public void setvMainImgUrl(String vMainImgUrl) {
 		this.vMainImgUrl = vMainImgUrl;
 	}
-	
+
 	public String geteImgUrl() {
 		return eImgUrl;
 	}
@@ -339,6 +344,14 @@ public class GoodsPlat implements Serializable {
 
 	public void setOtherTitle(String otherTitle) {
 		this.otherTitle = otherTitle;
+	}
+
+	public String getTitleWords() {
+		return titleWords;
+	}
+
+	public void setTitleWords(String titleWords) {
+		this.titleWords = titleWords;
 	}
 
 }

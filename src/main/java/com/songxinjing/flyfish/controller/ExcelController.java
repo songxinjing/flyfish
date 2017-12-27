@@ -439,7 +439,12 @@ public class ExcelController extends BaseController {
 		// 更新父SKU
 		if (StringUtils.isNotEmpty(obj.get("Parent Unique ID"))) {
 			Goods goods = goodsService.find(sku);
-			goods.setParentSku(obj.get("Parent Unique ID"));
+			String parentSku = obj.get("Parent Unique ID");
+			// 去除"\"部分
+			if (parentSku.contains("\\")) {
+				parentSku = parentSku.split("\\\\")[0];
+			}
+			goods.setParentSku(parentSku);
 			goodsService.save(goods);
 		}
 

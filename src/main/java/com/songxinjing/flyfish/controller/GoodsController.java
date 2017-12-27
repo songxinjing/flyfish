@@ -89,8 +89,8 @@ public class GoodsController extends BaseController {
 	private SftpService sftpService;
 
 	@RequestMapping(value = "goods/list")
-	public String list(HttpServletRequest request, Model model, Integer page, Integer pageSize, Boolean isQuery, GoodsQueryForm form)
-			throws AppException {
+	public String list(HttpServletRequest request, Model model, Integer page, Integer pageSize, Boolean isQuery,
+			GoodsQueryForm form) throws AppException {
 		try {
 			logger.info("进入商品列表页面");
 			if (page == null) {
@@ -102,7 +102,7 @@ public class GoodsController extends BaseController {
 			if (isQuery == null) {
 				isQuery = false;
 			}
-			if(isQuery){
+			if (isQuery) {
 				logger.info("商品查询，有传入查询条件，更新session");
 				request.getSession().setAttribute(Constant.SESSION_GOODS_QUERY, form);
 			} else {
@@ -374,6 +374,7 @@ public class GoodsController extends BaseController {
 				gp.setEbayTitle(goodsPlat.getEbayTitle());
 				gp.setOtherTitle(goodsPlat.getOtherTitle());
 				gp.setTags(goodsPlat.getTags());
+				gp.setTitleWords(goodsPlat.getTitleWords());
 				goodsPlatService.update(gp);
 			}
 		}

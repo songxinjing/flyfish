@@ -343,6 +343,11 @@ public class GoodsEditForm implements Serializable {
 	 */
 	private String otherTitle;
 	
+	/**
+	 * titleWords
+	 */
+	private String titleWords;
+	
 	public String getSku() {
 		return sku;
 	}
@@ -877,6 +882,14 @@ public class GoodsEditForm implements Serializable {
 
 	public void setOtherTitle(String otherTitle) {
 		this.otherTitle = otherTitle;
+	}
+
+	public String getTitleWords() {
+		return titleWords;
+	}
+
+	public void setTitleWords(String titleWords) {
+		this.titleWords = titleWords;
 	}
 	
 }
