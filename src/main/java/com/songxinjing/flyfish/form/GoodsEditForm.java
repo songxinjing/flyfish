@@ -125,6 +125,11 @@ public class GoodsEditForm implements Serializable {
 	 * 采购到货天数
 	 */
 	private String buyDayNum;
+	
+	/**
+	 * 供应商名称
+	 */
+	private String supplyName;
 
 	/**
 	 * 网页URL
@@ -890,6 +895,14 @@ public class GoodsEditForm implements Serializable {
 
 	public void setTitleWords(String titleWords) {
 		this.titleWords = titleWords;
+	}
+
+	public String getSupplyName() {
+		return supplyName;
+	}
+
+	public void setSupplyName(String supplyName) {
+		this.supplyName = supplyName;
 	}
 	
 }
