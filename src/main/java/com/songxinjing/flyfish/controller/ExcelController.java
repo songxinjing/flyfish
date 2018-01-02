@@ -40,6 +40,7 @@ import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
+import com.songxinjing.flyfish.exception.AppException;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
@@ -74,261 +75,287 @@ public class ExcelController extends BaseController {
 	private SftpService sftpService;
 
 	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
-	public String load(HttpServletRequest request, MultipartFile file) {
+	public String load(HttpServletRequest request, MultipartFile file) throws AppException {
 		logger.info("Excel导入普源模版数据");
-		if (!file.isEmpty()) {
-			logger.info("文件检查成功，开始导入！");
-			try {
-				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
-				for (Map<String, String> obj : data) {
-					String sku = obj.get("SKU");
-					if (StringUtils.isEmpty(sku)) {
-						sku = obj.get("sku");
-					}
-					if (StringUtils.isNotEmpty(sku)) {
-						logger.info("开始导入商品SKU：" + sku);
-						Goods goods = goodsService.find(sku);
-						if (goods == null) {
-							goods = new Goods();
+		try {
+			if (!file.isEmpty()) {
+				logger.info("文件检查成功，开始导入！");
+				try {
+					List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
+					for (Map<String, String> obj : data) {
+						String sku = obj.get("SKU");
+						if (StringUtils.isEmpty(sku)) {
+							sku = obj.get("sku");
 						}
-						for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
-							if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)) {
-								ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
+						if (StringUtils.isNotEmpty(sku)) {
+							logger.info("开始导入商品SKU：" + sku);
+							Goods goods = goodsService.find(sku);
+							if (goods == null) {
+								goods = new Goods();
 							}
-						}
-						// 获取用户登录信息
-						User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
-						goods.setModifyId(user.getUserId());
-						goods.setModifyer(user.getName());
-						goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-						if (goodsService.find(sku) == null) {
-							goodsService.save(goods);
-						} else {
-							goodsService.update(goods);
-						}
-
-						// 更新带*SKU
-						for (Goods moreGoods : goodsService.findMoreSku(sku + "*")) {
-							String skuMore = moreGoods.getSku();
-							int num = Integer.parseInt(skuMore.split("*")[1]);
 							for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
-								if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)
-										&& !"sku".equals(ExcelTemp.COMMON_FIELD.get(key))) {
-									if ("weight".equals(ExcelTemp.COMMON_FIELD.get(key))) {
-										BigDecimal bgWeight = new BigDecimal(obj.get(key));
-										moreGoods.setWeight(bgWeight.multiply(new BigDecimal(num)).toString());
-									} else if ("costPrice".equals(ExcelTemp.COMMON_FIELD.get(key))) {
-										BigDecimal bgCostPrice = new BigDecimal(obj.get(key));
-										moreGoods.setCostPrice(bgCostPrice.multiply(new BigDecimal(num)).toString());
-									} else {
-										ReflectionUtil.setFieldValue(moreGoods, ExcelTemp.COMMON_FIELD.get(key),
-												obj.get(key));
-									}
+								if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)) {
+									ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
 								}
 							}
-							moreGoods.setModifyId(user.getUserId());
-							moreGoods.setModifyer(user.getName());
-							moreGoods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-							goodsService.update(moreGoods);
+							// 获取用户登录信息
+							User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
+							goods.setModifyId(user.getUserId());
+							goods.setModifyer(user.getName());
+							goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
+							if (goodsService.find(sku) == null) {
+								goodsService.save(goods);
+							} else {
+								goodsService.update(goods);
+							}
+
+							// 更新带*SKU
+							for (Goods moreGoods : goodsService.findMoreSku(sku + "*")) {
+								String skuMore = moreGoods.getSku();
+								int num = Integer.parseInt(skuMore.split("*")[1]);
+								for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
+									if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)
+											&& !"sku".equals(ExcelTemp.COMMON_FIELD.get(key))) {
+										if ("weight".equals(ExcelTemp.COMMON_FIELD.get(key))) {
+											BigDecimal bgWeight = new BigDecimal(obj.get(key));
+											moreGoods.setWeight(bgWeight.multiply(new BigDecimal(num)).toString());
+										} else if ("costPrice".equals(ExcelTemp.COMMON_FIELD.get(key))) {
+											BigDecimal bgCostPrice = new BigDecimal(obj.get(key));
+											moreGoods
+													.setCostPrice(bgCostPrice.multiply(new BigDecimal(num)).toString());
+										} else {
+											ReflectionUtil.setFieldValue(moreGoods, ExcelTemp.COMMON_FIELD.get(key),
+													obj.get(key));
+										}
+									}
+								}
+								moreGoods.setModifyId(user.getUserId());
+								moreGoods.setModifyer(user.getName());
+								moreGoods.setModifyTm(new Timestamp(System.currentTimeMillis()));
+								goodsService.update(moreGoods);
+							}
 						}
 					}
+				} catch (IOException e) {
+					logger.error("读取文件失败", e);
 				}
-			} catch (IOException e) {
-				logger.error("读取文件失败", e);
 			}
+		} catch (Exception e) {
+			logger.error("系统错误", e);
+			throw new AppException();
 		}
 		return "redirect:/goods/list.html";
 	}
 
 	@RequestMapping(value = "csv/import/wish", method = RequestMethod.POST)
-	public String loadWish(HttpServletRequest request, MultipartFile file) {
+	public String loadWish(HttpServletRequest request, MultipartFile file) throws AppException {
 		logger.info("CSV导入Wish模版数据");
-		if (!file.isEmpty()) {
-			logger.info("文件检查成功，开始导入！");
-			try {
-				String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
-				List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
-				for (Map<String, String> obj : data) {
-					String sku = obj.get("*Unique ID");
-					if (StringUtils.isNotEmpty(sku)) {
-						logger.info("开始导入商品SKU：" + sku);
-						// 去除"\"部分
-						if (sku.contains("\\")) {
-							String skuH = sku.split("\\\\")[0];
-							String skuB = sku.split("\\\\")[1];
-							if (skuB.contains("*")) {
-								sku = skuH + "*" + skuB.split("\\*")[1];
-							} else {
-								sku = skuH;
+		try {
+			if (!file.isEmpty()) {
+				logger.info("文件检查成功，开始导入！");
+				try {
+					String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
+					List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
+					for (Map<String, String> obj : data) {
+						String sku = obj.get("*Unique ID");
+						if (StringUtils.isNotEmpty(sku)) {
+							logger.info("开始导入商品SKU：" + sku);
+							// 去除"\"部分
+							if (sku.contains("\\")) {
+								String skuH = sku.split("\\\\")[0];
+								String skuB = sku.split("\\\\")[1];
+								if (skuB.contains("*")) {
+									sku = skuH + "*" + skuB.split("\\*")[1];
+								} else {
+									sku = skuH;
+								}
 							}
-						}
 
-						Goods goods = goodsService.find(sku);
-						if (sku.contains("*")) { // 包含"*"
-							if (goods != null) { // 带*SKU存在
-								this.wishUpdate(sku, obj); // 更新已存在带*SKU
-							} else { // 带*SKU不存在
-								String mainSku = sku.split("\\*")[0];
-								int num = Integer.parseInt(sku.split("\\*")[1]);
-								Goods mainGoods = goodsService.find(mainSku);
-								if (mainGoods != null) { // 去*SKU存在，新增带*SKU，复制信息
-									this.wishNewStar(mainGoods, num, obj);
-								} else { // 去*SKU不存在
-									String hql = "from Goods where relaSkus like ?";
-									List<Goods> list = goodsService.findHql(hql, "%" + mainSku + "%");
-									if (!list.isEmpty()) { // 关联SKU存在
-										goods = list.get(0);
-										String skuStar = goods.getSku() + "*" + num;
-										Goods starGoods = goodsService.find(skuStar);
-										if (starGoods != null) { // 带*SKU存在
-											this.wishUpdate(skuStar, obj); // 更新已存在带*SKU
-										} else { // 带*SKU不存在，新增带*SKU，复制信息
-											this.wishNewStar(goods, num, obj);
+							Goods goods = goodsService.find(sku);
+							if (sku.contains("*")) { // 包含"*"
+								if (goods != null) { // 带*SKU存在
+									this.wishUpdate(sku, obj); // 更新已存在带*SKU
+								} else { // 带*SKU不存在
+									String mainSku = sku.split("\\*")[0];
+									int num = 1;
+									try {
+										num = Integer.parseInt(sku.split("\\*")[1]);
+									} catch (NumberFormatException e) {
+										logger.error("带*SKU格式错误" + sku, e);
+										continue;
+									} catch (ArrayIndexOutOfBoundsException e) {
+										logger.error("带*SKU格式错误" + sku, e);
+										continue;
+									}
+									Goods mainGoods = goodsService.find(mainSku);
+									if (mainGoods != null) { // 去*SKU存在，新增带*SKU，复制信息
+										this.wishNewStar(mainGoods, num, obj);
+									} else { // 去*SKU不存在
+										String hql = "from Goods where relaSkus like ?";
+										List<Goods> list = goodsService.findHql(hql, "%" + mainSku + "%");
+										if (!list.isEmpty()) { // 关联SKU存在
+											goods = list.get(0);
+											String skuStar = goods.getSku() + "*" + num;
+											Goods starGoods = goodsService.find(skuStar);
+											if (starGoods != null) { // 带*SKU存在
+												this.wishUpdate(skuStar, obj); // 更新已存在带*SKU
+											} else { // 带*SKU不存在，新增带*SKU，复制信息
+												this.wishNewStar(goods, num, obj);
+											}
 										}
 									}
 								}
-							}
-						} else { // 不包含"*"
-							if (goods != null) { // SKU存在
-								this.wishUpdate(sku, obj); // 更新已存在SKU
-							} else { // SKU不存在
-								String hql = "from Goods where relaSkus like ?";
-								List<Goods> list = goodsService.findHql(hql, "%" + sku + "%");
-								if (!list.isEmpty()) { // 关联SKU存在
-									goods = list.get(0);
-									this.wishUpdate(goods.getSku(), obj);
+							} else { // 不包含"*"
+								if (goods != null) { // SKU存在
+									this.wishUpdate(sku, obj); // 更新已存在SKU
+								} else { // SKU不存在
+									String hql = "from Goods where relaSkus like ?";
+									List<Goods> list = goodsService.findHql(hql, "%" + sku + "%");
+									if (!list.isEmpty()) { // 关联SKU存在
+										goods = list.get(0);
+										this.wishUpdate(goods.getSku(), obj);
+									}
 								}
 							}
-						}
 
+						}
 					}
+				} catch (IOException e) {
+					logger.error("读取文件失败", e);
 				}
-			} catch (IOException e) {
-				logger.error("读取文件失败", e);
 			}
+		} catch (Exception e) {
+			logger.error("系统错误", e);
+			throw new AppException();
 		}
 		return "redirect:/goods/list.html";
 	}
 
 	@RequestMapping(value = "export", method = RequestMethod.GET)
-	public void export(HttpServletResponse response, Integer storeId, String batchNo) {
+	public void export(HttpServletResponse response, Integer storeId, String batchNo) throws AppException {
 		logger.info("导出刊登");
-		Store store = storeService.find(storeId);
-		Platform platform = store.getPlatform();
-		String hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
-		List<Goods> goodses = goodsService.findHql(hql, storeId, batchNo);
-		Map<String, String> tempFiledMap = ExcelTemp.PLATFORM_TEMP_FIELD.get(platform.getName());
-		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		try {
+			Store store = storeService.find(storeId);
+			Platform platform = store.getPlatform();
+			String hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
+			List<Goods> goodses = goodsService.findHql(hql, storeId, batchNo);
+			Map<String, String> tempFiledMap = ExcelTemp.PLATFORM_TEMP_FIELD.get(platform.getName());
+			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 
-		for (Goods goods : goodses) {
-			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
-			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
-			if (goodsPlat == null || goodsImg == null) {
-				continue;
-			}
-
-			String platformTitle = "";
-			boolean titleRed = false;
-			if (platform.getName().equals(Constant.Wish)) {
-				platformTitle = goodsPlat.getTitle();
-			} else if (platform.getName().equals(Constant.Ebay)) {
-				platformTitle = goodsPlat.getEbayTitle();
-				if (StringUtils.isNotEmpty(platformTitle) && platformTitle.length() > 75) {
-					titleRed = true;
+			for (Goods goods : goodses) {
+				GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
+				GoodsImg goodsImg = goodsImgService.find(goods.getSku());
+				if (goodsPlat == null || goodsImg == null) {
+					continue;
 				}
-			} else {
-				platformTitle = goodsPlat.getOtherTitle();
-				if (StringUtils.isNotEmpty(platformTitle) && platformTitle.length() > 90) {
-					titleRed = true;
-				}
-			}
 
-			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
-					&& StringUtils.isNotEmpty(platformTitle) && !titleRed
-					&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
-				String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
-				String listingParentSku = BaseUtil.changeSku(goods.getParentSku(), store.getMove());
-				Map<String, String> map = new HashMap<String, String>();
-				for (String key : tempFiledMap.keySet()) {
-					if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
-						if (goodsImg != null && (key.contains("image") || key.contains("Image"))) {
-							String img = (String) ReflectionUtil.getFieldValue(goodsImg, tempFiledMap.get(key));
-							if (StringUtils.isNotEmpty(img)) {
-								map.put(key, "http://" + store.getDomainName() + "/" + img);
-							}
-						} else if (goodsPlat != null) {
-							Object obj = ReflectionUtil.getFieldValue(goodsPlat, tempFiledMap.get(key));
-							if (obj != null) {
-								map.put(key, obj.toString());
+				String platformTitle = "";
+				boolean titleRed = false;
+				if (platform.getName().equals(Constant.Wish)) {
+					platformTitle = goodsPlat.getTitle();
+				} else if (platform.getName().equals(Constant.Ebay)) {
+					platformTitle = goodsPlat.getEbayTitle();
+					if (StringUtils.isNotEmpty(platformTitle) && platformTitle.length() > 75) {
+						titleRed = true;
+					}
+				} else {
+					platformTitle = goodsPlat.getOtherTitle();
+					if (StringUtils.isNotEmpty(platformTitle) && platformTitle.length() > 90) {
+						titleRed = true;
+					}
+				}
+
+				if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
+						&& StringUtils.isNotEmpty(platformTitle) && !titleRed
+						&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
+					String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
+					String listingParentSku = BaseUtil.changeSku(goods.getParentSku(), store.getMove());
+					Map<String, String> map = new HashMap<String, String>();
+					for (String key : tempFiledMap.keySet()) {
+						if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
+							if (goodsImg != null && (key.contains("image") || key.contains("Image"))) {
+								String img = (String) ReflectionUtil.getFieldValue(goodsImg, tempFiledMap.get(key));
+								if (StringUtils.isNotEmpty(img)) {
+									map.put(key, "http://" + store.getDomainName() + "/" + img);
+								}
+							} else if (goodsPlat != null) {
+								Object obj = ReflectionUtil.getFieldValue(goodsPlat, tempFiledMap.get(key));
+								if (obj != null) {
+									map.put(key, obj.toString());
+								}
 							}
 						}
 					}
-				}
 
-				String weight = goods.getWeight();
-				if (StringUtils.isEmpty(weight)) {
-					weight = "0";
-				}
+					String weight = goods.getWeight();
+					if (StringUtils.isEmpty(weight)) {
+						weight = "0";
+					}
 
-				BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
-				if (shippingPrice == null) {
-					shippingPrice = new BigDecimal(0);
-				}
-				BigDecimal price = goodsService.getPrice(platform, goods, shippingPrice);
-				BigDecimal msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
+					BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
+					if (shippingPrice == null) {
+						shippingPrice = new BigDecimal(0);
+					}
+					BigDecimal price = goodsService.getPrice(platform, goods, shippingPrice);
+					BigDecimal msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
 
-				if (Constant.Wish.equals(platform.getName())) {
-					if (StringUtils.isEmpty(map.get("*Quantity"))) {
-						map.put("*Quantity", "9999");
+					if (Constant.Wish.equals(platform.getName())) {
+						if (StringUtils.isEmpty(map.get("*Quantity"))) {
+							map.put("*Quantity", "9999");
+						}
+						if (StringUtils
+								.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
+							map.put("Shipping Time(enter without \" \", just the estimated days )", "15-35");
+						}
+						map.put("*Shipping", "1");
+						map.put("*Price", price.toString());
+						map.put("*Unique ID", listingSku);
+						map.put("Parent Unique ID", listingParentSku);
+						map.put("*Product Name", platformTitle);
+					} else if (Constant.Joom.equals(platform.getName())) {
+						if (StringUtils.isEmpty(map.get("inventory"))) {
+							map.put("inventory", "9999");
+						}
+						if (StringUtils.isEmpty(map.get("shipping days"))) {
+							map.put("shipping days", "15-35");
+						}
+						map.put("shipping price", "0");
+						map.put("price", price.toString());
+						map.put("msrp", msrp.toString());
+						map.put("SKU", listingSku);
+						map.put("Parent SKU", listingParentSku);
+						String smallTitel = platformTitle.toLowerCase();
+						map.put("product name", smallTitel);
 					}
-					if (StringUtils.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
-						map.put("Shipping Time(enter without \" \", just the estimated days )", "15-35");
-					}
-					map.put("*Shipping", "1");
-					map.put("*Price", price.toString());
-					map.put("*Unique ID", listingSku);
-					map.put("Parent Unique ID", listingParentSku);
-					map.put("*Product Name", platformTitle);
-				} else if (Constant.Joom.equals(platform.getName())) {
-					if (StringUtils.isEmpty(map.get("inventory"))) {
-						map.put("inventory", "9999");
-					}
-					if (StringUtils.isEmpty(map.get("shipping days"))) {
-						map.put("shipping days", "15-35");
-					}
-					map.put("shipping price", "0");
-					map.put("price", price.toString());
-					map.put("msrp", msrp.toString());
-					map.put("SKU", listingSku);
-					map.put("Parent SKU", listingParentSku);
-					String smallTitel = platformTitle.toLowerCase();
-					map.put("product name", smallTitel);
+					data.add(map);
 				}
-				data.add(map);
 			}
-		}
-		String file = ConfigUtil.getValue("/config.properties", "workDir")
-				+ ExcelTemp.PLATFORM_TEMP_FILE.get(platform.getName());
-		String[] headers = tempFiledMap.keySet().toArray(new String[] {});
-		File csvFile = ExcelUtil.writeCSV(file, data, headers);
-		try {
-			response.setContentType("multipart/form-data");
-			response.setHeader("Content-Disposition",
-					"attachment;filename=" + URLEncoder.encode(store.getName() + "-" + batchNo + ".csv", "UTF-8"));
-			OutputStream os = new BufferedOutputStream(response.getOutputStream());
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
-			byte[] buff = new byte[2048];
-			while (true) {
-				int bytesRead;
-				if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
-					break;
-				os.write(buff, 0, bytesRead);
+			String file = ConfigUtil.getValue("/config.properties", "workDir")
+					+ ExcelTemp.PLATFORM_TEMP_FILE.get(platform.getName());
+			String[] headers = tempFiledMap.keySet().toArray(new String[] {});
+			File csvFile = ExcelUtil.writeCSV(file, data, headers);
+			try {
+				response.setContentType("multipart/form-data");
+				response.setHeader("Content-Disposition",
+						"attachment;filename=" + URLEncoder.encode(store.getName() + "-" + batchNo + ".csv", "UTF-8"));
+				OutputStream os = new BufferedOutputStream(response.getOutputStream());
+				BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
+				byte[] buff = new byte[2048];
+				while (true) {
+					int bytesRead;
+					if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
+						break;
+					os.write(buff, 0, bytesRead);
+				}
+				bis.close();
+				os.flush();
+				os.close();
+			} catch (IOException e) {
+				logger.error("导出文件失败", e);
 			}
-			bis.close();
-			os.flush();
-			os.close();
-		} catch (IOException e) {
-			logger.error("导出文件失败", e);
+		} catch (Exception e) {
+			logger.error("系统错误", e);
+			throw new AppException();
 		}
 	}
 
@@ -454,9 +481,13 @@ public class ExcelController extends BaseController {
 			goodsImg = new GoodsImg();
 			goodsImg.setSku(sku);
 			goodsImgService.save(goodsImg);
-			for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-				if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key))) {
-					if (ExcelTemp.WISH_FIELD.get(key).contains("Img") && StringUtils.isNotEmpty(obj.get(key))) {
+		}
+
+		for (String key : ExcelTemp.WISH_FIELD.keySet()) {
+			if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key))) {
+				if (ExcelTemp.WISH_FIELD.get(key).contains("Img") && StringUtils.isNotEmpty(obj.get(key))) {
+					String url = (String) ReflectionUtil.getFieldValue(goodsImg, ExcelTemp.WISH_FIELD.get(key));
+					if (StringUtils.isEmpty(url)) {
 						sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
 					}
 				}

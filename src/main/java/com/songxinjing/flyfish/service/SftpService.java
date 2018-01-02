@@ -114,13 +114,14 @@ public class SftpService extends BaseService<Goods, String> {
 	}
 
 	public void doFTP(SftpJob sftpJob) {
+		logger.info("待上传图片任务数量：" + sftpJobs.size());
 		String tempSku = sftpJob.sku;
-		if (tempSku.contains("*")) {
-			tempSku = tempSku.replace("*", "_");
-		}
 		if (sftpJob.name.equals("mainImgUrl")) {
 			Goods goods = goodsService.find(sftpJob.sku);
 			tempSku = goods.getParentSku();
+		}
+		if (tempSku.contains("*")) {
+			tempSku = tempSku.replace("*", "_");
 		}
 		try {
 			logger.info("批量导入上传图片：" + sftpJob.sku + " " + sftpJob.name + " " + sftpJob.url);
