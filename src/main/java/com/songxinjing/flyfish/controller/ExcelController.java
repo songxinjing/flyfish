@@ -44,7 +44,6 @@ import com.songxinjing.flyfish.exception.AppException;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
-import com.songxinjing.flyfish.service.SftpService;
 import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.util.BaseUtil;
 import com.songxinjing.flyfish.util.ConfigUtil;
@@ -71,8 +70,8 @@ public class ExcelController extends BaseController {
 	@Autowired
 	private StoreService storeService;
 
-	@Autowired
-	private SftpService sftpService;
+	// @Autowired
+	// private SftpService sftpService;
 
 	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
 	public String load(HttpServletRequest request, MultipartFile file) throws AppException {
@@ -158,66 +157,72 @@ public class ExcelController extends BaseController {
 					List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
 					for (Map<String, String> obj : data) {
 						String sku = obj.get("*Unique ID");
-						if (StringUtils.isNotEmpty(sku)) {
-							logger.info("开始导入商品SKU：" + sku);
-							// 去除"\"部分
-							if (sku.contains("\\")) {
-								String skuH = sku.split("\\\\")[0];
-								String skuB = sku.split("\\\\")[1];
-								if (skuB.contains("*")) {
-									sku = skuH + "*" + skuB.split("\\*")[1];
-								} else {
-									sku = skuH;
-								}
-							}
-
-							Goods goods = goodsService.find(sku);
-							if (sku.contains("*")) { // 包含"*"
-								if (goods != null) { // 带*SKU存在
-									this.wishUpdate(sku, obj); // 更新已存在带*SKU
-								} else { // 带*SKU不存在
-									String mainSku = sku.split("\\*")[0];
-									int num = 1;
-									try {
-										num = Integer.parseInt(sku.split("\\*")[1]);
-									} catch (NumberFormatException e) {
-										logger.error("带*SKU格式错误" + sku, e);
-										continue;
-									} catch (ArrayIndexOutOfBoundsException e) {
-										logger.error("带*SKU格式错误" + sku, e);
-										continue;
+						try {
+							if (StringUtils.isNotEmpty(sku)) {
+								logger.info("开始导入商品SKU：" + sku);
+								// 去除"\"部分
+								if (sku.contains("\\")) {
+									String skuH = sku.split("\\\\")[0];
+									String skuB = sku.split("\\\\")[1];
+									if (skuB.contains("*")) {
+										sku = skuH + "*" + skuB.split("\\*")[1];
+									} else {
+										sku = skuH;
 									}
-									Goods mainGoods = goodsService.find(mainSku);
-									if (mainGoods != null) { // 去*SKU存在，新增带*SKU，复制信息
-										this.wishNewStar(mainGoods, num, obj);
-									} else { // 去*SKU不存在
-										String hql = "from Goods where relaSkus like ?";
-										List<Goods> list = goodsService.findHql(hql, "%" + mainSku + "%");
-										if (!list.isEmpty()) { // 关联SKU存在
-											goods = list.get(0);
-											String skuStar = goods.getSku() + "*" + num;
-											Goods starGoods = goodsService.find(skuStar);
-											if (starGoods != null) { // 带*SKU存在
-												this.wishUpdate(skuStar, obj); // 更新已存在带*SKU
-											} else { // 带*SKU不存在，新增带*SKU，复制信息
-												this.wishNewStar(goods, num, obj);
+								}
+
+								Goods goods = goodsService.find(sku);
+								if (sku.contains("*")) { // 包含"*"
+									if (goods != null) { // 带*SKU存在
+										this.wishUpdate(sku, obj); // 更新已存在带*SKU
+									} else { // 带*SKU不存在
+										String mainSku = sku.split("\\*")[0];
+										int num = 1;
+										try {
+											num = Integer.parseInt(sku.split("\\*")[1]);
+										} catch (NumberFormatException e) {
+											logger.error("带*SKU格式错误" + sku, e);
+											continue;
+										} catch (ArrayIndexOutOfBoundsException e) {
+											logger.error("带*SKU格式错误" + sku, e);
+											continue;
+										}
+										Goods mainGoods = goodsService.find(mainSku);
+										if (mainGoods != null) { // 去*SKU存在，新增带*SKU，复制信息
+											this.wishNewStar(mainGoods, num, obj);
+										} else { // 去*SKU不存在
+											String hql = "from Goods where relaSkus like ?";
+											List<Goods> list = goodsService.findHql(hql, "%" + mainSku + "%");
+											if (!list.isEmpty()) { // 关联SKU存在
+												goods = list.get(0);
+												String skuStar = goods.getSku() + "*" + num;
+												Goods starGoods = goodsService.find(skuStar);
+												if (starGoods != null) { // 带*SKU存在
+													this.wishUpdate(skuStar, obj); // 更新已存在带*SKU
+												} else { // 带*SKU不存在，新增带*SKU，复制信息
+													this.wishNewStar(goods, num, obj);
+												}
 											}
 										}
 									}
-								}
-							} else { // 不包含"*"
-								if (goods != null) { // SKU存在
-									this.wishUpdate(sku, obj); // 更新已存在SKU
-								} else { // SKU不存在
-									String hql = "from Goods where relaSkus like ?";
-									List<Goods> list = goodsService.findHql(hql, "%" + sku + "%");
-									if (!list.isEmpty()) { // 关联SKU存在
-										goods = list.get(0);
-										this.wishUpdate(goods.getSku(), obj);
+								} else { // 不包含"*"
+									if (goods != null) { // SKU存在
+										this.wishUpdate(sku, obj); // 更新已存在SKU
+									} else { // SKU不存在
+										String hql = "from Goods where relaSkus like ?";
+										List<Goods> list = goodsService.findHql(hql, "%" + sku + "%");
+										if (!list.isEmpty()) { // 关联SKU存在
+											goods = list.get(0);
+											this.wishUpdate(goods.getSku(), obj);
+										}
 									}
 								}
+
 							}
 
+						} catch (Exception e) {
+							logger.error("SKU导入错误：" + sku, e);
+							continue;
 						}
 					}
 				} catch (IOException e) {
@@ -458,6 +463,7 @@ public class ExcelController extends BaseController {
 		if (goodsPlatService.find(sku) == null) {
 			goodsPlat.setEbayTitle(goodsPlat.getTitle());
 			goodsPlat.setOtherTitle(goodsPlat.getTitle());
+			goodsPlat.setIsUpload(0);
 			goodsPlatService.save(goodsPlat);
 		} else {
 			goodsPlatService.update(goodsPlat);
@@ -476,23 +482,20 @@ public class ExcelController extends BaseController {
 		}
 
 		// 只新增GoodsImg,已存在的不更新
-		GoodsImg goodsImg = goodsImgService.find(sku);
-		if (goodsImg == null) {
-			goodsImg = new GoodsImg();
-			goodsImg.setSku(sku);
-			goodsImgService.save(goodsImg);
-		}
-
-		for (String key : ExcelTemp.WISH_FIELD.keySet()) {
-			if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key))) {
-				if (ExcelTemp.WISH_FIELD.get(key).contains("Img") && StringUtils.isNotEmpty(obj.get(key))) {
-					String url = (String) ReflectionUtil.getFieldValue(goodsImg, ExcelTemp.WISH_FIELD.get(key));
-					if (StringUtils.isEmpty(url)) {
-						sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
-					}
-				}
-			}
-		}
+		/*
+		 * GoodsImg goodsImg = goodsImgService.find(sku); if (goodsImg == null)
+		 * { goodsImg = new GoodsImg(); goodsImg.setSku(sku);
+		 * goodsImgService.save(goodsImg); }
+		 * 
+		 * for (String key : ExcelTemp.WISH_FIELD.keySet()) { if
+		 * (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key))) { if
+		 * (ExcelTemp.WISH_FIELD.get(key).contains("Img") &&
+		 * StringUtils.isNotEmpty(obj.get(key))) { String url = (String)
+		 * ReflectionUtil.getFieldValue(goodsImg,
+		 * ExcelTemp.WISH_FIELD.get(key)); if (StringUtils.isEmpty(url)) {
+		 * sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key),
+		 * obj.get(key)); } } } }
+		 */
 	}
 
 	// 根据SKU复制新增带*SKU

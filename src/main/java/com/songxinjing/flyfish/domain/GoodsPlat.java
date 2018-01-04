@@ -162,6 +162,12 @@ public class GoodsPlat implements Serializable {
 	@Column(length = 500)
 	private String eImgUrl10;
 
+	/**
+	 * 是否上传图片
+	 */
+	@Column
+	private Integer isUpload;
+
 	public String getSku() {
 		return sku;
 	}
@@ -352,6 +358,14 @@ public class GoodsPlat implements Serializable {
 
 	public void setTitleWords(String titleWords) {
 		this.titleWords = titleWords;
+	}
+
+	public Integer getIsUpload() {
+		return isUpload;
+	}
+
+	public void setIsUpload(Integer isUpload) {
+		this.isUpload = isUpload;
 	}
 
 }
