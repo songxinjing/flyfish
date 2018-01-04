@@ -480,22 +480,6 @@ public class ExcelController extends BaseController {
 			goods.setParentSku(parentSku);
 			goodsService.save(goods);
 		}
-
-		// 只新增GoodsImg,已存在的不更新
-		/*
-		 * GoodsImg goodsImg = goodsImgService.find(sku); if (goodsImg == null)
-		 * { goodsImg = new GoodsImg(); goodsImg.setSku(sku);
-		 * goodsImgService.save(goodsImg); }
-		 * 
-		 * for (String key : ExcelTemp.WISH_FIELD.keySet()) { if
-		 * (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key))) { if
-		 * (ExcelTemp.WISH_FIELD.get(key).contains("Img") &&
-		 * StringUtils.isNotEmpty(obj.get(key))) { String url = (String)
-		 * ReflectionUtil.getFieldValue(goodsImg,
-		 * ExcelTemp.WISH_FIELD.get(key)); if (StringUtils.isEmpty(url)) {
-		 * sftpService.startFTP(sku, ExcelTemp.WISH_FIELD.get(key),
-		 * obj.get(key)); } } } }
-		 */
 	}
 
 	// 根据SKU复制新增带*SKU

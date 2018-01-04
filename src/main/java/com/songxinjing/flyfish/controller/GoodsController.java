@@ -46,11 +46,11 @@ import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
-import com.songxinjing.flyfish.service.SftpService;
 import com.songxinjing.flyfish.service.StoreGoodsService;
 import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.util.BaseUtil;
 import com.songxinjing.flyfish.util.ReflectionUtil;
+import com.songxinjing.flyfish.util.SftpUtil;
 
 /**
  * 商品管理控制类
@@ -84,9 +84,6 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	private StoreGoodsService storeGoodsService;
-
-	@Autowired
-	private SftpService sftpService;
 
 	@RequestMapping(value = "goods/list")
 	public String list(HttpServletRequest request, Model model, Integer page, Integer pageSize, Boolean isQuery,
@@ -400,18 +397,6 @@ public class GoodsController extends BaseController {
 		return true;
 	}
 
-	@RequestMapping(value = "goods/reget", method = RequestMethod.POST)
-	@ResponseBody
-	public boolean reget(String sku, String imgName) {
-		logger.info("重新获取图片");
-		GoodsPlat goodsPlat = goodsPlatService.find(sku);
-		String imgUrl = (String) ReflectionUtil.getFieldValue(goodsPlat, imgName);
-		if (StringUtils.isNotEmpty(imgUrl)) {
-			sftpService.startFTP(sku, imgName, imgUrl);
-		}
-		return true;
-	}
-
 	@RequestMapping(value = "goods/uploadimg", method = RequestMethod.POST)
 	@ResponseBody
 	public boolean uploadimg(String sku, String imgName, MultipartFile file) {
@@ -429,7 +414,7 @@ public class GoodsController extends BaseController {
 				tempSku = goods.getParentSku();
 			}
 			String name = tempSku + "-" + imgName + ".jpg";
-			sftpService.doFTP(name, temp);
+			SftpUtil.doFTP(name, temp);
 			ReflectionUtil.setFieldValue(goodsImg, imgName, name);
 			goodsImgService.update(goodsImg);
 		} catch (IllegalStateException | IOException e) {
