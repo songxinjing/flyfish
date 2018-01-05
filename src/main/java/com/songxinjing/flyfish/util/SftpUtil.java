@@ -49,9 +49,9 @@ public class SftpUtil {
 		}
 	}
 
-	public static void doFTP(String name, String url) {
+	public static boolean doFTP(String name, String url) {
 		try {
-			logger.info("上传图片：" + name + " " + url);
+			// logger.info("上传图片：" + name + " " + url);
 			URL fileUrl = new URL(url);
 			String path = remoteDirectory + "/" + name;
 			URI sftpUri = new URI("sftp", userInfo, serverAddress, -1, path, null, null);
@@ -60,9 +60,10 @@ public class SftpUtil {
 			FileObject localFile = manager.resolveFile(fileUrl);
 			// Copy local file to sftp server
 			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
+			return true;
 		} catch (MalformedURLException | FileSystemException | URISyntaxException e) {
 			logger.error("图片上传失败！" + name + " " + url, e);
-			return;
+			return false;
 		}
 	}
 

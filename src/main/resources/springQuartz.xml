@@ -5,17 +5,17 @@
 		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 	
 	<!-- 定时任务：图片上传任务 -->
-	<bean id="goodsImgService" class="com.songxinjing.flyfish.service.GoodsImgService"></bean>
+	<bean id="quartzService" class="com.songxinjing.flyfish.service.QuartzService"></bean>
 	<!-- 定义调用对象和调用对象的方法 -->
 	<bean id="clockTgt"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<!-- 调用的类 -->
 		<property name="targetObject">
-			<ref bean="goodsImgService" />
+			<ref bean="quartzService" />
 		</property>
 		<!-- 调用类中的方法 -->
 		<property name="targetMethod">
-			<value>updateImg</value>
+			<value>uploadImg</value>
 		</property>
 	</bean>
 	<!-- 定义触发时间 -->
@@ -25,13 +25,13 @@
 		</property>
 		<!-- cron表达式 -->
 		<property name="cronExpression">
-			<!-- 整点执行一次 -->
-			<value>0 0 * * * ?</value>
+			<!-- 每5分钟执行一次 -->
+			<value>0 0/10 * * * ?</value>
 		</property>
 	</bean>
 
 	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序 -->
-	<bean id="startQuertz" lazy-init="false" autowire="no"
+	<bean id="startQuartz" lazy-init="false" autowire="no"
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
