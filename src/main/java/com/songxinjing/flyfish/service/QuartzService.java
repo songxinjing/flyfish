@@ -39,20 +39,17 @@ public class QuartzService {
 	public void uploadImg() {
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY);
-		int minute = now.get(Calendar.MINUTE);
-		String jobName = hour + ":" + minute;
-		int numInJob = 100;
-		logger.info("开始执行当日任务(" + jobName + ")");
+		logger.info("开始执行任务(" + hour + ")");
 		String hql = "from GoodsPlat where isUpload = ?";
-		List<GoodsPlat> list = goodsPlatService.findPage(hql, 0, numInJob, 0);
-		// 首先全部标志为已经上传，避免其他任务重复上传
+		List<GoodsPlat> list = goodsPlatService.findPage(hql, 0, 300, 0);
+		// 首先全部标志为正在上传，避免其他任务重复上传
 		for (GoodsPlat gp : list) {
-			gp.setIsUpload(1);
+			gp.setIsUpload(2); // 2表示正在上传
 			goodsPlatService.update(gp);
 		}
-		logger.info("当日任务(" + jobName + ") 标记完毕");
+		logger.info("任务(" + hour + ") 标记完毕");
 
-		int all = numInJob;
+		int all = list.size();
 		int fail = 0;
 		for (GoodsPlat gp : list) {
 			GoodsImg goodsImg = goodsImgService.find(gp.getSku());
@@ -61,6 +58,8 @@ public class QuartzService {
 				goodsImg.setSku(gp.getSku());
 				goodsImgService.save(goodsImg);
 			}
+
+			boolean gpSuccess = true;
 
 			for (String key : ExcelTemp.WISH_FIELD.keySet()) {
 				String name = ExcelTemp.WISH_FIELD.get(key);
@@ -84,23 +83,24 @@ public class QuartzService {
 						if (isSuccess) {
 							ReflectionUtil.setFieldValue(goodsImg, name, imgName);
 						} else {
-							gp.setIsUpload(0);
+							gpSuccess = false;
 						}
 					}
 				}
 			}
 			goodsImgService.update(goodsImg);
-			if (gp.getIsUpload().intValue() == 0) {
+			if (gpSuccess) {
+				gp.setIsUpload(1); // 1表示成功
 				goodsPlatService.update(gp);
-				logger.info("SKU " + gp.getSku() + " 图片上传存在失败情况，进入重新上传任务队列");
+			} else {
+				logger.info("SKU " + gp.getSku() + " 图片上传存在失败情况");
 				fail++;
 			}
 			all--;
-			logger.info("当日任务(" + jobName + ") SKU " + gp.getSku() + " 图片上传完毕");
-			logger.info("当日任务(" + jobName + ") SKU剩余数量为 " + all);
+			logger.info("任务(" + hour + ") SKU " + gp.getSku() + " 图片上传完毕(剩余：" + all + ")");
 		}
 
-		logger.info("完成当日任务(" + jobName + ") 图片上传工作，上传数量：100，其中失败数量：" + fail);
+		logger.info("完成任务(" + hour + ") 图片上传工作，上传数量：" + list.size() + "，其中失败数量：" + fail);
 	}
 
 }

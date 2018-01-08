@@ -181,7 +181,7 @@ public class ExcelController extends BaseController {
 										try {
 											num = Integer.parseInt(sku.split("\\*")[1]);
 										} catch (NumberFormatException e) {
-											logger.error("带*SKU格式错误" + sku, e);
+											logger.error("带*SKU格式错误" + sku);
 											continue;
 										} catch (ArrayIndexOutOfBoundsException e) {
 											logger.error("带*SKU格式错误" + sku, e);

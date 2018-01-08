@@ -62,7 +62,7 @@ public class SftpUtil {
 			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
 			return true;
 		} catch (MalformedURLException | FileSystemException | URISyntaxException e) {
-			logger.error("图片上传失败！" + name + " " + url, e);
+			logger.info("图片上传失败！" + name + " " + url);
 			return false;
 		}
 	}

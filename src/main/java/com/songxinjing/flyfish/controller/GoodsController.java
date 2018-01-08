@@ -111,15 +111,16 @@ public class GoodsController extends BaseController {
 			}
 
 			int storeId = form.getStoreId();
-			int total = 0;
+			String dataHqlPre = "select goods ";
+			String countHqlPre = "select count(goods.sku) ";
 			String hql = "";
 			Map<String, Object> paraMap = new HashMap<String, Object>();
 			if (storeId == 0) {
-				hql = "select goods from Goods as goods where 1=1 ";
+				hql = "from Goods as goods where 1=1 ";
 			} else if (storeId == -1) {
-				hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id is null ";
+				hql = "from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id is null ";
 			} else {
-				hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where (store.id is null or store.id != :storeId) ";
+				hql = "from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where (store.id is null or store.id != :storeId) ";
 				paraMap.put("storeId", storeId);
 			}
 			if (StringUtils.isNotEmpty(form.getName())) {
@@ -202,7 +203,8 @@ public class GoodsController extends BaseController {
 				}
 				hql = hql + ") ";
 			}
-			total = goodsService.findHql(hql, paraMap).size();
+
+			int total = ((Long) goodsService.findHqlAObject(countHqlPre + hql, paraMap)).intValue();
 
 			// 分页代码
 			PageModel<GoodsForm> pageModel = new PageModel<GoodsForm>();
@@ -211,7 +213,7 @@ public class GoodsController extends BaseController {
 			pageModel.setUrl("goods/list.html");
 			pageModel.setPara("?pageSize=" + pageSize + "&");
 			List<Goods> goodses = new ArrayList<Goods>();
-			goodses = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
+			goodses = goodsService.findPage(dataHqlPre + hql, pageModel.getRecFrom(), pageModel.getPageSize(), paraMap);
 			List<GoodsForm> list = new ArrayList<GoodsForm>();
 			for (Goods goods : goodses) {
 				GoodsForm goodsForm = new GoodsForm();
@@ -472,20 +474,62 @@ public class GoodsController extends BaseController {
 	}
 
 	@RequestMapping(value = "goods/relasku", method = RequestMethod.GET)
-	public String relasku(Model model) {
+	public String relasku(Model model, Integer page, Integer pageSize) {
 		logger.info("进入关联SKU列表页面");
+
+		if (page == null) {
+			page = 1;
+		}
+		if (pageSize == null) {
+			pageSize = Constant.PAGE_SIZE;
+		}
+
 		String hql = "from Goods where length(relaSkus) > 0";
-		List<Goods> recList = goodsService.findHql(hql);
-		model.addAttribute("recList", recList);
+		String countHql = "select count(sku) from Goods where length(relaSkus) > 0";
+
+		int total = ((Long) goodsService.findHqlAObject(countHql)).intValue();
+
+		// 分页代码
+		PageModel<Goods> pageModel = new PageModel<Goods>();
+		pageModel.setPageSize(pageSize);
+		pageModel.init(page, total);
+		pageModel.setUrl("goods/relasku.html");
+		pageModel.setPara("?pageSize=" + pageSize + "&");
+		List<Goods> list = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize());
+		pageModel.setRecList(list);
+		model.addAttribute("pageModel", pageModel);
+		model.addAttribute("page", pageModel.getCurrPage());
+
 		return "goods/relasku";
 	}
 
 	@RequestMapping(value = "goods/virtsku", method = RequestMethod.GET)
-	public String virtsku(Model model) {
+	public String virtsku(Model model, Integer page, Integer pageSize) {
 		logger.info("进入虚拟SKU列表页面");
+
+		if (page == null) {
+			page = 1;
+		}
+		if (pageSize == null) {
+			pageSize = Constant.PAGE_SIZE;
+		}
+
 		String hql = "from Goods where length(virtSkus) > 0";
-		List<Goods> recList = goodsService.findHql(hql);
-		model.addAttribute("recList", recList);
+		String countHql = "select count(sku) from Goods where length(virtSkus) > 0";
+
+		int total = ((Long) goodsService.findHqlAObject(countHql)).intValue();
+
+		// 分页代码
+		PageModel<Goods> pageModel = new PageModel<Goods>();
+		pageModel.setPageSize(pageSize);
+		pageModel.init(page, total);
+		pageModel.setUrl("goods/virtsku.html");
+		pageModel.setPara("?pageSize=" + pageSize + "&");
+		List<Goods> list = goodsService.findPage(hql, pageModel.getRecFrom(), pageModel.getPageSize());
+		pageModel.setRecList(list);
+		model.addAttribute("pageModel", pageModel);
+		model.addAttribute("page", pageModel.getCurrPage());
+		
 		return "goods/virtsku";
 	}
 

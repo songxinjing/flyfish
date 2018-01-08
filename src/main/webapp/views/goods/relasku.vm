@@ -18,7 +18,14 @@
 			    </tr>
 			  </thead>
 			  <tbody>
-				#foreach($rec in $!recList)
+				#if(!$!{pageModel.recList} || $!{pageModel.recList.size()} == 0)
+					<tr>
+						<td colspan="11">
+							<h3>无数据</h3>
+						</td>
+					</tr>
+				#end 
+				#foreach($rec in $!{pageModel.recList})
 			        <tr>
 			          <td>$!{rec.sku}</td>
 					  <td>$!{rec.relaSkus}</td>
@@ -27,6 +34,7 @@
 			  </tbody>
 			</table>
 		</div>
+		#parse("/base/page.vm")
 	</div>
 </div>
 

@@ -17,7 +17,7 @@ import com.songxinjing.flyfish.dao.base.BaseDao;
  * 
  */
 public abstract class BaseService<T, PK extends Serializable> {
-	
+
 	protected static Logger logger = LoggerFactory.getLogger(BaseService.class);
 
 	protected BaseDao<T, PK> dao;
@@ -146,8 +146,30 @@ public abstract class BaseService<T, PK extends Serializable> {
 	 * @param values
 	 * @return
 	 */
+	public List<Object> findHqlObject(final String hql, final Map<String, Object> paraMap) {
+		return dao.findHqlObject(hql, paraMap);
+	}
+
+	/**
+	 * HQL查询
+	 * 
+	 * @param queryString
+	 * @param values
+	 * @return
+	 */
 	public Object findHqlAObject(final String hql, final Object... values) {
 		return dao.findHqlAObject(hql, values);
+	}
+
+	/**
+	 * HQL查询
+	 * 
+	 * @param queryString
+	 * @param values
+	 * @return
+	 */
+	public Object findHqlAObject(final String hql, final Map<String, Object> paraMap) {
+		return dao.findHqlAObject(hql, paraMap);
 	}
 
 	/**
