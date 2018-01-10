@@ -2,6 +2,9 @@ package com.songxinjing.flyfish.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +30,7 @@ public class LogisService extends BaseService<Logis, Integer> {
 
 	public BigDecimal getShippingPrice(Logis logis, BigDecimal weight) {
 		BigDecimal price = new BigDecimal(0);
-		if(weight == null){
+		if (weight == null) {
 			weight = new BigDecimal(0);
 		}
 		if (logis.getMethod() == 1 && logis.getParaA() != null && logis.getParaB() != null) {
@@ -45,8 +48,16 @@ public class LogisService extends BaseService<Logis, Integer> {
 
 	public BigDecimal getPlatCountryWeight(Platform platform, Logis logis) {
 		String hql = "select weight.rate from Weight as weight left join weight.platform as platform "
-				+ "left join weight.country as country where platform.id = ? and country.id = ?";
-		return (BigDecimal) this.findHqlAObject(hql, platform.getId(), logis.getCountry().getId());
+				+ "left join weight.country as country where platform.id = :platId and country.id = :countryId";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("platId", platform.getId());
+		paraMap.put("countryId", logis.getCountry().getId());
+		@SuppressWarnings("unchecked")
+		List<BigDecimal> list = (List<BigDecimal>) this.findHql(hql, paraMap);
+		if(!list.isEmpty()){
+			return list.get(0);
+		}
+		return null;
 	}
 
 }

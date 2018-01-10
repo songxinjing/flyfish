@@ -85,6 +85,7 @@ public class GoodsController extends BaseController {
 	@Autowired
 	private StoreGoodsService storeGoodsService;
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "goods/list")
 	public String list(HttpServletRequest request, Model model, Integer page, Integer pageSize, Boolean isQuery,
 			GoodsQueryForm form) throws AppException {
@@ -204,7 +205,7 @@ public class GoodsController extends BaseController {
 				hql = hql + ") ";
 			}
 
-			int total = ((Long) goodsService.findHqlAObject(countHqlPre + hql, paraMap)).intValue();
+			int total = ((Long) goodsService.findHql(countHqlPre + hql, paraMap).get(0)).intValue();
 
 			// 分页代码
 			PageModel<GoodsForm> pageModel = new PageModel<GoodsForm>();
@@ -226,19 +227,19 @@ public class GoodsController extends BaseController {
 			pageModel.setRecList(list);
 
 			hql = "select distinct bigCataName from Goods where length(bigCataName) > 0";
-			List<Object> bigCataNames = goodsService.findHqlObject(hql);
+			List<String> bigCataNames = (List<String>) goodsService.findHql(hql);
 
 			hql = "select distinct smallCataName from Goods  where length(smallCataName) > 0";
-			List<Object> smallCataNames = goodsService.findHqlObject(hql);
+			List<String> smallCataNames = (List<String>) goodsService.findHql(hql);
 
 			hql = "select distinct bussOwner1 from Goods  where length(bussOwner1) > 0";
-			List<Object> bussOwner1s = goodsService.findHqlObject(hql);
+			List<String> bussOwner1s = (List<String>) goodsService.findHql(hql);
 
 			hql = "select distinct bussOwner2 from Goods  where length(bussOwner2) > 0";
-			List<Object> bussOwner2s = goodsService.findHqlObject(hql);
+			List<String> bussOwner2s = (List<String>) goodsService.findHql(hql);
 
 			hql = "select distinct buyer from Goods  where length(buyer) > 0";
-			List<Object> buyers = goodsService.findHqlObject(hql);
+			List<String> buyers = (List<String>) goodsService.findHql(hql);
 
 			model.addAttribute("pageModel", pageModel);
 			model.addAttribute("page", pageModel.getCurrPage());
@@ -448,11 +449,14 @@ public class GoodsController extends BaseController {
 				if (StringUtils.isNotEmpty(sku)) {
 					Goods goods = goodsService.find(sku.trim());
 					if (goods != null) {
-						String hql = "from StoreGoods where store.id = ? and goods.sku = ? ";
+						String hql = "from StoreGoods where store.id = :storeId and goods.sku = :sku ";
+						Map<String, Object> paraMap = new HashMap<String, Object>();
+						paraMap.put("storeId", storeId);
+						paraMap.put("sku", sku);
 						StoreGoods sg = new StoreGoods();
 						sg.setGoods(goods);
 						sg.setStore(store);
-						if (storeGoodsService.findHql(hql, storeId, sku).isEmpty()) {
+						if (storeGoodsService.findHql(hql, paraMap).isEmpty()) {
 							sg.setBatchNo(batchNo);
 							storeGoodsService.save(sg);
 							String listingSku = BaseUtil.changeSku(goods.getSku(), store.getMove());
@@ -487,7 +491,7 @@ public class GoodsController extends BaseController {
 		String hql = "from Goods where length(relaSkus) > 0";
 		String countHql = "select count(sku) from Goods where length(relaSkus) > 0";
 
-		int total = ((Long) goodsService.findHqlAObject(countHql)).intValue();
+		int total = ((Long) goodsService.findHql(countHql).get(0)).intValue();
 
 		// 分页代码
 		PageModel<Goods> pageModel = new PageModel<Goods>();
@@ -517,7 +521,7 @@ public class GoodsController extends BaseController {
 		String hql = "from Goods where length(virtSkus) > 0";
 		String countHql = "select count(sku) from Goods where length(virtSkus) > 0";
 
-		int total = ((Long) goodsService.findHqlAObject(countHql)).intValue();
+		int total = ((Long) goodsService.findHql(countHql).get(0)).intValue();
 
 		// 分页代码
 		PageModel<Goods> pageModel = new PageModel<Goods>();
@@ -529,7 +533,7 @@ public class GoodsController extends BaseController {
 		pageModel.setRecList(list);
 		model.addAttribute("pageModel", pageModel);
 		model.addAttribute("page", pageModel.getCurrPage());
-		
+
 		return "goods/virtsku";
 	}
 

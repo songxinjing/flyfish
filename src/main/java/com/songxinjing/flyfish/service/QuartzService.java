@@ -1,7 +1,9 @@
 package com.songxinjing.flyfish.service;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -40,8 +42,10 @@ public class QuartzService {
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY);
 		logger.info("开始执行任务(" + hour + ")");
-		String hql = "from GoodsPlat where isUpload = ?";
-		List<GoodsPlat> list = goodsPlatService.findPage(hql, 0, 300, 0);
+		String hql = "from GoodsPlat where isUpload = :isUpload";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("isUpload", 0);
+		List<GoodsPlat> list = goodsPlatService.findPage(hql, 0, 300, paraMap);
 		// 首先全部标志为正在上传，避免其他任务重复上传
 		for (GoodsPlat gp : list) {
 			gp.setIsUpload(2); // 2表示正在上传

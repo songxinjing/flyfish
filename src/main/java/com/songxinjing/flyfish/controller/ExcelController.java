@@ -191,8 +191,11 @@ public class ExcelController extends BaseController {
 										if (mainGoods != null) { // 去*SKU存在，新增带*SKU，复制信息
 											this.wishNewStar(mainGoods, num, obj);
 										} else { // 去*SKU不存在
-											String hql = "from Goods where relaSkus like ?";
-											List<Goods> list = goodsService.findHql(hql, "%" + mainSku + "%");
+											String hql = "from Goods where relaSkus like :relaSkus";
+											Map<String, Object> paraMap = new HashMap<String, Object>();
+											paraMap.put("relaSkus", "%" + mainSku + "%");
+											@SuppressWarnings("unchecked")
+											List<Goods> list = (List<Goods>) goodsService.findHql(hql, paraMap);
 											if (!list.isEmpty()) { // 关联SKU存在
 												goods = list.get(0);
 												String skuStar = goods.getSku() + "*" + num;
@@ -209,8 +212,11 @@ public class ExcelController extends BaseController {
 									if (goods != null) { // SKU存在
 										this.wishUpdate(sku, obj); // 更新已存在SKU
 									} else { // SKU不存在
-										String hql = "from Goods where relaSkus like ?";
-										List<Goods> list = goodsService.findHql(hql, "%" + sku + "%");
+										String hql = "from Goods where relaSkus like :relaSkus";
+										Map<String, Object> paraMap = new HashMap<String, Object>();
+										paraMap.put("relaSkus", "%" + sku + "%");
+										@SuppressWarnings("unchecked")
+										List<Goods> list = (List<Goods>) goodsService.findHql(hql, paraMap);
 										if (!list.isEmpty()) { // 关联SKU存在
 											goods = list.get(0);
 											this.wishUpdate(goods.getSku(), obj);
@@ -242,8 +248,12 @@ public class ExcelController extends BaseController {
 		try {
 			Store store = storeService.find(storeId);
 			Platform platform = store.getPlatform();
-			String hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
-			List<Goods> goodses = goodsService.findHql(hql, storeId, batchNo);
+			String hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = :storeId and sg.batchNo = :batchNo ";
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			paraMap.put("storeId", storeId);
+			paraMap.put("batchNo", batchNo);
+			@SuppressWarnings("unchecked")
+			List<Goods> goodses = (List<Goods>) goodsService.findHql(hql, paraMap);
 			Map<String, String> tempFiledMap = ExcelTemp.PLATFORM_TEMP_FIELD.get(platform.getName());
 			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 
@@ -368,7 +378,8 @@ public class ExcelController extends BaseController {
 	public void exportVirtsku(HttpServletResponse response, Integer storeId, String batchNo) {
 		logger.info("导出虚拟SKU列表");
 		String hql = "from Goods where length(virtSkus) > 0";
-		List<Goods> goodses = goodsService.findHql(hql);
+		@SuppressWarnings("unchecked")
+		List<Goods> goodses = (List<Goods>) goodsService.findHql(hql);
 
 		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 		for (Goods goods : goodses) {

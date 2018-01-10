@@ -2,6 +2,7 @@ package com.songxinjing.flyfish.service.base;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -103,7 +104,6 @@ public abstract class BaseService<T, PK extends Serializable> {
 		if (obj != null) {
 			delete(obj);
 		}
-
 	}
 
 	/**
@@ -124,8 +124,8 @@ public abstract class BaseService<T, PK extends Serializable> {
 	 * @param values
 	 * @return
 	 */
-	public List<T> findHql(final String hql, final Object... values) {
-		return dao.findHql(hql, values);
+	public List<?> findHql(final String hql) {
+		return dao.findHql(hql);
 	}
 
 	/**
@@ -135,51 +135,7 @@ public abstract class BaseService<T, PK extends Serializable> {
 	 * @param values
 	 * @return
 	 */
-	public List<Object> findHqlObject(final String hql, final Object... values) {
-		return dao.findHqlObject(hql, values);
-	}
-
-	/**
-	 * HQL查询
-	 * 
-	 * @param queryString
-	 * @param values
-	 * @return
-	 */
-	public List<Object> findHqlObject(final String hql, final Map<String, Object> paraMap) {
-		return dao.findHqlObject(hql, paraMap);
-	}
-
-	/**
-	 * HQL查询
-	 * 
-	 * @param queryString
-	 * @param values
-	 * @return
-	 */
-	public Object findHqlAObject(final String hql, final Object... values) {
-		return dao.findHqlAObject(hql, values);
-	}
-
-	/**
-	 * HQL查询
-	 * 
-	 * @param queryString
-	 * @param values
-	 * @return
-	 */
-	public Object findHqlAObject(final String hql, final Map<String, Object> paraMap) {
-		return dao.findHqlAObject(hql, paraMap);
-	}
-
-	/**
-	 * HQL查询
-	 * 
-	 * @param queryString
-	 * @param values
-	 * @return
-	 */
-	public List<T> findHql(final String hql, final Map<String, Object> paraMap) {
+	public List<?> findHql(final String hql, final Map<String, Object> paraMap) {
 		return dao.findHql(hql, paraMap);
 	}
 
@@ -190,8 +146,19 @@ public abstract class BaseService<T, PK extends Serializable> {
 	 * @param size
 	 * @return
 	 */
-	public List<T> findPage(String hql, int from, int size, final Object... values) {
-		return dao.findPage(hql, from, size, values);
+	public List<T> findPage(String hql, int from, int size) {
+		return this.findPage(hql, from, size, new HashMap<String, Object>());
+	}
+
+	/**
+	 * 分页查询
+	 * 
+	 * @param from
+	 * @param size
+	 * @return
+	 */
+	public List<?> findPage(String hql, int from, int size, Class<?> clazz) {
+		return this.findPage(hql, from, size, null, clazz);
 	}
 
 	/**
@@ -203,6 +170,17 @@ public abstract class BaseService<T, PK extends Serializable> {
 	 */
 	public List<T> findPage(String hql, int from, int size, final Map<String, Object> paraMap) {
 		return dao.findPage(hql, from, size, paraMap);
+	}
+
+	/**
+	 * 分页查询
+	 * 
+	 * @param from
+	 * @param size
+	 * @return
+	 */
+	public List<?> findPage(String hql, int from, int size, final Map<String, Object> paraMap, Class<?> clazz) {
+		return dao.findPage(hql, from, size, paraMap, clazz);
 	}
 
 }

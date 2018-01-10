@@ -2,7 +2,9 @@ package com.songxinjing.flyfish.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,15 +60,24 @@ public class PublishController extends BaseController {
 		}
 		Store store = storeService.find(storeId);
 		if (StringUtils.isEmpty(batchNo)) {
-			String hql = "select max(batchNo) from StoreGoods where store.id = ? ";
-			batchNo = (String) storeGoodsService.findHqlAObject(hql, storeId);
+			String hql = "select max(batchNo) from StoreGoods where store.id = :storeId ";
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			paraMap.put("storeId", storeId);
+			batchNo = (String) storeGoodsService.findHql(hql, paraMap).get(0);
 		}
 
-		String hql = "select distinct batchNo from StoreGoods where store.id = ? ";
-		List<Object> batchNos = storeGoodsService.findHqlObject(hql, storeId);
+		String hql = "select distinct batchNo from StoreGoods where store.id = :storeId ";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("storeId", storeId);
+		@SuppressWarnings("unchecked")
+		List<String> batchNos = (List<String>) storeGoodsService.findHql(hql, paraMap);
 
-		hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
-		List<Goods> goodses = goodsService.findHql(hql, storeId, batchNo);
+		hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = :storeId and sg.batchNo = :batchNo ";
+		paraMap = new HashMap<String, Object>();
+		paraMap.put("storeId", storeId);
+		paraMap.put("batchNo", batchNo);
+		@SuppressWarnings("unchecked")
+		List<Goods> goodses = (List<Goods>) goodsService.findHql(hql, paraMap);
 
 		List<GoodsForm> listT = new ArrayList<GoodsForm>();
 		List<GoodsForm> listF = new ArrayList<GoodsForm>();
@@ -136,8 +147,12 @@ public class PublishController extends BaseController {
 	@RequestMapping(value = "publish/remove", method = RequestMethod.GET)
 	public String remove(Model model, Integer storeId, String sku, Boolean dataFlag) {
 		logger.info("商品移除店铺");
-		String hql = "select sg from StoreGoods as sg left join sg.store as store left join sg.goods as goods where store.id = ? and goods.sku = ? ";
-		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, sku);
+		String hql = "select sg from StoreGoods as sg left join sg.store as store left join sg.goods as goods where store.id = :storeId and goods.sku = :sku ";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("storeId", storeId);
+		paraMap.put("sku", sku);
+		@SuppressWarnings("unchecked")
+		List<StoreGoods> list = (List<StoreGoods>) storeGoodsService.findHql(hql, paraMap);
 		String batchNo = null;
 		if (!list.isEmpty()) {
 			batchNo = list.get(0).getBatchNo();
@@ -149,8 +164,12 @@ public class PublishController extends BaseController {
 	@RequestMapping(value = "publish/removeall", method = RequestMethod.GET)
 	public String removeall(Model model, Integer storeId, String batchNo) {
 		logger.info("商品批量移除店铺");
-		String hql = "select sg from StoreGoods as sg left join sg.store as store where store.id = ? and sg.batchNo = ? ";
-		List<StoreGoods> list = storeGoodsService.findHql(hql, storeId, batchNo);
+		String hql = "select sg from StoreGoods as sg left join sg.store as store where store.id = :storeId and sg.batchNo = :batchNo ";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("storeId", storeId);
+		paraMap.put("batchNo", batchNo);
+		@SuppressWarnings("unchecked")
+		List<StoreGoods> list = (List<StoreGoods>) storeGoodsService.findHql(hql, paraMap);
 		storeGoodsService.delete(list);
 		return list(model, storeId, null, null);
 	}

@@ -1,5 +1,8 @@
 package com.songxinjing.flyfish.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,21 +17,23 @@ import com.songxinjing.flyfish.service.base.BaseService;
  * 
  */
 @Service
-public class StoreService extends BaseService<Store, Integer>{
+public class StoreService extends BaseService<Store, Integer> {
 
 	@Autowired
 	public void setSuperDao(StoreDao dao) {
 		super.setDao(dao);
 	}
-	
-	public int getNextMove(int platformId){
-		String hql = "select max(move) from Store where platform.id = ? ";
-		Object max = this.findHqlAObject(hql, platformId);
+
+	public int getNextMove(int platformId) {
+		String hql = "select max(move) from Store where platform.id = :platId ";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("platId", platformId);
+		Long max = (Long) this.findHql(hql, paraMap).get(0);
 		int iMax = 0;
-		if(max != null){
-			iMax = (Integer)max;
+		if (max != null) {
+			iMax = max.intValue();
 		}
-		return iMax+1;
+		return iMax + 1;
 	}
 
 }

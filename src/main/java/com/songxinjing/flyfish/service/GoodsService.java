@@ -2,7 +2,9 @@ package com.songxinjing.flyfish.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ public class GoodsService extends BaseService<Goods, String> {
 	private ExchangeService exchangeService;
 
 	public BigDecimal getShippingPrice(Platform platform, Goods goods) {
+		
+		logger.info("计算运费：" + platform.getName() + " " + goods.getSku());
 
 		BigDecimal shippingPrice = null;
 		String weight = goods.getWeight();
@@ -57,6 +61,8 @@ public class GoodsService extends BaseService<Goods, String> {
 	}
 
 	public BigDecimal getPrice(Platform platform, Goods goods, BigDecimal shippingPrice) {
+		
+		logger.info("计算售价：" + platform.getName() + " " + goods.getSku());
 
 		if (shippingPrice == null) {
 			shippingPrice = new BigDecimal(0);
@@ -79,10 +85,13 @@ public class GoodsService extends BaseService<Goods, String> {
 		}
 		return price;
 	}
-	
-	public List<Goods> findMoreSku(String skuTemp){
-		String hql = "from Goods where sku like ?";
-		return this.findHql(hql, "skuTemp%");
+
+	@SuppressWarnings("unchecked")
+	public List<Goods> findMoreSku(String skuTemp) {
+		String hql = "from Goods where sku like :sku";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("sku", "skuTemp%");
+		return (List<Goods>) this.findHql(hql, paraMap);
 	}
 
 }
