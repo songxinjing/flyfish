@@ -1,6 +1,8 @@
 package com.songxinjing.flyfish.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,9 +26,11 @@ public class PlatformService extends BaseService<Platform, Integer> {
 	}
 
 	public Platform findByName(String name) {
-		Platform temp = new Platform();
-		temp.setName(name);
-		List<Platform> list = find(temp);
+		String hql = "from Platform where name = :name";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("name", name);
+		@SuppressWarnings("unchecked")
+		List<Platform> list = (List<Platform>) findHql(hql, paraMap);
 		if (!list.isEmpty()) {
 			return list.get(0);
 		}

@@ -251,7 +251,7 @@
 							#if("$!{rec.goods.url2}" != "") <a target="_blank" class="btn btn-info btn-sm margin-bottom" href="$!{rec.goods.url2}">供2</a>#end
 							#if("$!{rec.goods.url3}" != "") <a target="_blank" class="btn btn-info btn-sm margin-bottom" href="$!{rec.goods.url3}">供3</a>#end
 						</td>
-						<td>$!{rec.goodsPlat.title}</td>
+						<td>$!{rec.goods.title}</td>
 						<td>$!{rec.goods.createTm}</td>
 						<td>$!{rec.goods.modifyTm}</td>
 					</tr>

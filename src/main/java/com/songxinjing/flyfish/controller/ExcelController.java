@@ -34,7 +34,6 @@ import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
-import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.Platform;
 import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.User;
@@ -42,7 +41,6 @@ import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
 import com.songxinjing.flyfish.exception.AppException;
 import com.songxinjing.flyfish.service.GoodsImgService;
-import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.util.BaseUtil;
@@ -62,16 +60,10 @@ public class ExcelController extends BaseController {
 	private GoodsService goodsService;
 
 	@Autowired
-	private GoodsPlatService goodsPlatService;
-
-	@Autowired
 	private GoodsImgService goodsImgService;
 
 	@Autowired
 	private StoreService storeService;
-
-	// @Autowired
-	// private SftpService sftpService;
 
 	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
 	public String load(HttpServletRequest request, MultipartFile file) throws AppException {
@@ -92,7 +84,8 @@ public class ExcelController extends BaseController {
 							if (goods == null) {
 								goods = new Goods();
 							}
-							for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
+							for (String key : ExcelTemp.COMMON_FIELD.keySet()) { // 遍历列头
+								// 列头有对应字段 且 数据中有该列头，则将列头的值set到字段中
 								if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)) {
 									ReflectionUtil.setFieldValue(goods, ExcelTemp.COMMON_FIELD.get(key), obj.get(key));
 								}
@@ -114,11 +107,11 @@ public class ExcelController extends BaseController {
 								int num = Integer.parseInt(skuMore.split("*")[1]);
 								for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
 									if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)
-											&& !"sku".equals(ExcelTemp.COMMON_FIELD.get(key))) {
-										if ("weight".equals(ExcelTemp.COMMON_FIELD.get(key))) {
+											&& !"sku".equals(ExcelTemp.COMMON_FIELD.get(key))) { // 不更新sku，保留带*
+										if ("weight".equals(ExcelTemp.COMMON_FIELD.get(key))) { // 重量按倍数更新
 											BigDecimal bgWeight = new BigDecimal(obj.get(key));
 											moreGoods.setWeight(bgWeight.multiply(new BigDecimal(num)).toString());
-										} else if ("costPrice".equals(ExcelTemp.COMMON_FIELD.get(key))) {
+										} else if ("costPrice".equals(ExcelTemp.COMMON_FIELD.get(key))) { // 成本按倍数更新
 											BigDecimal bgCostPrice = new BigDecimal(obj.get(key));
 											moreGoods
 													.setCostPrice(bgCostPrice.multiply(new BigDecimal(num)).toString());
@@ -174,7 +167,7 @@ public class ExcelController extends BaseController {
 								Goods goods = goodsService.find(sku);
 								if (sku.contains("*")) { // 包含"*"
 									if (goods != null) { // 带*SKU存在
-										this.wishUpdate(sku, obj); // 更新已存在带*SKU
+										this.wishUpdate(goods, obj); // 更新已存在带*SKU
 									} else { // 带*SKU不存在
 										String mainSku = sku.split("\\*")[0];
 										int num = 1;
@@ -201,7 +194,7 @@ public class ExcelController extends BaseController {
 												String skuStar = goods.getSku() + "*" + num;
 												Goods starGoods = goodsService.find(skuStar);
 												if (starGoods != null) { // 带*SKU存在
-													this.wishUpdate(skuStar, obj); // 更新已存在带*SKU
+													this.wishUpdate(starGoods, obj); // 更新已存在带*SKU
 												} else { // 带*SKU不存在，新增带*SKU，复制信息
 													this.wishNewStar(goods, num, obj);
 												}
@@ -210,7 +203,7 @@ public class ExcelController extends BaseController {
 									}
 								} else { // 不包含"*"
 									if (goods != null) { // SKU存在
-										this.wishUpdate(sku, obj); // 更新已存在SKU
+										this.wishUpdate(goods, obj); // 更新已存在SKU
 									} else { // SKU不存在
 										String hql = "from Goods where relaSkus like :relaSkus";
 										Map<String, Object> paraMap = new HashMap<String, Object>();
@@ -219,7 +212,7 @@ public class ExcelController extends BaseController {
 										List<Goods> list = (List<Goods>) goodsService.findHql(hql, paraMap);
 										if (!list.isEmpty()) { // 关联SKU存在
 											goods = list.get(0);
-											this.wishUpdate(goods.getSku(), obj);
+											this.wishUpdate(goods, obj);
 										}
 									}
 								}
@@ -258,23 +251,22 @@ public class ExcelController extends BaseController {
 			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
 
 			for (Goods goods : goodses) {
-				GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
 				GoodsImg goodsImg = goodsImgService.find(goods.getSku());
-				if (goodsPlat == null || goodsImg == null) {
+				if (goodsImg == null) {
 					continue;
 				}
 
 				String platformTitle = "";
 				boolean titleRed = false;
 				if (platform.getName().equals(Constant.Wish)) {
-					platformTitle = goodsPlat.getTitle();
+					platformTitle = goods.getTitle();
 				} else if (platform.getName().equals(Constant.Ebay)) {
-					platformTitle = goodsPlat.getEbayTitle();
+					platformTitle = goods.getEbayTitle();
 					if (StringUtils.isNotEmpty(platformTitle) && platformTitle.length() > 75) {
 						titleRed = true;
 					}
 				} else {
-					platformTitle = goodsPlat.getOtherTitle();
+					platformTitle = goods.getOtherTitle();
 					if (StringUtils.isNotEmpty(platformTitle) && platformTitle.length() > 90) {
 						titleRed = true;
 					}
@@ -293,8 +285,8 @@ public class ExcelController extends BaseController {
 								if (StringUtils.isNotEmpty(img)) {
 									map.put(key, "http://" + store.getDomainName() + "/" + img);
 								}
-							} else if (goodsPlat != null) {
-								Object obj = ReflectionUtil.getFieldValue(goodsPlat, tempFiledMap.get(key));
+							} else {
+								Object obj = ReflectionUtil.getFieldValue(goods, tempFiledMap.get(key));
 								if (obj != null) {
 									map.put(key, obj.toString());
 								}
@@ -451,46 +443,39 @@ public class ExcelController extends BaseController {
 		return "redirect:/goods/relasku.html";
 	}
 
-	// 根据Excel数据新增或更新GoodsPlat和GoodsImg
-	private void wishUpdate(String sku, Map<String, String> obj) {
+	// 根据Excel数据更新Goods
+	private void wishUpdate(Goods goods, Map<String, String> obj) {
 
-		GoodsPlat goodsPlat = goodsPlatService.find(sku);
-		if (goodsPlat == null) {
-			goodsPlat = new GoodsPlat();
-		}
 		for (String key : ExcelTemp.WISH_FIELD.keySet()) {
 			if (StringUtils.isNotEmpty(ExcelTemp.WISH_FIELD.get(key)) && obj.containsKey(key)) {
-				if (ExcelTemp.WISH_FIELD.get(key).equals("sku")) {
-					ReflectionUtil.setFieldValue(goodsPlat, "sku", sku);
-				} else if (ExcelTemp.WISH_FIELD.get(key).equals("tags")) {
-					if (StringUtils.isEmpty(goodsPlat.getTags())) {
-						ReflectionUtil.setFieldValue(goodsPlat, "tags", obj.get(key));
+				if (ExcelTemp.WISH_FIELD.get(key).equals("tags")) {
+					if (StringUtils.isEmpty(goods.getTags())) {
+						ReflectionUtil.setFieldValue(goods, "tags", obj.get(key));
 					}
 				} else {
-					ReflectionUtil.setFieldValue(goodsPlat, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
+					ReflectionUtil.setFieldValue(goods, ExcelTemp.WISH_FIELD.get(key), obj.get(key));
 				}
 			}
 		}
-		if (goodsPlatService.find(sku) == null) {
-			goodsPlat.setEbayTitle(goodsPlat.getTitle());
-			goodsPlat.setOtherTitle(goodsPlat.getTitle());
-			goodsPlat.setIsUpload(0);
-			goodsPlatService.save(goodsPlat);
-		} else {
-			goodsPlatService.update(goodsPlat);
+
+		if (StringUtils.isEmpty(goods.getEbayTitle())) {
+			goods.setEbayTitle(goods.getTitle());
 		}
+		if (StringUtils.isEmpty(goods.getOtherTitle())) {
+			goods.setOtherTitle(goods.getTitle());
+		}
+		goods.setIsUpload(0);
 
 		// 更新父SKU
 		if (StringUtils.isNotEmpty(obj.get("Parent Unique ID"))) {
-			Goods goods = goodsService.find(sku);
 			String parentSku = obj.get("Parent Unique ID");
 			// 去除"\"部分
 			if (parentSku.contains("\\")) {
 				parentSku = parentSku.split("\\\\")[0];
 			}
 			goods.setParentSku(parentSku);
-			goodsService.save(goods);
 		}
+		goodsService.update(goods);
 	}
 
 	// 根据SKU复制新增带*SKU
@@ -508,7 +493,8 @@ public class ExcelController extends BaseController {
 		temp.setVirtSkus("");
 		temp.setModifyTm(new Timestamp(System.currentTimeMillis()));
 		goodsService.save(temp);
-		this.wishUpdate(skuStar, obj);
+		Goods newGoods = goodsService.find(skuStar);
+		this.wishUpdate(newGoods, obj);
 	}
 
 }

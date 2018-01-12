@@ -2,7 +2,6 @@ package com.songxinjing.flyfish.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -30,19 +29,16 @@ import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
-import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.Platform;
 import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.StoreGoods;
 import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.exception.AppException;
-import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.form.GoodsQueryForm;
 import com.songxinjing.flyfish.plugin.cache.MapCache;
 import com.songxinjing.flyfish.plugin.page.PageModel;
 import com.songxinjing.flyfish.service.GoodsImgService;
-import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.PlatformService;
 import com.songxinjing.flyfish.service.StoreGoodsService;
@@ -62,9 +58,6 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	private GoodsService goodsService;
-
-	@Autowired
-	private GoodsPlatService goodsPlatService;
 
 	@Autowired
 	private GoodsImgService goodsImgService;
@@ -209,7 +202,6 @@ public class GoodsController extends BaseController {
 			for (Goods goods : goodses) {
 				GoodsForm goodsForm = new GoodsForm();
 				goodsForm.setGoods(goods);
-				goodsForm.setGoodsPlat(goodsPlatService.find(goods.getSku()));
 				goodsForm.setGoodsImg(goodsImgService.find(goods.getSku()));
 				list.add(goodsForm);
 			}
@@ -237,7 +229,6 @@ public class GoodsController extends BaseController {
 		GoodsForm form = new GoodsForm();
 		Goods goods = goodsService.find(sku);
 		form.setGoods(goods);
-		form.setGoodsPlat(goodsPlatService.find(sku));
 		form.setGoodsImg(goodsImgService.find(sku));
 
 		Map<String, BigDecimal> platformShipPrice = new HashMap<String, BigDecimal>();
@@ -265,7 +256,6 @@ public class GoodsController extends BaseController {
 	public String delete(String sku, Integer page, Integer pageSize) {
 		logger.info("删除商品信息");
 		goodsService.delete(sku);
-		goodsPlatService.delete(sku);
 		goodsImgService.delete(sku);
 		return "redirect:/goods/list.html?pageSize=" + pageSize + "&page=" + page;
 	}
@@ -276,7 +266,6 @@ public class GoodsController extends BaseController {
 		for (String sku : skus.split(",")) {
 			if (StringUtils.isNotEmpty(sku)) {
 				goodsService.delete(sku.trim());
-				goodsPlatService.delete(sku.trim());
 				goodsImgService.delete(sku.trim());
 			}
 		}
@@ -285,44 +274,8 @@ public class GoodsController extends BaseController {
 
 	@RequestMapping(value = "goods/save", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean save(HttpServletRequest request, Model model, GoodsEditForm form) {
+	public boolean save(HttpServletRequest request, Model model, Goods goods) {
 		logger.info("保存商品详情页面");
-		Goods goods = goodsService.find(form.getSku());
-		if (goods == null) {
-			goods = new Goods();
-			goods.setSku(form.getSku());
-			goodsService.save(goods);
-			goods = goodsService.find(form.getSku());
-		}
-		GoodsPlat goodsPlat = goodsPlatService.find(form.getSku());
-		if (goodsPlat == null) {
-			goodsPlat = new GoodsPlat();
-			goodsPlat.setSku(form.getSku());
-			goodsPlatService.save(goodsPlat);
-			goodsPlat = goodsPlatService.find(form.getSku());
-		}
-
-		Field[] fields = form.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			if ("serialVersionUID".equals(field.getName())) {
-				continue;
-			}
-			Object value = ReflectionUtil.getFieldValue(form, field.getName());
-			if (value != null) {
-				try {
-					goods.getClass().getDeclaredField(field.getName());
-					ReflectionUtil.setFieldValue(goods, field.getName(), value);
-				} catch (NoSuchFieldException e) {
-					logger.debug("Goods不存在字段：" + field.getName());
-				}
-				try {
-					goodsPlat.getClass().getDeclaredField(field.getName());
-					ReflectionUtil.setFieldValue(goodsPlat, field.getName(), value);
-				} catch (NoSuchFieldException e) {
-					logger.debug("GoodsPlat不存在字段：" + field.getName());
-				}
-			}
-		}
 
 		// 获取用户登录信息
 		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
@@ -330,23 +283,21 @@ public class GoodsController extends BaseController {
 		goods.setModifyer(user.getName());
 		goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
 
-		goodsService.update(goods);
-		goodsPlatService.update(goodsPlat);
+		goodsService.saveOrUpdate(goods);
 
-		Goods temp = new Goods();
-		temp.setParentSku(goods.getParentSku());
-		List<Goods> list = goodsService.find(temp);
+		String hql = "from Goods where parentSku = :parentSku";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("parentSku", goods.getParentSku());
+		@SuppressWarnings("unchecked")
+		List<Goods> list = (List<Goods>) goodsService.findHql(hql, paraMap);
 		for (Goods g : list) {
-			logger.info("更新同一父SKU的标题和标签信息：" + goods.getParentSku() + " -> " + g.getSku());
-			GoodsPlat gp = goodsPlatService.find(g.getSku());
-			if (gp != null) {
-				gp.setTitle(goodsPlat.getTitle());
-				gp.setEbayTitle(goodsPlat.getEbayTitle());
-				gp.setOtherTitle(goodsPlat.getOtherTitle());
-				gp.setTags(goodsPlat.getTags());
-				gp.setTitleWords(goodsPlat.getTitleWords());
-				goodsPlatService.update(gp);
-			}
+			logger.info("更新同一父SKU的标题和标签信息：" + goods.getParentSku() + " - " + g.getSku());
+			g.setTitle(goods.getTitle());
+			g.setEbayTitle(goods.getEbayTitle());
+			g.setOtherTitle(goods.getOtherTitle());
+			g.setTags(goods.getTags());
+			g.setTitleWords(goods.getTitleWords());
+			goodsService.update(g);
 		}
 		return true;
 	}

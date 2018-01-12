@@ -1,6 +1,8 @@
 package com.songxinjing.flyfish.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,10 +28,12 @@ public class PrivService extends BaseService<Privilege, String>{
 	/**
 	 * 获取已经激活的权限列表
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Privilege> findEnable() {
-		Privilege temp = new Privilege();
-		temp.setEnable(true);
-		return this.find(temp);
+		String hql = "from Privilege where enable = :enable";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("enable", true);
+		return (List<Privilege>) findHql(hql, paraMap);
 	}
 
 }

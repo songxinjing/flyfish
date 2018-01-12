@@ -52,6 +52,16 @@ public abstract class BaseService<T, PK extends Serializable> {
 	public void update(final T entity) {
 		dao.update(entity);
 	}
+	
+	/**
+	 * 新增或修改修改
+	 * 
+	 * @param entity
+	 *            实体对象
+	 */
+	public void saveOrUpdate(final T entity) {
+		dao.saveOrUpdate(entity);
+	}
 
 	/**
 	 * 删除单个对象
@@ -104,17 +114,6 @@ public abstract class BaseService<T, PK extends Serializable> {
 		if (obj != null) {
 			delete(obj);
 		}
-	}
-
-	/**
-	 * 通过含有部分属性的对象查询符合该属性的对象List.
-	 * 
-	 * @param entity
-	 *            模板实体对象
-	 * @return 实体对象List
-	 */
-	public List<T> find(final T entity) {
-		return dao.find(entity);
 	}
 
 	/**

@@ -17,12 +17,10 @@ import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
-import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.StoreGoods;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.service.GoodsImgService;
-import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.StoreGoodsService;
 import com.songxinjing.flyfish.service.StoreService;
@@ -39,9 +37,6 @@ public class PublishController extends BaseController {
 
 	@Autowired
 	private GoodsService goodsService;
-
-	@Autowired
-	private GoodsPlatService goodsPlatService;
 
 	@Autowired
 	private GoodsImgService goodsImgService;
@@ -83,16 +78,11 @@ public class PublishController extends BaseController {
 		List<GoodsForm> listF = new ArrayList<GoodsForm>();
 		for (Goods goods : goodses) {
 			GoodsForm goodsForm = new GoodsForm();
-			GoodsPlat goodsPlat = goodsPlatService.find(goods.getSku());
-			if (goodsPlat == null) {
-				goodsPlat = new GoodsPlat();
-			}
 			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
 			if (goodsImg == null) {
 				goodsImg = new GoodsImg();
 			}
 			goodsForm.setGoods(goods);
-			goodsForm.setGoodsPlat(goodsPlat);
 			goodsForm.setGoodsImg(goodsImg);
 			goodsForm.setListingSku(BaseUtil.changeSku(goods.getSku(), store.getMove()));
 			if (StringUtils.isNotEmpty(goods.getParentSku())) {
@@ -105,18 +95,18 @@ public class PublishController extends BaseController {
 			BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
 			goodsForm.setPlatformPrice(price);
 			if (store.getPlatform().getName().equals(Constant.Wish)) {
-				goodsForm.setPlatformTitle(goodsPlat.getTitle());
+				goodsForm.setPlatformTitle(goods.getTitle());
 				goodsForm.setTitleRed(false);
 			} else if (store.getPlatform().getName().equals(Constant.Ebay)) {
-				goodsForm.setPlatformTitle(goodsPlat.getEbayTitle());
-				if (StringUtils.isNotEmpty(goodsPlat.getEbayTitle()) && goodsPlat.getEbayTitle().length() > 75) {
+				goodsForm.setPlatformTitle(goods.getEbayTitle());
+				if (StringUtils.isNotEmpty(goods.getEbayTitle()) && goods.getEbayTitle().length() > 75) {
 					goodsForm.setTitleRed(true);
 				} else {
 					goodsForm.setTitleRed(false);
 				}
 			} else {
-				goodsForm.setPlatformTitle(goodsPlat.getOtherTitle());
-				if (StringUtils.isNotEmpty(goodsPlat.getOtherTitle()) && goodsPlat.getOtherTitle().length() > 90) {
+				goodsForm.setPlatformTitle(goods.getOtherTitle());
+				if (StringUtils.isNotEmpty(goods.getOtherTitle()) && goods.getOtherTitle().length() > 90) {
 					goodsForm.setTitleRed(true);
 				} else {
 					goodsForm.setTitleRed(false);
@@ -124,7 +114,7 @@ public class PublishController extends BaseController {
 			}
 
 			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
-					&& StringUtils.isNotEmpty(goodsPlat.getTitle()) && !goodsForm.isTitleRed()
+					&& StringUtils.isNotEmpty(goods.getTitle()) && !goodsForm.isTitleRed()
 					&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
 				listT.add(goodsForm);
 			} else {

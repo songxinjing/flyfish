@@ -60,6 +60,18 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 		Assert.notNull(entity, "对象不能为空！");
 		getHibernateTemplate().update(entity);
 	}
+	
+	/**
+	 * 新增或修改
+	 * 
+	 * @param entity
+	 *            实体对象
+	 */
+	public void saveOrUpdate(final T entity) {
+		logger.info("新增或更新数据：" + entityClass.getSimpleName());
+		Assert.notNull(entity, "对象不能为空！");
+		getHibernateTemplate().saveOrUpdate(entity);
+	}
 
 	/**
 	 * 删除单个对象
@@ -106,19 +118,6 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 		logger.info("查询单个数据：" + entityClass.getSimpleName() + " 主键：" + id);
 		Assert.notNull(id, "对象不能为空！");
 		return getHibernateTemplate().get(entityClass, id);
-	}
-
-	/**
-	 * 通过含有部分属性的对象查询符合该属性的对象List.
-	 * 
-	 * @param entity
-	 *            模板实体对象
-	 * @return 实体对象List
-	 */
-	public List<T> find(final T entity) {
-		logger.info("模板查询：" + entityClass.getSimpleName());
-		Assert.notNull(entity, "对象不能为空！");
-		return getHibernateTemplate().findByExample(entity);
 	}
 
 	/**

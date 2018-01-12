@@ -177,7 +177,7 @@ public class ExcelTemp {
 		WISH_FIELD.put("*Product Name", "title");
 		WISH_FIELD.put("Description", "descp");
 		WISH_FIELD.put("*Tags", "tags");
-		WISH_FIELD.put("*Unique ID", "sku");
+		WISH_FIELD.put("*Unique ID", "");
 		WISH_FIELD.put("Color", "color");
 		WISH_FIELD.put("Size", "size");
 		WISH_FIELD.put("*Quantity", "quantity");
