@@ -39,12 +39,11 @@ import com.songxinjing.flyfish.exception.AppException;
 import com.songxinjing.flyfish.form.GoodsEditForm;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.form.GoodsQueryForm;
+import com.songxinjing.flyfish.plugin.cache.MapCache;
 import com.songxinjing.flyfish.plugin.page.PageModel;
-import com.songxinjing.flyfish.service.DomainService;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsPlatService;
 import com.songxinjing.flyfish.service.GoodsService;
-import com.songxinjing.flyfish.service.LogisProdService;
 import com.songxinjing.flyfish.service.PlatformService;
 import com.songxinjing.flyfish.service.StoreGoodsService;
 import com.songxinjing.flyfish.service.StoreService;
@@ -71,13 +70,7 @@ public class GoodsController extends BaseController {
 	private GoodsImgService goodsImgService;
 
 	@Autowired
-	private DomainService domainService;
-
-	@Autowired
 	private PlatformService platformService;
-
-	@Autowired
-	private LogisProdService logisProdService;
 
 	@Autowired
 	private StoreService storeService;
@@ -85,7 +78,6 @@ public class GoodsController extends BaseController {
 	@Autowired
 	private StoreGoodsService storeGoodsService;
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "goods/list")
 	public String list(HttpServletRequest request, Model model, Integer page, Integer pageSize, Boolean isQuery,
 			GoodsQueryForm form) throws AppException {
@@ -204,9 +196,7 @@ public class GoodsController extends BaseController {
 				}
 				hql = hql + ") ";
 			}
-
 			int total = ((Long) goodsService.findHql(countHqlPre + hql, paraMap).get(0)).intValue();
-
 			// 分页代码
 			PageModel<GoodsForm> pageModel = new PageModel<GoodsForm>();
 			pageModel.setPageSize(pageSize);
@@ -223,37 +213,17 @@ public class GoodsController extends BaseController {
 				goodsForm.setGoodsImg(goodsImgService.find(goods.getSku()));
 				list.add(goodsForm);
 			}
-
 			pageModel.setRecList(list);
-
-			hql = "select distinct bigCataName from Goods where length(bigCataName) > 0";
-			List<String> bigCataNames = (List<String>) goodsService.findHql(hql);
-
-			hql = "select distinct smallCataName from Goods  where length(smallCataName) > 0";
-			List<String> smallCataNames = (List<String>) goodsService.findHql(hql);
-
-			hql = "select distinct bussOwner1 from Goods  where length(bussOwner1) > 0";
-			List<String> bussOwner1s = (List<String>) goodsService.findHql(hql);
-
-			hql = "select distinct bussOwner2 from Goods  where length(bussOwner2) > 0";
-			List<String> bussOwner2s = (List<String>) goodsService.findHql(hql);
-
-			hql = "select distinct buyer from Goods  where length(buyer) > 0";
-			List<String> buyers = (List<String>) goodsService.findHql(hql);
-
 			model.addAttribute("pageModel", pageModel);
 			model.addAttribute("page", pageModel.getCurrPage());
 			model.addAttribute("pageSize", pageSize);
 			model.addAttribute("queryForm", form);
-			model.addAttribute("platforms", platformService.find());
-			model.addAttribute("domains", domainService.find());
-			model.addAttribute("prods", logisProdService.find());
 
-			model.addAttribute("bigCataNames", bigCataNames);
-			model.addAttribute("smallCataNames", smallCataNames);
-			model.addAttribute("bussOwner1s", bussOwner1s);
-			model.addAttribute("bussOwner2s", bussOwner2s);
-			model.addAttribute("buyers", buyers);
+			model.addAttribute("bigCataNames", MapCache.get(Constant.CACHE_bigCataNames));
+			model.addAttribute("smallCataNames", MapCache.get(Constant.CACHE_smallCataNames));
+			model.addAttribute("bussOwner1s", MapCache.get(Constant.CACHE_bussOwner1s));
+			model.addAttribute("bussOwner2s", MapCache.get(Constant.CACHE_bussOwner2s));
+			model.addAttribute("buyers", MapCache.get(Constant.CACHE_buyers));
 		} catch (Exception e) {
 			logger.error("系统错误", e);
 			throw new AppException();

@@ -2,11 +2,12 @@ package com.songxinjing.flyfish.constant;
 
 public class Constant {
 
+	// -------------------------- session --------------------
 	/**
 	 * 登录用户信息在Session中的Key
 	 */
 	public static final String SESSION_LOGIN_USER = "session_login_user";
-	
+
 	/**
 	 * 商品查询条件
 	 */
@@ -17,6 +18,8 @@ public class Constant {
 	 */
 	public static final String SESSION_STORES = "session_stores";
 
+	// -------------------------- 参数 ------------------------
+
 	/**
 	 * 分页组件：每页显示数目
 	 */
@@ -26,6 +29,8 @@ public class Constant {
 	 * 汇率代码：美元／人民币
 	 */
 	public static final String USD_CNY = "USD/CNY";
+
+	// -------------------------- 平台名称 --------------------
 
 	/**
 	 * 平台名称：Ebay
@@ -51,5 +56,32 @@ public class Constant {
 	 * 平台名称：Joom
 	 */
 	public static final String Joom = "Joom";
-
+	
+	// -------------------------- 缓存 ------------------------
+	
+	/**
+	 * 缓存：大类名称
+	 */
+	public static final String CACHE_bigCataNames = "bigCataNames";
+	
+	/**
+	 * 缓存：小类名称
+	 */
+	public static final String CACHE_smallCataNames = "smallCataNames";
+	
+	/**
+	 * 缓存：业绩归属人1
+	 */
+	public static final String CACHE_bussOwner1s = "bussOwner1s";
+	
+	/**
+	 * 缓存：业绩归属人2
+	 */
+	public static final String CACHE_bussOwner2s = "bussOwner2s";
+	
+	/**
+	 * 缓存：采购员
+	 */
+	public static final String CACHE_buyers = "buyers";
+	
 }

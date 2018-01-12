@@ -11,10 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.GoodsPlat;
 import com.songxinjing.flyfish.excel.ExcelTemp;
+import com.songxinjing.flyfish.plugin.cache.MapCache;
 import com.songxinjing.flyfish.util.ReflectionUtil;
 import com.songxinjing.flyfish.util.SftpUtil;
 
@@ -41,7 +43,7 @@ public class QuartzService {
 	public void uploadImg() {
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY);
-		logger.info("开始执行任务(" + hour + ")");
+		logger.info("开始执行图片上传任务");
 		String hql = "from GoodsPlat where isUpload = :isUpload";
 		Map<String, Object> paraMap = new HashMap<String, Object>();
 		paraMap.put("isUpload", 0);
@@ -105,6 +107,31 @@ public class QuartzService {
 		}
 
 		logger.info("完成任务(" + hour + ") 图片上传工作，上传数量：" + list.size() + "，其中失败数量：" + fail);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void refreshCache() {
+		logger.info("开始执行缓存刷新任务");
+		String hql = "select distinct bigCataName from Goods where length(bigCataName) > 0";
+		List<String> bigCataNames = (List<String>) goodsService.findHql(hql);
+		MapCache.addUpdate(Constant.CACHE_bigCataNames, bigCataNames);
+
+		hql = "select distinct smallCataName from Goods  where length(smallCataName) > 0";
+		List<String> smallCataNames = (List<String>) goodsService.findHql(hql);
+		MapCache.addUpdate(Constant.CACHE_smallCataNames, smallCataNames);
+
+		hql = "select distinct bussOwner1 from Goods  where length(bussOwner1) > 0";
+		List<String> bussOwner1s = (List<String>) goodsService.findHql(hql);
+		MapCache.addUpdate(Constant.CACHE_bussOwner1s, bussOwner1s);
+
+		hql = "select distinct bussOwner2 from Goods  where length(bussOwner2) > 0";
+		List<String> bussOwner2s = (List<String>) goodsService.findHql(hql);
+		MapCache.addUpdate(Constant.CACHE_bussOwner2s, bussOwner2s);
+
+		hql = "select distinct buyer from Goods  where length(buyer) > 0";
+		List<String> buyers = (List<String>) goodsService.findHql(hql);
+		MapCache.addUpdate(Constant.CACHE_buyers, buyers);
+
 	}
 
 }

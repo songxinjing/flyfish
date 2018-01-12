@@ -4,10 +4,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 	
-	<!-- 定时任务：图片上传任务 -->
-	<bean id="quartzService" class="com.songxinjing.flyfish.service.QuartzService"></bean>
-	<!-- 定义调用对象和调用对象的方法 -->
-	<bean id="clockTgt"
+	<!-- 图片上传任务 -->
+	<bean id="jobUploadImg"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<!-- 调用的类 -->
 		<property name="targetObject">
@@ -18,15 +16,42 @@
 			<value>uploadImg</value>
 		</property>
 	</bean>
-	<!-- 定义触发时间 -->
-	<bean id="clockTm" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	
+	<!-- 图片上传任务触发时间 -->
+	<bean id="triggerUploadImg" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
-			<ref bean="clockTgt" />
+			<ref bean="jobUploadImg" />
 		</property>
 		<!-- cron表达式 -->
 		<property name="cronExpression">
 			<!-- 每小时执行一次 -->
 			<value>0 0 * * * ?</value>
+		</property>
+	</bean>
+	
+	
+	<!-- 缓存刷新任务 -->
+	<bean id="jobRefreshCache"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject">
+			<ref bean="quartzService" />
+		</property>
+		<!-- 调用类中的方法 -->
+		<property name="targetMethod">
+			<value>refreshCache</value>
+		</property>
+	</bean>
+	
+	<!-- 定义触发时间 -->
+	<bean id="triggerRefreshCache" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="jobRefreshCache" />
+		</property>
+		<!-- cron表达式 -->
+		<property name="cronExpression">
+			<!-- 每天执行一次 -->
+			<value>0 0 0 * * ?</value>
 		</property>
 	</bean>
 
@@ -35,7 +60,8 @@
 		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="clockTm" />
+				<ref bean="triggerUploadImg" />
+				<ref bean="triggerRefreshCache" />
 			</list>
 		</property>
 	</bean>

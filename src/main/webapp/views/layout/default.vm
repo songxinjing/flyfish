@@ -131,6 +131,7 @@
                             <ul class="nav nav-second-level">
                                 <li>
                                     <a href="${rc.contextPath}/user/list.html">用户管理</a>
+                                    <a href="${rc.contextPath}/system/cache.html">缓存管理</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

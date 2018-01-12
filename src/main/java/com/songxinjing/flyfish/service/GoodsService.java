@@ -37,10 +37,14 @@ public class GoodsService extends BaseService<Goods, String> {
 	@Autowired
 	private ExchangeService exchangeService;
 
+	/**
+	 * 计算商品运费
+	 * @param platform
+	 * @param goods
+	 * @return
+	 */
 	public BigDecimal getShippingPrice(Platform platform, Goods goods) {
-		
 		logger.info("计算运费：" + platform.getName() + " " + goods.getSku());
-
 		BigDecimal shippingPrice = null;
 		String weight = goods.getWeight();
 		if (StringUtils.isEmpty(weight)) {
@@ -60,10 +64,15 @@ public class GoodsService extends BaseService<Goods, String> {
 		return shippingPrice;
 	}
 
+	/**
+	 * 计算商品售价
+	 * @param platform
+	 * @param goods
+	 * @param shippingPrice
+	 * @return
+	 */
 	public BigDecimal getPrice(Platform platform, Goods goods, BigDecimal shippingPrice) {
-		
 		logger.info("计算售价：" + platform.getName() + " " + goods.getSku());
-
 		if (shippingPrice == null) {
 			shippingPrice = new BigDecimal(0);
 		}
@@ -86,11 +95,16 @@ public class GoodsService extends BaseService<Goods, String> {
 		return price;
 	}
 
+	/**
+	 * 查询关联带*SKU
+	 * @param skuTemp
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Goods> findMoreSku(String skuTemp) {
 		String hql = "from Goods where sku like :sku";
 		Map<String, Object> paraMap = new HashMap<String, Object>();
-		paraMap.put("sku", "skuTemp%");
+		paraMap.put("sku", skuTemp +"%");
 		return (List<Goods>) this.findHql(hql, paraMap);
 	}
 

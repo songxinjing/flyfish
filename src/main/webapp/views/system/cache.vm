@@ -1,0 +1,32 @@
+<div class="row">
+	<div class="col-md-12">
+		<h3 class="page-header">缓存管理</h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-4">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				商品列表查询区下拉单缓存
+			</div>
+			<div class="panel-body">
+				<div class="col-xs-6"><button id="btnRefresh" type="button" class="btn btn-info margin-bottom">全部刷新</button></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	$("#btnRefresh").on("click", function () {
+		 $.ajax({
+            cache: true,
+            type: "GET",
+            url: "${rc.contextPath}/system/cache/refresh.html",
+            async: false,
+            success: function(data) {
+				base.alert("刷新成功！");
+            }
+        });
+	})
+</script>
