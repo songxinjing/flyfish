@@ -85,6 +85,11 @@ public class GoodsQueryForm implements Serializable {
 	 * 排除店铺ID
 	 */
 	private int storeId;
+	
+	/**
+	 * 导入状态
+	 */
+	private int impState;
 
 	public String getSkus() {
 		return skus;
@@ -212,6 +217,14 @@ public class GoodsQueryForm implements Serializable {
 
 	public void setVirtSkus(String virtSkus) {
 		this.virtSkus = virtSkus;
+	}
+
+	public int getImpState() {
+		return impState;
+	}
+
+	public void setImpState(int impState) {
+		this.impState = impState;
 	}
 
 }

@@ -51,18 +51,24 @@
 						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#addModal'>新增</button>
 					</div>
 					<div class="col-sm-6">
-    					<label class="col-sm-3 control-label">排除店铺：</label>
+						<div class="col-sm-4">
+    						<select name="impState" class="form-control">
+								<option value="0" #if($!{queryForm.impState}=='0') selected#end>全部数据</option>
+								<option value="1" #if($!{queryForm.impState}=='1') selected#end>Wish已导入</option>
+    		            	</select>
+    					</div>
+    					
     					<div class="col-sm-4">
     						<select name="storeId" class="form-control">
-    		                <option value="0" #if($!{queryForm.storeId}=='0') selected#end>不排除</option>
-    		                <option value="-1" #if($!{queryForm.storeId}=='-1') selected#end>排除所有</option>
+    		                <option value="0" #if($!{queryForm.storeId}=='0') selected#end>不排除店铺</option>
+    		                <option value="-1" #if($!{queryForm.storeId}=='-1') selected#end>排除所有店铺</option>
     		                #foreach($!store in $!session_stores)
     							<option value="$!{store.id}" #if($!{store.id}==$!{queryForm.storeId}) selected#end>排除: $!{store.platform.name}-$!{store.name}</option>
     						#end
     		            	</select>
     					</div>
 						<label class="col-sm-2 control-label">每页：</label>
-						<div class="col-sm-3">
+						<div class="col-sm-2">
 							<select name="pageSize" class="form-control">
 			                <option value="50" #if($!pageSize=='50') selected#end>50</option>
 			                <option value="100" #if($!pageSize=='100') selected#end>1百</option>

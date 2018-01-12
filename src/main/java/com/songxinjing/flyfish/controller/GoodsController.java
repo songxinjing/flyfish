@@ -96,19 +96,21 @@ public class GoodsController extends BaseController {
 				}
 			}
 
-			int storeId = form.getStoreId();
 			String dataHqlPre = "select goods ";
 			String countHqlPre = "select count(goods.sku) ";
 			String hql = "";
 			Map<String, Object> paraMap = new HashMap<String, Object>();
-			if (storeId == 0) {
+			if (form.getStoreId() == 0) {
 				hql = "from Goods as goods where 1=1 ";
-			} else if (storeId == -1) {
+			} else if (form.getStoreId() == -1) {
 				hql = "from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id is null ";
 			} else {
 				hql = "from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where (store.id is null or store.id != :storeId) ";
-				paraMap.put("storeId", storeId);
+				paraMap.put("storeId", form.getStoreId());
 			}
+			if (form.getImpState() == 1) {
+				hql = hql + "and length(goods.title) > 0 ";
+			} 
 			if (StringUtils.isNotEmpty(form.getName())) {
 				hql = hql + "and goods.name like :name ";
 				paraMap.put("name", "%" + form.getName().trim() + "%");
