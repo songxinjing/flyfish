@@ -60,7 +60,7 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 		Assert.notNull(entity, "对象不能为空！");
 		getHibernateTemplate().update(entity);
 	}
-	
+
 	/**
 	 * 新增或修改
 	 * 
@@ -132,6 +132,17 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	}
 
 	/**
+	 * HQL更新
+	 * 
+	 * @param hql
+	 * @return
+	 */
+	public int updateHql(final String hql, final Map<String, Object> paraMap) {
+		logger.info("HQL更新：" + hql);
+		return createQuery(hql, paraMap, null).executeUpdate();
+	}
+
+	/**
 	 * HQL查询
 	 * 
 	 * @param hql
@@ -191,7 +202,12 @@ public abstract class BaseDao<T, PK extends Serializable> extends HibernateDaoSu
 	 */
 	public Query<?> createQuery(String hql, Map<String, Object> paraMap, Class<?> clazz) {
 		Assert.hasText(hql, "对象不能为空！");
-		Query<?> query = this.currentSession().createQuery(hql, clazz);
+		Query<?> query;
+		if (clazz != null) {
+			query = this.currentSession().createQuery(hql, clazz);
+		} else {
+			query = this.currentSession().createQuery(hql);
+		}
 		if (paraMap != null) {
 			for (String key : paraMap.keySet()) {
 				Object para = paraMap.get(key);

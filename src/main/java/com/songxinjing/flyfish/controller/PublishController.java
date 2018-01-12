@@ -53,22 +53,23 @@ public class PublishController extends BaseController {
 		if (dataFlag == null) {
 			dataFlag = true;
 		}
+		Map<String, Object> paraMap = new HashMap<String, Object>();
 		Store store = storeService.find(storeId);
 		if (StringUtils.isEmpty(batchNo)) {
 			String hql = "select max(batchNo) from StoreGoods where store.id = :storeId ";
-			Map<String, Object> paraMap = new HashMap<String, Object>();
+			paraMap.clear();
 			paraMap.put("storeId", storeId);
 			batchNo = (String) storeGoodsService.findHql(hql, paraMap).get(0);
 		}
 
 		String hql = "select distinct batchNo from StoreGoods where store.id = :storeId ";
-		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.clear();
 		paraMap.put("storeId", storeId);
 		@SuppressWarnings("unchecked")
 		List<String> batchNos = (List<String>) storeGoodsService.findHql(hql, paraMap);
 
 		hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = :storeId and sg.batchNo = :batchNo ";
-		paraMap = new HashMap<String, Object>();
+		paraMap.clear();
 		paraMap.put("storeId", storeId);
 		paraMap.put("batchNo", batchNo);
 		@SuppressWarnings("unchecked")

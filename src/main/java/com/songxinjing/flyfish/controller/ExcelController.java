@@ -148,6 +148,7 @@ public class ExcelController extends BaseController {
 				try {
 					String[] headers = ExcelTemp.WISH_FIELD.keySet().toArray(new String[] {});
 					List<Map<String, String>> data = ExcelUtil.readCSV(file.getInputStream(), headers);
+					Map<String, Object> paraMap = new HashMap<String, Object>();
 					for (Map<String, String> obj : data) {
 						String sku = obj.get("*Unique ID");
 						try {
@@ -185,7 +186,7 @@ public class ExcelController extends BaseController {
 											this.wishNewStar(mainGoods, num, obj);
 										} else { // 去*SKU不存在
 											String hql = "from Goods where relaSkus like :relaSkus";
-											Map<String, Object> paraMap = new HashMap<String, Object>();
+											paraMap.clear();
 											paraMap.put("relaSkus", "%" + mainSku + "%");
 											@SuppressWarnings("unchecked")
 											List<Goods> list = (List<Goods>) goodsService.findHql(hql, paraMap);
@@ -206,7 +207,7 @@ public class ExcelController extends BaseController {
 										this.wishUpdate(goods, obj); // 更新已存在SKU
 									} else { // SKU不存在
 										String hql = "from Goods where relaSkus like :relaSkus";
-										Map<String, Object> paraMap = new HashMap<String, Object>();
+										paraMap.clear();
 										paraMap.put("relaSkus", "%" + sku + "%");
 										@SuppressWarnings("unchecked")
 										List<Goods> list = (List<Goods>) goodsService.findHql(hql, paraMap);

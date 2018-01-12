@@ -126,6 +126,16 @@ public abstract class BaseService<T, PK extends Serializable> {
 	public List<?> findHql(final String hql) {
 		return dao.findHql(hql);
 	}
+	
+	/**
+	 * HQL更新
+	 * 
+	 * @param hql
+	 * @return
+	 */
+	public int updateHql(final String hql,final Map<String, Object> paraMap) {
+		return dao.updateHql(hql, paraMap);
+	}
 
 	/**
 	 * HQL查询
@@ -137,6 +147,7 @@ public abstract class BaseService<T, PK extends Serializable> {
 	public List<?> findHql(final String hql, final Map<String, Object> paraMap) {
 		return dao.findHql(hql, paraMap);
 	}
+	
 
 	/**
 	 * 分页查询
