@@ -1,0 +1,128 @@
+<div class="row">
+	<div class="col-md-12">
+		<h3 class="page-header">Wish店铺【$!{store.name}】-在线商品列表</h3>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<button type="button" class="btn btn-info margin-bottom" data-toggle='modal' data-target='#addModal'>查询</button>
+		<button type="button" class="btn btn-success margin-bottom" onclick="sync('$!{store.id}')">同步</button>
+	</div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered">
+	    	  <thead>
+			    <tr>
+			      <th>图片</th>
+			      <th>标题/产品ID</th>
+			      <th>收藏</th>
+				  <th>出售</th>
+				  <th>Parent SKU</th>
+				  <th>SKU</th>
+				  <th>价格</th>
+				  <th>库存</th>
+				  <th>运费</th>
+				  <th>时间</th>
+				  <th>操作</th>
+			    </tr>
+			  </thead>			  
+			  <tbody>
+				#if($!{store.products.size()} == 0)
+				<tr>
+					<td colspan="11">
+						<h3>无数据</h3>
+					</td>
+				</tr>
+				#end 
+				#foreach($product in $!{store.products})
+				<tr>
+					<td rowspan="$!{product.variants.size()}">
+					#if("$!{product.mainImage}" != "") 
+						<img height="40px" width="40px" src="$!{product.mainImage}"/>
+					#end
+					</td>
+					<td rowspan="$!{product.variants.size()}">$!{product.name}<br/>$!{product.wishId}</td>
+					<td rowspan="$!{product.variants.size()}">$!{product.numberSaves}</td>
+					<td rowspan="$!{product.variants.size()}">$!{product.numberSold}</td>
+					<td rowspan="$!{product.variants.size()}">$!{product.parentSku}</td>
+					#foreach($variant in $!{product.variants})
+					<td>$!{variant.sku}</td>
+					<td>$!{variant.price}</td>
+					<td>$!{variant.inventory}</td>
+					<td>$!{variant.shipping}</td>
+                </tr>
+				<tr>
+					#end
+                </tr>
+				<tr>
+					<td colspan="11">
+					</td>
+                </tr>
+				</tr>
+				#end
+			 </tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!-- add Modal-->
+
+
+<!-- modify Modal-->
+<div id="modifyModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">修改店铺</h4>
+      </div>
+      <div class="modal-body">
+         <form id="modifyForm" action="${rc.contextPath}/wish/storemodify.html" method="post">
+			<input name="id" type="hidden" id="id"> 
+			<div class="form-group">
+                <label>店铺名称</label>
+                 <input id="name" class="form-control" name="name" maxlength="30" required>
+            </div>
+	     </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="confirm-yes btn btn-primary" id="btnModify">提交</button>
+        <button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $().ready(function() {
+    $("#modifyForm").validate();
+  });
+  
+  $("#btnModify").on("click", function () {
+     $("#modifyForm").submit();
+  })
+  
+  $("#modifyModal").on("show.bs.modal", function (event) {
+	  var button = $(event.relatedTarget);
+	  var id = button.data("id");
+	  var name = button.data("name");
+	  var modal = $(this)
+	  modal.find("#id").val(id);
+	  modal.find("#name").val(name);
+  })
+  
+  function sync(storeId) { 
+		$.ajax({
+			cache: true,
+			type: "GET",
+			url: "${rc.contextPath}/wish/sync.html?storeId="+storeId,
+			async: false,
+			success: function (data) {
+				base.alert("后台已安排同步，请稍后查看!");
+			}
+		});
+	}
+	
+</script>
