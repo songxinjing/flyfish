@@ -45,6 +45,10 @@ public class QuartzService {
 		paraMap.put("isUpload", 0);
 		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>) goodsService.findPage(hql, 0, 300, paraMap, String.class);
+		if(list.isEmpty()){
+			logger.info("任务(" + hour + ") 没有需要上传的图片，任务结束");
+			return;
+		}
 		// 首先全部标志为正在上传，避免其他任务重复上传
 		hql = "update Goods set isUpload = 2 where sku in (:skus)";
 		paraMap.clear();
