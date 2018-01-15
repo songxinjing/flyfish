@@ -6,7 +6,7 @@
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<button type="button" class="btn btn-info margin-bottom" data-toggle='modal' data-target='#addModal'>查询</button>
+		<button type="button" class="btn btn-info margin-bottom" onclick="window.location.href='${rc.contextPath}/wish/productlist.html?storeId=$!{store.id}'">查询</button>
 		<button type="button" class="btn btn-success margin-bottom" onclick="sync('$!{store.id}')">同步</button>
 	</div>
 	<div class="panel-body">
@@ -14,17 +14,17 @@
 			<table class="table table-striped table-bordered">
 	    	  <thead>
 			    <tr>
-			      <th>图片</th>
+			      <th width="60px">图片</th>
 			      <th>标题/产品ID</th>
-			      <th>收藏</th>
-				  <th>出售</th>
-				  <th>Parent SKU</th>
-				  <th>SKU</th>
-				  <th>价格</th>
-				  <th>库存</th>
-				  <th>运费</th>
-				  <th>时间</th>
-				  <th>操作</th>
+			      <th width="60px">收藏</th>
+				  <th width="60px">出售</th>
+				  <th width="100px">Parent SKU</th>
+				  <th width="100px">SKU</th>
+				  <th width="60px">价格</th>
+				  <th width="60px">库存</th>
+				  <th width="60px">运费</th>
+				  <th width="100px">时间</th>
+				  <th width="60px">操作</th>
 			    </tr>
 			  </thead>			  
 			  <tbody>
@@ -39,27 +39,32 @@
 				<tr>
 					<td rowspan="$!{product.variants.size()}">
 					#if("$!{product.mainImage}" != "") 
-						<img height="40px" width="40px" src="$!{product.mainImage}"/>
+						<img height="50px" width="50px" src="$!{product.mainImage}"/>
 					#end
 					</td>
 					<td rowspan="$!{product.variants.size()}">$!{product.name}<br/>$!{product.wishId}</td>
 					<td rowspan="$!{product.variants.size()}">$!{product.numberSaves}</td>
 					<td rowspan="$!{product.variants.size()}">$!{product.numberSold}</td>
 					<td rowspan="$!{product.variants.size()}">$!{product.parentSku}</td>
-					#foreach($variant in $!{product.variants})
-					<td>$!{variant.sku}</td>
-					<td>$!{variant.price}</td>
-					<td>$!{variant.inventory}</td>
-					<td>$!{variant.shipping}</td>
-                </tr>
-				<tr>
-					#end
-                </tr>
-				<tr>
-					<td colspan="11">
-					</td>
-                </tr>
+					<td>$!{product.variants.get(0).sku}</td>
+					<td>$!{product.variants.get(0).price}</td>
+					<td>$!{product.variants.get(0).inventory}</td>
+					<td>$!{product.variants.get(0).shipping}</td>
+					<td rowspan="$!{product.variants.size()}">创建：<br/>$!{product.dateUploaded}<br/>更新：<br/>$!{product.lastUpdated}</td>
+					<td rowspan="$!{product.variants.size()}">编辑<br/>同步<br/>更多</td>
 				</tr>
+				#if($!{product.variants.size()} >= 2)
+					#set($last = $!{product.variants.size()} - 1)
+					#foreach($i in [1..$last])
+					<tr>
+						<td>$!{product.variants.get($i).sku}</td>
+						<td>$!{product.variants.get($i).price}</td>
+						<td>$!{product.variants.get($i).inventory}</td>
+						<td>$!{product.variants.get($i).shipping}</td>
+	                </tr>
+					#end
+				#end
+
 				#end
 			 </tbody>
 			</table>

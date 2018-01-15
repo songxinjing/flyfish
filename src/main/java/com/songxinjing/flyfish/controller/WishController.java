@@ -135,6 +135,7 @@ public class WishController extends BaseController {
 					wishVariant.setSize(variant.getString("size"));
 					wishVariant.setMsrp(variant.getString("msrp"));
 					wishVariant.setShippingTime(variant.getString("shipping_time"));
+					wishVariant.setProduct(wishProduct);
 					variantList.add(wishVariant);
 				}
 				wishProduct.setVariants(variantList);
