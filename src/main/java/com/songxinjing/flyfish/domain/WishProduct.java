@@ -62,6 +62,18 @@ public class WishProduct implements Serializable {
 	@Column(length = 102400)
 	private String description;
 	
+	@Column(length = 32)
+	private String brand;
+	
+	@Column(length = 256)
+	private String landingPageUrl;
+	
+	@Column(length = 16)
+	private String upc;
+	
+	@Column(length = 8)
+	private String maxQuantity;
+	
 	@ManyToOne
 	@JoinColumn
 	private WishStore store;
@@ -187,6 +199,38 @@ public class WishProduct implements Serializable {
 
 	public void setStore(WishStore store) {
 		this.store = store;
+	}
+
+	public String getBrand() {
+		return brand;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public String getLandingPageUrl() {
+		return landingPageUrl;
+	}
+
+	public void setLandingPageUrl(String landingPageUrl) {
+		this.landingPageUrl = landingPageUrl;
+	}
+
+	public String getUpc() {
+		return upc;
+	}
+
+	public void setUpc(String upc) {
+		this.upc = upc;
+	}
+
+	public String getMaxQuantity() {
+		return maxQuantity;
+	}
+
+	public void setMaxQuantity(String maxQuantity) {
+		this.maxQuantity = maxQuantity;
 	}
 
 }

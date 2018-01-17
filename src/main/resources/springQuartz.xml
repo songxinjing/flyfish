@@ -54,6 +54,32 @@
 			<value>0 0 0 * * ?</value>
 		</property>
 	</bean>
+	
+	
+	<!-- Wish同步任务 -->
+	<bean id="jobWishSync"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<!-- 调用的类 -->
+		<property name="targetObject">
+			<ref bean="quartzService" />
+		</property>
+		<!-- 调用类中的方法 -->
+		<property name="targetMethod">
+			<value>wishSync</value>
+		</property>
+	</bean>
+	
+	<!-- 图片上传任务触发时间 -->
+	<bean id="triggerWishSync" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="jobWishSync" />
+		</property>
+		<!-- cron表达式 -->
+		<property name="cronExpression">
+			<!-- 每小时执行一次 -->
+			<value>0 0 * * * ?</value>
+		</property>
+	</bean>
 
 	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序 -->
 	<bean id="startQuartz" lazy-init="false" autowire="no"
@@ -62,6 +88,7 @@
 			<list>
 				<ref bean="triggerUploadImg" />
 				<ref bean="triggerRefreshCache" />
+				<ref bean="triggerWishSync" />
 			</list>
 		</property>
 	</bean>

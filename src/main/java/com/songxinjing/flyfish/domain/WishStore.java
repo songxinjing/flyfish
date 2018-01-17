@@ -61,6 +61,24 @@ public class WishStore implements Serializable {
 	@Column
 	private Timestamp expiryTime;
 	
+	/**
+	 * 同步状态 0：空闲；1：请求同步；2：正在同步
+	 */
+	@Column
+	private Integer state;
+	
+	/**
+	 * 请求同步任务时间
+	 */
+	@Column
+	private Timestamp applyJobTime;
+	
+	/**
+	 * 最后同步时间
+	 */
+	@Column
+	private Timestamp lastSyncTime;
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "store")
 	private List<WishProduct> products;
 
@@ -118,6 +136,30 @@ public class WishStore implements Serializable {
 
 	public void setProducts(List<WishProduct> products) {
 		this.products = products;
+	}
+
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
+
+	public Timestamp getApplyJobTime() {
+		return applyJobTime;
+	}
+
+	public void setApplyJobTime(Timestamp applyJobTime) {
+		this.applyJobTime = applyJobTime;
+	}
+
+	public Timestamp getLastSyncTime() {
+		return lastSyncTime;
+	}
+
+	public void setLastSyncTime(Timestamp lastSyncTime) {
+		this.lastSyncTime = lastSyncTime;
 	}
 	
 }
