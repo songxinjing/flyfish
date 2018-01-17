@@ -44,6 +44,9 @@ public class WishVariant implements Serializable {
 	@Column(length = 8)
 	private String size;
 	
+	@Column(length = 16)
+	private String color;
+	
 	@Column(length = 8)
 	private String msrp;
 	
