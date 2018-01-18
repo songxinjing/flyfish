@@ -76,8 +76,8 @@
 		</property>
 		<!-- cron表达式 -->
 		<property name="cronExpression">
-			<!-- 每小时执行一次 -->
-			<value>0 0 * * * ?</value>
+			<!-- 每10分钟执行一次 -->
+			<value>0 0/10 * * * ?</value>
 		</property>
 	</bean>
 

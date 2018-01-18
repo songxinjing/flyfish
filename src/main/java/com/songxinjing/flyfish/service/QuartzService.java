@@ -45,13 +45,13 @@ public class QuartzService {
 
 	@Autowired
 	private GoodsImgService goodsImgService;
-	
+
 	@Autowired
 	private WishStoreService wishStoreService;
-	
+
 	@Autowired
 	private WishProductService wishProductService;
-	
+
 	@Autowired
 	private WishVariantService wishVariantService;
 
@@ -153,92 +153,101 @@ public class QuartzService {
 	}
 
 	public void wishSync() {
-		
+
 		logger.info("开始执行Wish同步任务");
 		String hql = "from WishStore where state = :state order by applyJobTime asc";
 		Map<String, Object> paraMap = new HashMap<String, Object>();
 		paraMap.put("state", 1);
 		@SuppressWarnings("unchecked")
 		List<WishStore> list = (List<WishStore>) wishStoreService.findPage(hql, 0, 1, paraMap, WishStore.class);
-		if(!list.isEmpty()){
+		if (!list.isEmpty()) {
 			WishStore store = list.get(0);
 			store.setState(2);
-			wishStoreService.save(store);
-			try {
+			wishStoreService.update(store);
 
-				String result = WishProductApi.multiGet(0, 10, null, true, store.getAccessToken());
-				JSONObject json = JSON.parseObject(result);
-				JSONArray products = json.getJSONArray("data");
-				for (int i = 0; i < products.size(); i++) {
-					JSONObject product = products.getJSONObject(i).getJSONObject("Product");
-					String parentSku = product.getString("parent_sku");
-					WishProduct wishProduct = null;
-					if (StringUtils.isNotEmpty(parentSku)) {
-						wishProduct = wishProductService.find(parentSku);
-					}
-					if (wishProduct == null) {
-						wishProduct = new WishProduct();
-					}
-					wishProduct.setParentSku(parentSku);
-					wishProduct.setWishId(product.getString("id"));
-					wishProduct.setMainImage(product.getString("main_image"));
-					wishProduct.setIsPromoted(product.getString("is_promoted"));
-					wishProduct.setName(product.getString("name"));
-					// wishProduct.setTags(product.getString("tags"));
-					wishProduct.setReviewStatus(product.getString("review_status"));
-					wishProduct.setExtraImages(product.getString("extra_images"));
-					wishProduct.setNumberSaves(product.getString("number_saves"));
-					wishProduct.setNumberSold(product.getString("number_sold"));
-					wishProduct.setLastUpdated(product.getString("last_updated"));
-					wishProduct.setDescription(product.getString("description"));
+			int from = 0;
+			int size = 50;
+			boolean hasNext = true;
+			do {
+				try {
+					String result = WishProductApi.multiGet(from, size, null, true, store.getAccessToken());
+					JSONObject json = JSON.parseObject(result);
+					JSONArray products = json.getJSONArray("data");
+					for (int i = 0; i < products.size(); i++) {
+						JSONObject product = products.getJSONObject(i).getJSONObject("Product");
+						String parentSku = product.getString("parent_sku");
+						WishProduct wishProduct = null;
+						if (StringUtils.isNotEmpty(parentSku)) {
+							wishProduct = wishProductService.find(parentSku);
+						}
+						if (wishProduct == null) {
+							wishProduct = new WishProduct();
+						}
+						wishProduct.setParentSku(parentSku);
+						wishProduct.setWishId(product.getString("id"));
+						wishProduct.setMainImage(product.getString("main_image"));
+						wishProduct.setIsPromoted(product.getString("is_promoted"));
+						wishProduct.setName(product.getString("name"));
+						// wishProduct.setTags(product.getString("tags"));
+						wishProduct.setReviewStatus(product.getString("review_status"));
+						wishProduct.setExtraImages(product.getString("extra_images"));
+						wishProduct.setNumberSaves(product.getString("number_saves"));
+						wishProduct.setNumberSold(product.getString("number_sold"));
+						wishProduct.setLastUpdated(product.getString("last_updated"));
+						wishProduct.setDescription(product.getString("description"));
 
-					List<WishVariant> variantList = wishProduct.getVariants();
-					if (variantList != null) {
-						variantList.clear();
+						List<WishVariant> variantList = wishProduct.getVariants();
+						if (variantList != null) {
+							variantList.clear();
+						} else {
+							variantList = new ArrayList<WishVariant>();
+						}
+						JSONArray variants = product.getJSONArray("variants");
+						for (int j = 0; j < variants.size(); j++) {
+							JSONObject variant = variants.getJSONObject(j).getJSONObject("Variant");
+							String sku = variant.getString("sku");
+							WishVariant wishVariant = null;
+							if (StringUtils.isNotEmpty(sku)) {
+								wishVariant = wishVariantService.find(sku);
+							}
+							if (wishVariant == null) {
+								wishVariant = new WishVariant();
+							}
+							wishVariant.setSku(sku);
+							wishVariant.setWishId(variant.getString("id"));
+							wishVariant.setAllImages(variant.getString("all_images"));
+							wishVariant.setPrice(variant.getString("price"));
+							wishVariant.setEnabled(variant.getString("enabled"));
+							wishVariant.setShipping(variant.getString("shipping"));
+							wishVariant.setInventory(variant.getString("inventory"));
+							wishVariant.setSize(variant.getString("size"));
+							wishVariant.setMsrp(variant.getString("msrp"));
+							wishVariant.setShippingTime(variant.getString("shipping_time"));
+							wishVariant.setProduct(wishProduct);
+							variantList.add(wishVariant);
+						}
+						wishProduct.setVariants(variantList);
+						wishProduct.setStore(store);
+						wishProductService.saveOrUpdate(wishProduct);
+					}
+					JSONObject paging = json.getJSONObject("paging");
+					String next = paging.getString("next");
+					if (StringUtils.isEmpty(next)) {
+						hasNext = false;
 					} else {
-						variantList = new ArrayList<WishVariant>();
+						from = from + size;
 					}
-					JSONArray variants = product.getJSONArray("variants");
-					for (int j = 0; j < variants.size(); j++) {
-						JSONObject variant = variants.getJSONObject(j).getJSONObject("Variant");
-						String sku = variant.getString("sku");
-						WishVariant wishVariant = null;
-						if (StringUtils.isNotEmpty(sku)) {
-							wishVariant = wishVariantService.find(sku);
-						}
-						if (wishVariant == null) {
-							wishVariant = new WishVariant();
-						}
-						wishVariant.setSku(sku);
-						wishVariant.setWishId(variant.getString("id"));
-						wishVariant.setAllImages(variant.getString("all_images"));
-						wishVariant.setPrice(variant.getString("price"));
-						wishVariant.setEnabled(variant.getString("enabled"));
-						wishVariant.setShipping(variant.getString("shipping"));
-						wishVariant.setInventory(variant.getString("inventory"));
-						wishVariant.setSize(variant.getString("size"));
-						wishVariant.setMsrp(variant.getString("msrp"));
-						wishVariant.setShippingTime(variant.getString("shipping_time"));
-						wishVariant.setProduct(wishProduct);
-						variantList.add(wishVariant);
-					}
-					wishProduct.setVariants(variantList);
-					wishProduct.setStore(store);
-					wishProductService.saveOrUpdate(wishProduct);
+				} catch (WishException e) {
+					logger.error("调用Wish List all Products 接口错误", e);
+					break;
 				}
 
-			} catch (WishException e) {
-				logger.error("调用Wish List all Products 接口错误", e);
-			}
-			
+			} while (hasNext);
+
 			store.setState(0);
 			store.setLastSyncTime(new Timestamp(System.currentTimeMillis()));
-			wishStoreService.save(store);
+			wishStoreService.update(store);
 		}
-		
-		
-
-
 	}
 
 }

@@ -76,7 +76,7 @@ public class WishController extends BaseController {
 		if(store.getState().intValue() == 0){
 			store.setState(1);
 			store.setApplyJobTime(new Timestamp(System.currentTimeMillis()));
-			wishStoreService.save(store);
+			wishStoreService.update(store);
 		}
 		return true;
 	}

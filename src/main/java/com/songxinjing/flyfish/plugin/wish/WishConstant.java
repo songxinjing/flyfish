@@ -6,13 +6,13 @@ public class WishConstant {
 	 * wish Client Id
 	 * 
 	 */
-	public static final String WISH_CLIENT_ID = "5a5aea7a6d2c6b26b89e82fa";
+	public static final String WISH_CLIENT_ID = "5a6016eddb0e427a13ba0aff";
 
 	/**
 	 * wish Client Secret
 	 * 
 	 */
-	public static final String WISH_CLIENT_SECRET = "4b7275ca4c2a4d7f80032cfde2dcd709";
+	public static final String WISH_CLIENT_SECRET = "a737034b581340ca8e78f037d7a0bf5a";
 
 	public static final String WISH_OAUTH_URL = "https://merchant.wish.com/oauth/authorize?client_id="
 			+ WISH_CLIENT_ID;
