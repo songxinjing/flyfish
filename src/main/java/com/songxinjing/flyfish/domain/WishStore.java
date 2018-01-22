@@ -2,7 +2,7 @@ package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -80,7 +80,7 @@ public class WishStore implements Serializable {
 	private Timestamp lastSyncTime;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "store")
-	private List<WishProduct> products;
+	private Set<WishProduct> products;
 
 	public Integer getId() {
 		return id;
@@ -130,11 +130,11 @@ public class WishStore implements Serializable {
 		this.expiryTime = expiryTime;
 	}
 
-	public List<WishProduct> getProducts() {
+	public Set<WishProduct> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<WishProduct> products) {
+	public void setProducts(Set<WishProduct> products) {
 		this.products = products;
 	}
 

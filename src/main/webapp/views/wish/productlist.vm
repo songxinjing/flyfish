@@ -46,25 +46,24 @@
 					<td rowspan="$!{product.variants.size()}">$!{product.numberSaves}</td>
 					<td rowspan="$!{product.variants.size()}">$!{product.numberSold}</td>
 					<td rowspan="$!{product.variants.size()}">$!{product.parentSku}</td>
-					<td>$!{product.variants.get(0).sku}</td>
-					<td>$!{product.variants.get(0).price}</td>
-					<td>$!{product.variants.get(0).inventory}</td>
-					<td>$!{product.variants.get(0).shipping}</td>
+				#foreach($variant in $!{product.variants}) 
+					#if($velocityCount == 1)
+					<td>$!{variant.sku}</td>
+					<td>$!{variant.price}</td>
+					<td>$!{variant.inventory}</td>
+					<td>$!{variant.shipping}</td>
 					<td rowspan="$!{product.variants.size()}">创建：<br/>$!{product.dateUploaded}<br/>更新：<br/>$!{product.lastUpdated}</td>
 					<td rowspan="$!{product.variants.size()}">编辑<br/>同步<br/>更多</td>
 				</tr>
-				#if($!{product.variants.size()} >= 2)
-					#set($last = $!{product.variants.size()} - 1)
-					#foreach($i in [1..$last])
-					<tr>
-						<td>$!{product.variants.get($i).sku}</td>
-						<td>$!{product.variants.get($i).price}</td>
-						<td>$!{product.variants.get($i).inventory}</td>
-						<td>$!{product.variants.get($i).shipping}</td>
-	                </tr>
+					#else
+				<tr>
+					<td>$!{variant.sku}</td>
+					<td>$!{variant.price}</td>
+					<td>$!{variant.inventory}</td>
+					<td>$!{variant.shipping}</td>
+                </tr> 
 					#end
 				#end
-
 				#end
 			 </tbody>
 			</table>

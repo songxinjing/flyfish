@@ -1,6 +1,6 @@
 package com.songxinjing.flyfish.controller;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,7 +43,7 @@ public class StoreController extends BaseController {
 			platId = 1;
 		}
 
-		List<Store> stores = platformService.find(platId).getStores();
+		Set<Store> stores = platformService.find(platId).getStores();
 
 		model.addAttribute("stores", stores);
 

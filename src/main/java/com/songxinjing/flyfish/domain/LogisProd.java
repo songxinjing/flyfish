@@ -1,7 +1,7 @@
 package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,13 +46,7 @@ public class LogisProd implements Serializable {
 	 * 该产品物流方式列表
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "prod")
-	private List<Logis> logises;
-
-	/**
-	 * 物流策略选择该产品的平台列表
-	 */
-	@OneToMany(mappedBy = "prodStrategy")
-	private List<Platform> platforms;
+	private Set<Logis> logises;
 
 	public Integer getId() {
 		return id;
@@ -78,20 +72,12 @@ public class LogisProd implements Serializable {
 		this.orderNum = orderNum;
 	}
 
-	public List<Logis> getLogises() {
+	public Set<Logis> getLogises() {
 		return logises;
 	}
 
-	public void setLogises(List<Logis> logises) {
+	public void setLogises(Set<Logis> logises) {
 		this.logises = logises;
-	}
-
-	public List<Platform> getPlatforms() {
-		return platforms;
-	}
-
-	public void setPlatforms(List<Platform> platforms) {
-		this.platforms = platforms;
 	}
 
 }

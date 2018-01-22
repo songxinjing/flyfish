@@ -2,7 +2,7 @@ package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,7 +38,7 @@ public class Platform implements Serializable {
 	 */
 	@Column(length = 32)
 	private String name;
-	
+
 	/**
 	 * 平台排序
 	 */
@@ -56,39 +56,37 @@ public class Platform implements Serializable {
 	 */
 	@Column(precision = 5, scale = 2)
 	private BigDecimal profitRate;
-	
+
 	/**
 	 * 平台折扣率（%）
 	 */
 	@Column(precision = 5, scale = 2)
 	private BigDecimal cutRate;
-	
+
 	/**
 	 * 物流策略，重量临界点
 	 */
 	@Column(precision = 6, scale = 2)
 	private BigDecimal weightStrategy;
-	
+
 	/**
 	 * 物流策略，选择物流产品
 	 */
 	@ManyToOne
 	@JoinColumn
 	private LogisProd prodStrategy;
-	
-	
+
 	/**
 	 * 该平台权重列表
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "platform")
-	private List<Weight> weights;
-	
+	private Set<Weight> weights;
+
 	/**
 	 * 该平台店铺列表
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "platform")
-	private List<Store> stores;
-
+	private Set<Store> stores;
 
 	public Integer getId() {
 		return id;
@@ -138,19 +136,19 @@ public class Platform implements Serializable {
 		this.cutRate = cutRate;
 	}
 
-	public List<Weight> getWeights() {
+	public Set<Weight> getWeights() {
 		return weights;
 	}
 
-	public void setWeights(List<Weight> weights) {
+	public void setWeights(Set<Weight> weights) {
 		this.weights = weights;
 	}
 
-	public List<Store> getStores() {
+	public Set<Store> getStores() {
 		return stores;
 	}
 
-	public void setStores(List<Store> stores) {
+	public void setStores(Set<Store> stores) {
 		this.stores = stores;
 	}
 
@@ -169,5 +167,5 @@ public class Platform implements Serializable {
 	public void setProdStrategy(LogisProd prodStrategy) {
 		this.prodStrategy = prodStrategy;
 	}
-	
+
 }

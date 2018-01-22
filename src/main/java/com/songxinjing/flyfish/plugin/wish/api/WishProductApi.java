@@ -17,37 +17,49 @@ public class WishProductApi {
 	 * Create a Product
 	 */
 	public static String add(WishVariant variant, String token) throws WishException {
-		String url = WishConstant.WISH_API_BASE_URL + "product/add";
-		Map<String, String> urlParas = new HashMap<String, String>();
-		urlParas = productPara(urlParas, variant.getProduct());
-		urlParas = variantPara(urlParas, variant);
-		urlParas.put("access_token", token);
-		url = url + "?" + HttpUtil.getRequestBody(urlParas);
-		return HttpUtil.get(url);
+		try {
+			String url = WishConstant.WISH_API_BASE_URL + "product/add";
+			Map<String, String> urlParas = new HashMap<String, String>();
+			urlParas = productPara(urlParas, variant.getProduct());
+			urlParas = variantPara(urlParas, variant);
+			urlParas.put("access_token", token);
+			url = url + "?" + HttpUtil.getRequestBody(urlParas);
+			return HttpUtil.get(url);
+		} catch (Exception e) {
+			throw new WishException("Create a Product Api Error!", e);
+		}
 	}
 
 	/**
 	 * Retrieve a Product
 	 */
 	public static String product(String parentSku, String token) throws WishException {
-		String url = WishConstant.WISH_API_BASE_URL + "product";
-		Map<String, String> urlParas = new HashMap<String, String>();
-		urlParas.put("parent_sku", parentSku);
-		urlParas.put("access_token", token);
-		url = url + "?" + HttpUtil.getRequestBody(urlParas);
-		return HttpUtil.get(url);
+		try {
+			String url = WishConstant.WISH_API_BASE_URL + "product";
+			Map<String, String> urlParas = new HashMap<String, String>();
+			urlParas.put("parent_sku", parentSku);
+			urlParas.put("access_token", token);
+			url = url + "?" + HttpUtil.getRequestBody(urlParas);
+			return HttpUtil.get(url);
+		} catch (Exception e) {
+			throw new WishException("Retrieve a Product Api Error!", e);
+		}
 	}
 
 	/**
 	 * Update a Product
 	 */
 	public static String update(WishProduct product, String token) throws WishException {
-		String url = WishConstant.WISH_API_BASE_URL + "product/update";
-		Map<String, String> urlParas = new HashMap<String, String>();
-		urlParas = productPara(urlParas, product);
-		urlParas.put("access_token", token);
-		url = url + "?" + HttpUtil.getRequestBody(urlParas);
-		return HttpUtil.get(url);
+		try {
+			String url = WishConstant.WISH_API_BASE_URL + "product/update";
+			Map<String, String> urlParas = new HashMap<String, String>();
+			urlParas = productPara(urlParas, product);
+			urlParas.put("access_token", token);
+			url = url + "?" + HttpUtil.getRequestBody(urlParas);
+			return HttpUtil.get(url);
+		} catch (Exception e) {
+			throw new WishException("Update a Product Api Error!", e);
+		}
 	}
 
 	/**
@@ -55,22 +67,23 @@ public class WishProductApi {
 	 */
 	public static String multiGet(int star, int limit, Calendar since, boolean showRejected, String token)
 			throws WishException {
-		String url = WishConstant.WISH_API_BASE_URL + "product/multi-get";
-		Map<String, String> urlParas = new HashMap<String, String>();
-		urlParas.put("star", star + "");
-		urlParas.put("limit", limit + "");
-		if (since != null) {
-			String str = (new SimpleDateFormat("YYYY-MM-DD")).format(since.getTime());
-			urlParas.put("since", str);
+		try {
+			String url = WishConstant.WISH_API_BASE_URL + "product/multi-get";
+			Map<String, String> urlParas = new HashMap<String, String>();
+			urlParas.put("star", star + "");
+			urlParas.put("limit", limit + "");
+			if (since != null) {
+				String str = (new SimpleDateFormat("YYYY-MM-DD")).format(since.getTime());
+				urlParas.put("since", str);
+			}
+			urlParas.put("show_rejected", showRejected + "");
+			urlParas.put("access_token", token);
+			url = url + "?" + HttpUtil.getRequestBody(urlParas);
+			return HttpUtil.get(url);
+		} catch (Exception e) {
+			throw new WishException("List all Products Api Error!", e);
 		}
-		urlParas.put("show_rejected", showRejected + "");
-		urlParas.put("access_token", token);
-		url = url + "?" + HttpUtil.getRequestBody(urlParas);
-		return HttpUtil.get(url);
 	}
-	
-	
-	
 
 	private static Map<String, String> productPara(Map<String, String> urlParas, WishProduct product) {
 		urlParas.put("name", product.getName());

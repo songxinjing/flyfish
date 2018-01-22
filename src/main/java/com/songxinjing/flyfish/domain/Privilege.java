@@ -1,7 +1,7 @@
 package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,7 +54,7 @@ public class Privilege implements Serializable {
 	 * 权限所属角色列表
 	 */
 	@ManyToMany(mappedBy = "privileges")
-	private List<Role> roles;
+	private Set<Role> roles;
 
 	public String getCode() {
 		return code;
@@ -96,11 +96,11 @@ public class Privilege implements Serializable {
 		this.enable = enable;
 	}
 
-	public List<Role> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<Role> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

@@ -1,7 +1,7 @@
 package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,13 +60,13 @@ public class User implements Serializable {
 	 * 用户所属用户组列表
 	 */
 	@ManyToMany(mappedBy = "members")
-	private List<UserGroup> groups;
+	private Set<UserGroup> groups;
 
 	/**
 	 * 用户所属角色列表
 	 */
 	@ManyToMany(mappedBy = "users")
-	private List<Role> roles;
+	private Set<Role> roles;
 
 	public String getUserId() {
 		return userId;
@@ -116,19 +116,19 @@ public class User implements Serializable {
 		this.state = state;
 	}
 
-	public List<UserGroup> getGroups() {
+	public Set<UserGroup> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(List<UserGroup> groups) {
+	public void setGroups(Set<UserGroup> groups) {
 		this.groups = groups;
 	}
 
-	public List<Role> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<Role> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

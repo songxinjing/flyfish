@@ -1,7 +1,7 @@
 package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -79,7 +79,7 @@ public class WishProduct implements Serializable {
 	private WishStore store;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
-	private List<WishVariant> variants;
+	private Set<WishVariant> variants;
 
 	public String getParentSku() {
 		return parentSku;
@@ -185,11 +185,11 @@ public class WishProduct implements Serializable {
 		this.description = description;
 	}
 
-	public List<WishVariant> getVariants() {
+	public Set<WishVariant> getVariants() {
 		return variants;
 	}
 
-	public void setVariants(List<WishVariant> variants) {
+	public void setVariants(Set<WishVariant> variants) {
 		this.variants = variants;
 	}
 
