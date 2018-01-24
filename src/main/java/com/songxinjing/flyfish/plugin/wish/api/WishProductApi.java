@@ -65,12 +65,12 @@ public class WishProductApi {
 	/**
 	 * List all Products
 	 */
-	public static String multiGet(int star, int limit, Calendar since, boolean showRejected, String token)
+	public static String multiGet(int start, int limit, Calendar since, boolean showRejected, String token)
 			throws WishException {
 		try {
 			String url = WishConstant.WISH_API_BASE_URL + "product/multi-get";
 			Map<String, String> urlParas = new HashMap<String, String>();
-			urlParas.put("star", star + "");
+			urlParas.put("start", start + "");
 			urlParas.put("limit", limit + "");
 			if (since != null) {
 				String str = (new SimpleDateFormat("YYYY-MM-DD")).format(since.getTime());

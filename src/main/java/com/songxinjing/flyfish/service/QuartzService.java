@@ -1,6 +1,6 @@
 package com.songxinjing.flyfish.service;
 
-import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +50,7 @@ public class QuartzService {
 
 	@Autowired
 	private WishProductService wishProductService;
-
+	
 	@Autowired
 	private WishVariantService wishVariantService;
 
@@ -63,6 +63,10 @@ public class QuartzService {
 		paraMap.put("isUpload", 0);
 		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>) goodsService.findPage(hql, 0, 300, paraMap, String.class);
+		if (list.isEmpty()) {
+			logger.info("任务(" + hour + ") 没有需要上传的图片，任务结束");
+			return;
+		}
 		// 首先全部标志为正在上传，避免其他任务重复上传
 		hql = "update Goods set isUpload = 2 where sku in (:skus)";
 		paraMap.clear();
@@ -192,8 +196,8 @@ public class QuartzService {
 
 			} while (hasNext);
 
-			String syncTime = (new SimpleDateFormat("YYYY-MM-DD HH:mm:ss")).format(System.currentTimeMillis());
-			hql = "update WishStore set state = 0, lastSyncTime = :syncTime where id = :id";
+			Timestamp syncTime = new Timestamp(System.currentTimeMillis());
+			hql = "update WishStore set state = 0, lastSyncTime = :lastSyncTime where id = :id";
 			paraMap.clear();
 			paraMap.put("lastSyncTime", syncTime);
 			paraMap.put("id", store.getId());
@@ -210,8 +214,9 @@ public class QuartzService {
 		}
 		if (wishProduct == null) {
 			wishProduct = new WishProduct();
+			wishProduct.setParentSku(parentSku);
+			wishProduct.setStore(store);
 		}
-		wishProduct.setParentSku(parentSku);
 		wishProduct.setWishId(product.getString("id"));
 		wishProduct.setMainImage(product.getString("main_image"));
 		wishProduct.setIsPromoted(product.getString("is_promoted"));
@@ -223,11 +228,12 @@ public class QuartzService {
 		wishProduct.setNumberSold(product.getString("number_sold"));
 		wishProduct.setLastUpdated(product.getString("last_updated"));
 		wishProduct.setDescription(product.getString("description"));
-		wishProduct.setStore(store);
-
+		wishProduct.setVariants(null);
+		
 		wishProductService.saveOrUpdate(wishProduct);
-
+		
 		JSONArray variants = product.getJSONArray("variants");
+
 		for (int j = 0; j < variants.size(); j++) {
 			JSONObject variant = variants.getJSONObject(j).getJSONObject("Variant");
 			String sku = variant.getString("sku");
@@ -237,8 +243,9 @@ public class QuartzService {
 			}
 			if (wishVariant == null) {
 				wishVariant = new WishVariant();
+				wishVariant.setSku(sku);
+				wishVariant.setProduct(wishProduct);
 			}
-			wishVariant.setSku(sku);
 			wishVariant.setWishId(variant.getString("id"));
 			wishVariant.setAllImages(variant.getString("all_images"));
 			wishVariant.setPrice(variant.getString("price"));
@@ -248,10 +255,8 @@ public class QuartzService {
 			wishVariant.setSize(variant.getString("size"));
 			wishVariant.setMsrp(variant.getString("msrp"));
 			wishVariant.setShippingTime(variant.getString("shipping_time"));
-			wishVariant.setProduct(wishProduct);
 			wishVariantService.saveOrUpdate(wishVariant);
 		}
-
 	}
 
 }

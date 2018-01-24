@@ -30,9 +30,9 @@ public class SftpUtil {
 	private static StandardFileSystemManager manager = new StandardFileSystemManager();
 	private static FileSystemOptions opts = new FileSystemOptions();
 
-	private static String serverAddress = "47.91.248.241";
-	private static String userId = "root";
-	private static String password = "Sxj!2345";
+	private static String serverAddress = ConfigUtil.getValue("/config.properties", "imgServer");
+	private static String userId = ConfigUtil.getValue("/config.properties", "imgUser");
+	private static String password = ConfigUtil.getValue("/config.properties", "imgPwd");
 	private static String remoteDirectory = "/flyfish/images";
 	private static String userInfo = userId + ":" + password;
 
