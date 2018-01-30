@@ -321,7 +321,8 @@ public class GoodsController extends BaseController {
 			g.setUrl(goods.getUrl());
 			g.setUrl2(goods.getUrl2());
 			g.setUrl3(goods.getUrl3());
-			g.setName(goods.getName());
+			//目前发现有部分sku的款式是写在商品名称里面的 同步修改之后会有点麻烦
+			//g.setName(goods.getName()); 
 			goodsService.update(g);
 		}
 		return true;

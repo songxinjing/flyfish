@@ -39,7 +39,11 @@
 		#end
     </div>
 	
-	
+	<footer>
+        <div class="col-xs-12 text-center">
+            <p>©&nbsp;2018&nbsp;&nbsp;飞鱼ERP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;沪ICP备18003437号-1</p>
+        </div>
+	</footer>
 
 	<script>
   
