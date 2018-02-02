@@ -79,6 +79,9 @@
                                 <li>
                                     <a href="${rc.contextPath}/wish/storelist.html">Wish店铺</a>
                                 </li>
+                                 <li>
+                                    <a href="${rc.contextPath}/joom/storelist.html">Joom店铺</a>
+                                </li>
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
