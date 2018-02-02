@@ -28,7 +28,7 @@ public class StoreService extends BaseService<Store, Integer> {
 		String hql = "select max(move) from Store where platform.id = :platId ";
 		Map<String, Object> paraMap = new HashMap<String, Object>();
 		paraMap.put("platId", platformId);
-		Long max = (Long) this.findHql(hql, paraMap).get(0);
+		Integer max = (Integer) this.findHql(hql, paraMap).get(0);
 		int iMax = 0;
 		if (max != null) {
 			iMax = max.intValue();
