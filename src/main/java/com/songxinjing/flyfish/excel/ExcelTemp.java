@@ -205,29 +205,36 @@ public class ExcelTemp {
 	public static final Map<String, String> JOOM_FIELD = new LinkedHashMap<String, String>();
 
 	static {
-		JOOM_FIELD.put("Parent SKU", "");
-		JOOM_FIELD.put("SKU", "sku");
-		JOOM_FIELD.put("product name", "title");
-		JOOM_FIELD.put("description", "descp");
-		JOOM_FIELD.put("tags", "tags");
-		JOOM_FIELD.put("msrp", "");
-		JOOM_FIELD.put("color", "color");
-		JOOM_FIELD.put("size", "size");
-		JOOM_FIELD.put("price", "");
-		JOOM_FIELD.put("shipping price", "");
-		JOOM_FIELD.put("inventory", "quantity");
-		JOOM_FIELD.put("shipping days", "shipDays");
-		JOOM_FIELD.put("product main image URL", "mainImgUrl");
-		JOOM_FIELD.put("variant main image URL", "vMainImgUrl");
-		JOOM_FIELD.put("extra image URL 1", "eImgUrl");
-		JOOM_FIELD.put("extra image URL 2", "eImgUrl1");
-		JOOM_FIELD.put("extra image URL 3", "eImgUrl2");
-		JOOM_FIELD.put("extra image URL 4", "eImgUrl3");
-		JOOM_FIELD.put("extra image URL 5", "eImgUrl4");
-		JOOM_FIELD.put("extra image URL 6", "eImgUrl5");
-		JOOM_FIELD.put("extra image URL 7", "eImgUrl6");
-		JOOM_FIELD.put("extra image URL 8", "eImgUrl7");
-		JOOM_FIELD.put("extra image URL 9", "eImgUrl8");
+		JOOM_FIELD.put("Parent Unique ID", "");
+		JOOM_FIELD.put("*Product Name", "title");
+		JOOM_FIELD.put("Description", "descp");
+		JOOM_FIELD.put("*Tags", "tags");
+		JOOM_FIELD.put("*Unique ID", "");
+		JOOM_FIELD.put("Color", "color");
+		JOOM_FIELD.put("Size", "size");
+		JOOM_FIELD.put("*Quantity", "quantity");
+		JOOM_FIELD.put("*Price", "");
+		JOOM_FIELD.put("*Shipping", "");
+		JOOM_FIELD.put("MSRP", "");
+		JOOM_FIELD.put("Shipping Time(enter without \" \", just the estimated days )", "shipDays");
+		JOOM_FIELD.put("Shipping Weight", "weight");
+		JOOM_FIELD.put("Shipping Length", "outLength");
+		JOOM_FIELD.put("Shipping Width", "outWidth");
+		JOOM_FIELD.put("Shipping Height", "outHeight");
+		JOOM_FIELD.put("HS Code", "");		
+		JOOM_FIELD.put("*Product Main Image URL", "mainImgUrl");
+		JOOM_FIELD.put("Variant Main Image URL", "vMainImgUrl");
+		JOOM_FIELD.put("Extra Image URL", "eImgUrl");
+		JOOM_FIELD.put("Extra Image URL 1", "eImgUrl1");
+		JOOM_FIELD.put("Extra Image URL 2", "eImgUrl2");
+		JOOM_FIELD.put("Extra Image URL 3", "eImgUrl3");
+		JOOM_FIELD.put("Extra Image URL 4", "eImgUrl4");
+		JOOM_FIELD.put("Extra Image URL 5", "eImgUrl5");
+		JOOM_FIELD.put("Extra Image URL 6", "eImgUrl6");
+		JOOM_FIELD.put("Extra Image URL 7", "eImgUrl7");
+		JOOM_FIELD.put("Extra Image URL 8", "eImgUrl8");
+		JOOM_FIELD.put("Extra Image URL 9", "eImgUrl9");
+		JOOM_FIELD.put("Extra Image URL 10", "eImgUrl10");
 	}
 
 	/**

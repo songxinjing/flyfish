@@ -104,7 +104,7 @@ public class ExcelController extends BaseController {
 							// 更新带*SKU
 							for (Goods moreGoods : goodsService.findMoreSku(sku + "*")) {
 								String skuMore = moreGoods.getSku();
-								int num = Integer.parseInt(skuMore.split("*")[1]);
+								int num = Integer.parseInt(skuMore.split("\\*")[1]);
 								for (String key : ExcelTemp.COMMON_FIELD.keySet()) {
 									if (StringUtils.isNotEmpty(ExcelTemp.COMMON_FIELD.get(key)) && obj.containsKey(key)
 											&& !"sku".equals(ExcelTemp.COMMON_FIELD.get(key))) { // 不更新sku，保留带*
@@ -321,19 +321,19 @@ public class ExcelController extends BaseController {
 						map.put("Parent Unique ID", listingParentSku);
 						map.put("*Product Name", platformTitle);
 					} else if (Constant.Joom.equals(platform.getName())) {
-						if (StringUtils.isEmpty(map.get("inventory"))) {
-							map.put("inventory", "9999");
+						if (StringUtils.isEmpty(map.get("*Quantity"))) {
+							map.put("*Quantity", "9999");
 						}
-						if (StringUtils.isEmpty(map.get("shipping days"))) {
-							map.put("shipping days", "15-35");
+						if (StringUtils.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
+							map.put("Shipping Time(enter without \" \", just the estimated days )", "15-35");
 						}
-						map.put("shipping price", "0");
-						map.put("price", price.toString());
-						map.put("msrp", msrp.toString());
-						map.put("SKU", listingSku);
-						map.put("Parent SKU", listingParentSku);
+						map.put("*Shipping", "0");
+						map.put("*Price", price.toString());
+						map.put("MSRP", msrp.toString());
+						map.put("*Unique ID", listingSku);
+						map.put("Parent Unique ID", listingParentSku);
 						String smallTitel = platformTitle.toLowerCase();
-						map.put("product name", smallTitel);
+						map.put("*Product Name", smallTitel);
 					}
 					data.add(map);
 				}
