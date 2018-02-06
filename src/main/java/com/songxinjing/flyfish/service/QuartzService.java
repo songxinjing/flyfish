@@ -115,23 +115,23 @@ public class QuartzService {
 	@SuppressWarnings("unchecked")
 	public void refreshCache() {
 		logger.info("开始执行缓存刷新任务");
-		String hql = "select distinct bigCataName from Goods where length(bigCataName) > 0";
+		String hql = "select distinct trim(bigCataName) from Goods where length(bigCataName) > 0";
 		List<String> bigCataNames = (List<String>) goodsService.findHql(hql);
 		MapCache.addUpdate(Constant.CACHE_bigCataNames, bigCataNames);
 
-		hql = "select distinct smallCataName from Goods  where length(smallCataName) > 0";
+		hql = "select distinct trim(smallCataName) from Goods  where length(smallCataName) > 0";
 		List<String> smallCataNames = (List<String>) goodsService.findHql(hql);
 		MapCache.addUpdate(Constant.CACHE_smallCataNames, smallCataNames);
 
-		hql = "select distinct bussOwner1 from Goods  where length(bussOwner1) > 0";
+		hql = "select distinct trim(bussOwner1) from Goods  where length(bussOwner1) > 0";
 		List<String> bussOwner1s = (List<String>) goodsService.findHql(hql);
 		MapCache.addUpdate(Constant.CACHE_bussOwner1s, bussOwner1s);
 
-		hql = "select distinct bussOwner2 from Goods  where length(bussOwner2) > 0";
+		hql = "select distinct trim(bussOwner2) from Goods  where length(bussOwner2) > 0";
 		List<String> bussOwner2s = (List<String>) goodsService.findHql(hql);
 		MapCache.addUpdate(Constant.CACHE_bussOwner2s, bussOwner2s);
 
-		hql = "select distinct buyer from Goods  where length(buyer) > 0";
+		hql = "select distinct trim(buyer) from Goods  where length(buyer) > 0";
 		List<String> buyers = (List<String>) goodsService.findHql(hql);
 		MapCache.addUpdate(Constant.CACHE_buyers, buyers);
 

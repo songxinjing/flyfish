@@ -1,7 +1,6 @@
 package com.songxinjing.flyfish.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -110,7 +109,7 @@ public class GoodsController extends BaseController {
 			}
 			if (form.getImpState() == 1) {
 				hql = hql + "and length(goods.title) > 0 ";
-			} 
+			}
 			if (StringUtils.isNotEmpty(form.getName())) {
 				hql = hql + "and goods.name like :name ";
 				paraMap.put("name", "%" + form.getName().trim() + "%");
@@ -321,8 +320,8 @@ public class GoodsController extends BaseController {
 			g.setUrl(goods.getUrl());
 			g.setUrl2(goods.getUrl2());
 			g.setUrl3(goods.getUrl3());
-			//目前发现有部分sku的款式是写在商品名称里面的 同步修改之后会有点麻烦
-			//g.setName(goods.getName()); 
+			// 目前发现有部分sku的款式是写在商品名称里面的 同步修改之后会有点麻烦
+			// g.setName(goods.getName());
 			goodsService.update(g);
 		}
 		return true;
@@ -359,6 +358,10 @@ public class GoodsController extends BaseController {
 			File temp = File.createTempFile("temp", ".jpg");
 			file.transferTo(temp);
 			GoodsImg goodsImg = goodsImgService.find(sku);
+			if (goodsImg == null) {
+				goodsImg = new GoodsImg();
+				goodsImg.setSku(sku);
+			}
 			if (imgName.equals("mainImgUrl")) {
 				Goods goods = goodsService.find(sku);
 				tempSku = goods.getParentSku();
@@ -366,9 +369,9 @@ public class GoodsController extends BaseController {
 			String name = tempSku + "-" + imgName + ".jpg";
 			SftpUtil.doFTP(name, temp);
 			ReflectionUtil.setFieldValue(goodsImg, imgName, name);
-			goodsImgService.update(goodsImg);
-		} catch (IllegalStateException | IOException e) {
-			logger.error("上传失败：" + sku + " " + imgName);
+			goodsImgService.saveOrUpdate(goodsImg);
+		} catch (Exception e) {
+			logger.error("上传失败：" + sku + " " + imgName, e);
 			return false;
 		}
 		return true;

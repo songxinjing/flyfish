@@ -295,11 +295,6 @@ public class ExcelController extends BaseController {
 						}
 					}
 
-					String weight = goods.getWeight();
-					if (StringUtils.isEmpty(weight)) {
-						weight = "0";
-					}
-
 					BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
 					if (shippingPrice == null) {
 						shippingPrice = new BigDecimal(0);
@@ -327,6 +322,13 @@ public class ExcelController extends BaseController {
 						if (StringUtils.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
 							map.put("Shipping Time(enter without \" \", just the estimated days )", "15-35");
 						}
+						String weight = goods.getWeight();
+						if (StringUtils.isEmpty(weight)) {
+							weight = "0";
+						}
+						BigDecimal weightg = new BigDecimal(weight);
+						BigDecimal weightKg = weightg.divide(new BigDecimal(1000)).setScale(3, RoundingMode.HALF_UP);
+						map.put("Shipping Weight", weightKg.toString());
 						map.put("*Shipping", "0");
 						map.put("*Price", price.toString());
 						map.put("MSRP", msrp.toString());
