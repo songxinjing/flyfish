@@ -319,7 +319,8 @@ public class ExcelController extends BaseController {
 						if (StringUtils.isEmpty(map.get("*Quantity"))) {
 							map.put("*Quantity", "9999");
 						}
-						if (StringUtils.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
+						if (StringUtils
+								.isEmpty(map.get("Shipping Time(enter without \" \", just the estimated days )"))) {
 							map.put("Shipping Time(enter without \" \", just the estimated days )", "15-35");
 						}
 						String weight = goods.getWeight();
@@ -334,8 +335,7 @@ public class ExcelController extends BaseController {
 						map.put("MSRP", msrp.toString());
 						map.put("*Unique ID", listingSku);
 						map.put("Parent Unique ID", listingParentSku);
-						String smallTitel = platformTitle.toLowerCase();
-						map.put("*Product Name", smallTitel);
+						map.put("*Product Name", platformTitle);
 					}
 					data.add(map);
 				}

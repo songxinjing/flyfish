@@ -302,7 +302,7 @@ public class GoodsController extends BaseController {
 			g.setSmallCataName(goods.getSmallCataName());
 			g.setBussOwner1(goods.getBussOwner1());
 			g.setBussOwner2(goods.getBussOwner2());
-			g.setState(goods.getState());
+			//g.setState(goods.getState()); // 不一定同步停售
 			g.setIsMoreSytle(goods.getIsMoreSytle());
 			g.setIsElectric(goods.getIsElectric());
 			g.setBuyer(goods.getBuyer());
