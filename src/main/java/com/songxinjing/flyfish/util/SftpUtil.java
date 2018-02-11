@@ -62,12 +62,12 @@ public class SftpUtil {
 			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
 			return true;
 		} catch (MalformedURLException | FileSystemException | URISyntaxException e) {
-			logger.info("图片上传失败！" + name + " " + url);
+			logger.error("图片上传失败！" + name + " " + url, e);
 			return false;
 		}
 	}
 
-	public static void doFTP(String name, File image) {
+	public static boolean doFTP(String name, File image) {
 		logger.info("人工上传图片：" + name);
 		try {
 			String path = remoteDirectory + "/" + name;
@@ -77,9 +77,10 @@ public class SftpUtil {
 			FileObject localFile = manager.toFileObject(image);
 			// Copy local file to sftp server
 			remoteFile.copyFrom(localFile, Selectors.SELECT_SELF);
+			return true;
 		} catch (FileSystemException | URISyntaxException e) {
 			logger.error("图片上传失败！" + name, e);
-			return;
+			return false;
 		}
 
 	}

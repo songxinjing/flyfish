@@ -552,8 +552,24 @@
 					<input name="sku" type="hidden" id="skuUpload"> 
          			<input name="imgName" type="hidden" id="imgNameUpload">
 					<div class="form-group">
-						<label>请选择待上传的图片</label>
-						<input type="file" name="file">
+						<label>选择上传方式</label>
+			            <div class="radio">
+			                <label>
+			                    <input type="radio" name="method" value="1" id="method-1" onchange="methodChange()">本地上传</input>
+			                </label>
+			            </div>
+						<div id="methodDiv-1">
+							<input id="file" type="file" name="file" class="form-control"/>
+			            </div>
+						<div class="radio">
+			                <label>
+			                    <input type="radio" name="method" value="2" id="method-2" onchange="methodChange()">URL上传</input>
+			                </label>
+			            </div>
+						<div id="methodDiv-2">
+							<input id="imgUrl" name="imgUrl" class="form-control"  maxlength="128"/>
+			            </div>
+			            <p class="form-control-static" style="color:red">上传图片过程较慢，请耐心等待...结束后，刷新页面查看是否成功，如果失败，请重试！</p>
 					</div>
 				</form>
 			</div>
@@ -569,6 +585,7 @@
 
 	$().ready(function () {
 		$("#editForm").validate();
+		$("#uploadImgForm").validate();
 		$("#mainImgSelect").imagepicker();
 	});
 
@@ -613,9 +630,20 @@
 	  var modal = $(this);
 	  modal.find("#skuUpload").val(sku);
 	  modal.find("#imgNameUpload").val(imgname);
+	  modal.find("#method-1").prop("checked",true);
+	  modal.find("#method-2").prop("checked",false);
+	  $("#methodDiv-1").show();
+	  $("#methodDiv-1").find("#file").attr("required","true");
+	  $("#methodDiv-2").hide();
+	  $("#methodDiv-2").find("#imgUrl").attr("required","false");
 	})
 	
 	$("#btnUploadImg").on("click", function () {
+		var flag = $("#uploadImgForm").valid();
+		if (!flag) {
+			//没有通过验证
+			return;
+		}
 		var formData = new FormData($("#uploadImgForm")[0]);
 		$.ajax({
 			cache: true,
@@ -631,5 +659,19 @@
 			}
 		});
 	})
+	
+	function methodChange() {
+	  	if($("#methodDiv-1").is(":hidden")){
+	       $("#methodDiv-1").show();
+	       $("#methodDiv-1").find("#file").attr("required","true");
+	       $("#methodDiv-2").hide();
+	       $("#methodDiv-2").find("#imgUrl").attr("required","false");
+		}else{
+		   $("#methodDiv-1").hide();
+	       $("#methodDiv-1").find("#file").attr("required","false");
+	       $("#methodDiv-2").show();
+	       $("#methodDiv-2").find("#imgUrl").attr("required","true");
+		}
+  }
 
 </script>

@@ -49,90 +49,96 @@ public class PublishController extends BaseController {
 
 	@RequestMapping(value = "publish/list")
 	public String list(Model model, Integer storeId, String batchNo, Boolean dataFlag) {
-		logger.info("进入刊登店铺列表页面");
-		if (dataFlag == null) {
-			dataFlag = true;
-		}
-		Map<String, Object> paraMap = new HashMap<String, Object>();
-		Store store = storeService.find(storeId);
-		if (StringUtils.isEmpty(batchNo)) {
-			String hql = "select max(batchNo) from StoreGoods where store.id = :storeId ";
+
+		try {
+			logger.info("进入刊登店铺列表页面");
+			if (dataFlag == null) {
+				dataFlag = true;
+			}
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			Store store = storeService.find(storeId);
+			if (StringUtils.isEmpty(batchNo)) {
+				String hql = "select max(batchNo) from StoreGoods where store.id = :storeId ";
+				paraMap.clear();
+				paraMap.put("storeId", storeId);
+				batchNo = (String) storeGoodsService.findHql(hql, paraMap).get(0);
+			}
+
+			String hql = "select distinct batchNo from StoreGoods where store.id = :storeId ";
 			paraMap.clear();
 			paraMap.put("storeId", storeId);
-			batchNo = (String) storeGoodsService.findHql(hql, paraMap).get(0);
-		}
+			@SuppressWarnings("unchecked")
+			List<String> batchNos = (List<String>) storeGoodsService.findHql(hql, paraMap);
 
-		String hql = "select distinct batchNo from StoreGoods where store.id = :storeId ";
-		paraMap.clear();
-		paraMap.put("storeId", storeId);
-		@SuppressWarnings("unchecked")
-		List<String> batchNos = (List<String>) storeGoodsService.findHql(hql, paraMap);
+			hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = :storeId and sg.batchNo = :batchNo ";
+			paraMap.clear();
+			paraMap.put("storeId", storeId);
+			paraMap.put("batchNo", batchNo);
+			@SuppressWarnings("unchecked")
+			List<Goods> goodses = (List<Goods>) goodsService.findHql(hql, paraMap);
 
-		hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = :storeId and sg.batchNo = :batchNo ";
-		paraMap.clear();
-		paraMap.put("storeId", storeId);
-		paraMap.put("batchNo", batchNo);
-		@SuppressWarnings("unchecked")
-		List<Goods> goodses = (List<Goods>) goodsService.findHql(hql, paraMap);
-
-		List<GoodsForm> listT = new ArrayList<GoodsForm>();
-		List<GoodsForm> listF = new ArrayList<GoodsForm>();
-		for (Goods goods : goodses) {
-			GoodsForm goodsForm = new GoodsForm();
-			GoodsImg goodsImg = goodsImgService.find(goods.getSku());
-			if (goodsImg == null) {
-				goodsImg = new GoodsImg();
-			}
-			goodsForm.setGoods(goods);
-			goodsForm.setGoodsImg(goodsImg);
-			goodsForm.setListingSku(BaseUtil.changeSku(goods.getSku(), store.getMove()));
-			if (StringUtils.isNotEmpty(goods.getParentSku())) {
-				goodsForm.setListingParentSku(BaseUtil.changeSku(goods.getParentSku(), store.getMove()));
-			}
-			BigDecimal shippingPrice = goodsService.getShippingPrice(store.getPlatform(), goods);
-			if (shippingPrice == null) {
-				shippingPrice = new BigDecimal(0);
-			}
-			BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
-			goodsForm.setPlatformPrice(price);
-			if (store.getPlatform().getName().equals(Constant.Wish)) {
-				goodsForm.setPlatformTitle(goods.getTitle());
-				goodsForm.setTitleRed(false);
-			} else if (store.getPlatform().getName().equals(Constant.Ebay)) {
-				goodsForm.setPlatformTitle(goods.getEbayTitle());
-				if (StringUtils.isNotEmpty(goods.getEbayTitle()) && goods.getEbayTitle().length() > 75) {
-					goodsForm.setTitleRed(true);
-				} else {
-					goodsForm.setTitleRed(false);
+			List<GoodsForm> listT = new ArrayList<GoodsForm>();
+			List<GoodsForm> listF = new ArrayList<GoodsForm>();
+			for (Goods goods : goodses) {
+				GoodsForm goodsForm = new GoodsForm();
+				GoodsImg goodsImg = goodsImgService.find(goods.getSku());
+				if (goodsImg == null) {
+					goodsImg = new GoodsImg();
 				}
-			} else {
-				goodsForm.setPlatformTitle(goods.getOtherTitle());
-				if (StringUtils.isNotEmpty(goods.getOtherTitle()) && goods.getOtherTitle().length() > 90) {
-					goodsForm.setTitleRed(true);
-				} else {
+				goodsForm.setGoods(goods);
+				goodsForm.setGoodsImg(goodsImg);
+				goodsForm.setListingSku(BaseUtil.changeSku(goods.getSku(), store.getMove()));
+				if (StringUtils.isNotEmpty(goods.getParentSku())) {
+					goodsForm.setListingParentSku(BaseUtil.changeSku(goods.getParentSku(), store.getMove()));
+				}
+				BigDecimal shippingPrice = goodsService.getShippingPrice(store.getPlatform(), goods);
+				if (shippingPrice == null) {
+					shippingPrice = new BigDecimal(0);
+				}
+				BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
+				goodsForm.setPlatformPrice(price);
+				if (store.getPlatform().getName().equals(Constant.Wish)) {
+					goodsForm.setPlatformTitle(goods.getTitle());
 					goodsForm.setTitleRed(false);
+				} else if (store.getPlatform().getName().equals(Constant.Ebay)) {
+					goodsForm.setPlatformTitle(goods.getEbayTitle());
+					if (StringUtils.isNotEmpty(goods.getEbayTitle()) && goods.getEbayTitle().length() > 75) {
+						goodsForm.setTitleRed(true);
+					} else {
+						goodsForm.setTitleRed(false);
+					}
+				} else {
+					goodsForm.setPlatformTitle(goods.getOtherTitle());
+					if (StringUtils.isNotEmpty(goods.getOtherTitle()) && goods.getOtherTitle().length() > 90) {
+						goodsForm.setTitleRed(true);
+					} else {
+						goodsForm.setTitleRed(false);
+					}
+				}
+
+				if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
+						&& StringUtils.isNotEmpty(goods.getTitle()) && !goodsForm.isTitleRed()
+						&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
+					listT.add(goodsForm);
+				} else {
+					listF.add(goodsForm);
 				}
 			}
-
-			if (StringUtils.isNotEmpty(goods.getWeight()) && StringUtils.isNotEmpty(goods.getCostPrice())
-					&& StringUtils.isNotEmpty(goods.getTitle()) && !goodsForm.isTitleRed()
-					&& StringUtils.isNotEmpty(goodsImg.getMainImgUrl())) {
-				listT.add(goodsForm);
+			if (dataFlag) {
+				model.addAttribute("goodsForms", listT);
 			} else {
-				listF.add(goodsForm);
+				model.addAttribute("goodsForms", listF);
 			}
-		}
-		if (dataFlag) {
-			model.addAttribute("goodsForms", listT);
-		} else {
-			model.addAttribute("goodsForms", listF);
-		}
-		model.addAttribute("batchNo", batchNo);
-		model.addAttribute("dataFlag", dataFlag);
-		model.addAttribute("batchNos", batchNos);
-		model.addAttribute("store", store);
+			model.addAttribute("batchNo", batchNo);
+			model.addAttribute("dataFlag", dataFlag);
+			model.addAttribute("batchNos", batchNos);
+			model.addAttribute("store", store);
 
-		return "publish/list";
+			return "publish/list";
+		} catch (Exception e) {
+			logger.error("系统错误！", e);
+			return "system/error";
+		}
 	}
 
 	@RequestMapping(value = "publish/remove", method = RequestMethod.GET)

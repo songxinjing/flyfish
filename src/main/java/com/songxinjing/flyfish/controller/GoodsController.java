@@ -120,23 +120,23 @@ public class GoodsController extends BaseController {
 			}
 			if (StringUtils.isNotEmpty(form.getBigCataName())) {
 				hql = hql + "and goods.bigCataName = :bigCataName ";
-				paraMap.put("bigCataName", form.getBigCataName().trim());
+				paraMap.put("bigCataName", form.getBigCataName());
 			}
 			if (StringUtils.isNotEmpty(form.getSmallCataName())) {
 				hql = hql + "and goods.smallCataName = :smallCataName ";
-				paraMap.put("smallCataName", form.getSmallCataName().trim());
+				paraMap.put("smallCataName", form.getSmallCataName());
 			}
 			if (StringUtils.isNotEmpty(form.getBussOwner1())) {
 				hql = hql + "and goods.bussOwner1 = :bussOwner1 ";
-				paraMap.put("bussOwner1", form.getBussOwner1().trim());
+				paraMap.put("bussOwner1", form.getBussOwner1());
 			}
 			if (StringUtils.isNotEmpty(form.getBussOwner2())) {
 				hql = hql + "and goods.bussOwner2 = :bussOwner2 ";
-				paraMap.put("bussOwner2", form.getBussOwner2().trim());
+				paraMap.put("bussOwner2", form.getBussOwner2());
 			}
 			if (StringUtils.isNotEmpty(form.getBuyer())) {
 				hql = hql + "and goods.buyer = :buyer ";
-				paraMap.put("buyer", form.getBuyer().trim());
+				paraMap.put("buyer", form.getBuyer());
 			}
 			if (StringUtils.isNotEmpty(form.getState())) {
 				hql = hql + "and goods.state = :state ";
@@ -298,14 +298,14 @@ public class GoodsController extends BaseController {
 			g.setOtherTitle(goods.getOtherTitle());
 			g.setTags(goods.getTags());
 			g.setTitleWords(goods.getTitleWords());
-			g.setBigCataName(goods.getBigCataName());
-			g.setSmallCataName(goods.getSmallCataName());
-			g.setBussOwner1(goods.getBussOwner1());
-			g.setBussOwner2(goods.getBussOwner2());
-			//g.setState(goods.getState()); // 不一定同步停售
+			g.setBigCataName(goods.getBigCataName().trim());
+			g.setSmallCataName(goods.getSmallCataName().trim());
+			g.setBussOwner1(goods.getBussOwner1().trim());
+			g.setBussOwner2(goods.getBussOwner2().trim());
+			// g.setState(goods.getState()); // 不一定同步停售
 			g.setIsMoreSytle(goods.getIsMoreSytle());
 			g.setIsElectric(goods.getIsElectric());
-			g.setBuyer(goods.getBuyer());
+			g.setBuyer(goods.getBuyer().trim());
 			g.setBuyDayNum(goods.getBuyDayNum());
 			g.setReportNameCn(goods.getReportNameCn());
 			g.setReportNameEn(goods.getReportNameEn());
@@ -348,15 +348,14 @@ public class GoodsController extends BaseController {
 
 	@RequestMapping(value = "goods/uploadimg", method = RequestMethod.POST)
 	@ResponseBody
-	public boolean uploadimg(String sku, String imgName, MultipartFile file) {
+	public boolean uploadimg(String sku, String imgName, MultipartFile file, String imgUrl, int method) {
 		logger.info("上传图片");
 		String tempSku = sku;
 		if (tempSku.contains("*")) {
 			tempSku = tempSku.replace("*", "_");
 		}
 		try {
-			File temp = File.createTempFile("temp", ".jpg");
-			file.transferTo(temp);
+			
 			GoodsImg goodsImg = goodsImgService.find(sku);
 			if (goodsImg == null) {
 				goodsImg = new GoodsImg();
@@ -367,14 +366,23 @@ public class GoodsController extends BaseController {
 				tempSku = goods.getParentSku();
 			}
 			String name = tempSku + "-" + imgName + ".jpg";
-			SftpUtil.doFTP(name, temp);
-			ReflectionUtil.setFieldValue(goodsImg, imgName, name);
-			goodsImgService.saveOrUpdate(goodsImg);
+			boolean isSucc = false;
+			if (method == 1) {
+				File temp = File.createTempFile("temp", ".jpg");
+				file.transferTo(temp);
+				isSucc = SftpUtil.doFTP(name, temp);
+			} else {
+				isSucc = SftpUtil.doFTP(name, imgUrl);
+			}
+			if (isSucc) {
+				ReflectionUtil.setFieldValue(goodsImg, imgName, name);
+				goodsImgService.saveOrUpdate(goodsImg);
+			}
+			return isSucc;
 		} catch (Exception e) {
 			logger.error("上传失败：" + sku + " " + imgName, e);
 			return false;
 		}
-		return true;
 	}
 
 	@RequestMapping(value = "goods/setmain", method = RequestMethod.POST)

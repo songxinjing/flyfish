@@ -207,7 +207,6 @@
   	  openSub($("tr#"+queryProdId+" td a"));
   	  $("tr#"+queryProdId+"-sub").collapse();
   	}
-  	
   
     $("#addForm").validate();
     $("#modifyForm").validate();
