@@ -21,13 +21,13 @@ public class BaseUtil {
 				if(m1 > 0){
 					int newIndex1 = index + m1;
 					if(newIndex1 >= charOfSku.length()){
-						newIndex1 = newIndex1 - sku.length();
+						newIndex1 = newIndex1 - charOfSku.length();
 					}
 					str1 = charOfSku.charAt(newIndex1) + "";
 				}
 				int newIndex2 = index + m2;
 				if(newIndex2 >= charOfSku.length()){
-					newIndex2 = newIndex2 - sku.length();
+					newIndex2 = newIndex2 - charOfSku.length();
 				}
 				str2 = charOfSku.charAt(newIndex2) + "";
 				newSku = newSku + str1 + str2;
@@ -39,7 +39,7 @@ public class BaseUtil {
 	}
 	
 	public static void main(String[] args){
-		System.out.println(changeSku("BELT-A002*4",56));
+		System.out.println(changeSku("EBY-B025B",15));
 	}
 
 }
