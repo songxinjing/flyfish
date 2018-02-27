@@ -50,6 +50,7 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">关联SKU</label>
 					<p class="col-sm-10 form-control-static">$!{form.goods.relaSkus}</p>
+					<input name="relaSkus" type="hidden" value="$!{form.goods.relaSkus}">
 				</div>
 				
 				<div class="form-group">
@@ -176,10 +177,13 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">创建时间</label>
 					<p class="col-sm-2 form-control-static">$!{form.goods.createTm}</p>
+					<input name="createTm" type="hidden" value="$!{form.goods.createTm}">
 					<label class="col-sm-2 control-label">停售时间</label>
 					<p class="col-sm-2 form-control-static">$!{form.goods.stopTm}</p>
+					<input name="stopTm" type="hidden" value="$!{form.goods.stopTm}">
 					<label class="col-sm-2 control-label">停售原因</label>
 					<p class="col-sm-2 form-control-static">$!{form.goods.stopReson}</p>
+					<input name="stopReson" type="hidden" value="$!{form.goods.stopReson}">
 				</div>
 				
 				<div class="form-group">
@@ -266,6 +270,7 @@
 				<div class="form-group">
 					<label class="col-sm-2 control-label">虚拟SKU</label>
 					<p class="col-sm-10 form-control-static">$!{form.goods.virtSkus}</p>
+					<input name="virtSkus" type="hidden" value="$!{form.goods.virtSkus}">
 				</div>
 
 				<div class="form-group">
