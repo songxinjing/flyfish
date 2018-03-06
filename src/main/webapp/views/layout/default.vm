@@ -73,6 +73,19 @@
                                 #end
                             </ul>
                         </li>
+						<li>
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i>在线产品<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="${rc.contextPath}/wish/storelist.html">Wish店铺</a>
+                                </li>
+                                 <li>
+                                    <a href="${rc.contextPath}/joom/storelist.html">Joom店铺</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+						
                         <li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i>商品管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
@@ -121,7 +134,7 @@
                                     <a href="${rc.contextPath}/domain/list.html">域名管理</a>
                                 </li>
 								<li>
-                                    <a href="${rc.contextPath}/store/list.html">店铺管理</a>
+                                    <a href="${rc.contextPath}/store/list.html">虚拟店铺管理</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->

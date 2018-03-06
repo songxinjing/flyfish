@@ -60,27 +60,27 @@ public class Constant {
 	// -------------------------- 缓存 ------------------------
 	
 	/**
-	 * 缓存：大类名称
+	 * 缓存：大类名称下拉单
 	 */
 	public static final String CACHE_bigCataNames = "bigCataNames";
 	
 	/**
-	 * 缓存：小类名称
+	 * 缓存：小类名称下拉单
 	 */
 	public static final String CACHE_smallCataNames = "smallCataNames";
 	
 	/**
-	 * 缓存：业绩归属人1
+	 * 缓存：业绩归属人1下拉单
 	 */
 	public static final String CACHE_bussOwner1s = "bussOwner1s";
 	
 	/**
-	 * 缓存：业绩归属人2
+	 * 缓存：业绩归属人2下拉单
 	 */
 	public static final String CACHE_bussOwner2s = "bussOwner2s";
 	
 	/**
-	 * 缓存：采购员
+	 * 缓存：采购员下拉单
 	 */
 	public static final String CACHE_buyers = "buyers";
 	

@@ -1,7 +1,7 @@
 package com.songxinjing.flyfish.domain;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -46,13 +46,13 @@ public class Country implements Serializable {
 	 * 该国家物流方式列表
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "country")
-	private List<Logis> logises;
+	private Set<Logis> logises;
 
 	/**
 	 * 该国家权重列表
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "country")
-	private List<Weight> weights;
+	private Set<Weight> weights;
 
 	public Integer getId() {
 		return id;
@@ -78,19 +78,19 @@ public class Country implements Serializable {
 		this.orderNum = orderNum;
 	}
 
-	public List<Logis> getLogises() {
+	public Set<Logis> getLogises() {
 		return logises;
 	}
 
-	public void setLogises(List<Logis> logises) {
+	public void setLogises(Set<Logis> logises) {
 		this.logises = logises;
 	}
 
-	public List<Weight> getWeights() {
+	public Set<Weight> getWeights() {
 		return weights;
 	}
 
-	public void setWeights(List<Weight> weights) {
+	public void setWeights(Set<Weight> weights) {
 		this.weights = weights;
 	}
 

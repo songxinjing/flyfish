@@ -1,5 +1,6 @@
 package com.songxinjing.flyfish.service;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +12,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
+import com.songxinjing.flyfish.domain.WishProduct;
+import com.songxinjing.flyfish.domain.WishStore;
+import com.songxinjing.flyfish.domain.WishVariant;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.plugin.cache.MapCache;
+import com.songxinjing.flyfish.plugin.wish.api.WishProductApi;
+import com.songxinjing.flyfish.plugin.wish.exception.WishException;
 import com.songxinjing.flyfish.util.ReflectionUtil;
 import com.songxinjing.flyfish.util.SftpUtil;
 
@@ -36,6 +45,15 @@ public class QuartzService {
 	@Autowired
 	private GoodsImgService goodsImgService;
 
+	@Autowired
+	private WishStoreService wishStoreService;
+
+	@Autowired
+	private WishProductService wishProductService;
+	
+	@Autowired
+	private WishVariantService wishVariantService;
+
 	public void uploadImg() {
 		Calendar now = Calendar.getInstance();
 		int hour = now.get(Calendar.HOUR_OF_DAY);
@@ -45,7 +63,7 @@ public class QuartzService {
 		paraMap.put("isUpload", 0);
 		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>) goodsService.findPage(hql, 0, 300, paraMap, String.class);
-		if(list.isEmpty()){
+		if (list.isEmpty()) {
 			logger.info("任务(" + hour + ") 没有需要上传的图片，任务结束");
 			return;
 		}
@@ -135,6 +153,110 @@ public class QuartzService {
 		List<String> buyers = (List<String>) goodsService.findHql(hql);
 		MapCache.addUpdate(Constant.CACHE_buyers, buyers);
 
+	}
+
+	public void wishSync() {
+
+		logger.info("开始执行Wish同步任务");
+		String hql = "from WishStore where state = :state order by applyJobTime asc";
+		Map<String, Object> paraMap = new HashMap<String, Object>();
+		paraMap.put("state", 1);
+		@SuppressWarnings("unchecked")
+		List<WishStore> list = (List<WishStore>) wishStoreService.findPage(hql, 0, 1, paraMap, WishStore.class);
+		if (!list.isEmpty()) {
+			WishStore store = list.get(0);
+			hql = "update WishStore set state = 2 where id = :id";
+			paraMap.clear();
+			paraMap.put("id", store.getId());
+			wishStoreService.updateHql(hql, paraMap);
+
+			int from = 0;
+			int size = 50;
+			boolean hasNext = true;
+			do {
+				try {
+					String result = WishProductApi.multiGet(from, size, null, true, store.getAccessToken());
+					JSONObject json = JSON.parseObject(result);
+					JSONArray products = json.getJSONArray("data");
+					for (int i = 0; i < products.size(); i++) {
+						JSONObject product = products.getJSONObject(i).getJSONObject("Product");
+						saveProduct(store, product);
+					}
+					JSONObject paging = json.getJSONObject("paging");
+					String next = paging.getString("next");
+					if (StringUtils.isEmpty(next)) {
+						hasNext = false;
+					} else {
+						from = from + size;
+					}
+				} catch (WishException e) {
+					logger.error("调用Wish List all Products 接口错误", e);
+					break;
+				}
+
+			} while (hasNext);
+
+			Timestamp syncTime = new Timestamp(System.currentTimeMillis());
+			hql = "update WishStore set state = 0, lastSyncTime = :lastSyncTime where id = :id";
+			paraMap.clear();
+			paraMap.put("lastSyncTime", syncTime);
+			paraMap.put("id", store.getId());
+			wishStoreService.updateHql(hql, paraMap);
+		}
+	}
+
+	public void saveProduct(WishStore store, JSONObject product) {
+
+		String parentSku = product.getString("parent_sku");
+		WishProduct wishProduct = null;
+		if (StringUtils.isNotEmpty(parentSku)) {
+			wishProduct = wishProductService.find(parentSku);
+		}
+		if (wishProduct == null) {
+			wishProduct = new WishProduct();
+			wishProduct.setParentSku(parentSku);
+			wishProduct.setStore(store);
+		}
+		wishProduct.setWishId(product.getString("id"));
+		wishProduct.setMainImage(product.getString("main_image"));
+		wishProduct.setIsPromoted(product.getString("is_promoted"));
+		wishProduct.setName(product.getString("name"));
+		// wishProduct.setTags(product.getString("tags"));
+		wishProduct.setReviewStatus(product.getString("review_status"));
+		wishProduct.setExtraImages(product.getString("extra_images"));
+		wishProduct.setNumberSaves(product.getString("number_saves"));
+		wishProduct.setNumberSold(product.getString("number_sold"));
+		wishProduct.setLastUpdated(product.getString("last_updated"));
+		wishProduct.setDescription(product.getString("description"));
+		wishProduct.setVariants(null);
+		
+		wishProductService.saveOrUpdate(wishProduct);
+		
+		JSONArray variants = product.getJSONArray("variants");
+
+		for (int j = 0; j < variants.size(); j++) {
+			JSONObject variant = variants.getJSONObject(j).getJSONObject("Variant");
+			String sku = variant.getString("sku");
+			WishVariant wishVariant = null;
+			if (StringUtils.isNotEmpty(sku)) {
+				wishVariant = wishVariantService.find(sku);
+			}
+			if (wishVariant == null) {
+				wishVariant = new WishVariant();
+				wishVariant.setSku(sku);
+				wishVariant.setProduct(wishProduct);
+			}
+			wishVariant.setWishId(variant.getString("id"));
+			wishVariant.setAllImages(variant.getString("all_images"));
+			wishVariant.setPrice(variant.getString("price"));
+			wishVariant.setEnabled(variant.getString("enabled"));
+			wishVariant.setShipping(variant.getString("shipping"));
+			wishVariant.setInventory(variant.getString("inventory"));
+			wishVariant.setSize(variant.getString("size"));
+			wishVariant.setMsrp(variant.getString("msrp"));
+			wishVariant.setShippingTime(variant.getString("shipping_time"));
+			wishVariantService.saveOrUpdate(wishVariant);
+		}
 	}
 
 }

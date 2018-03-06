@@ -2,7 +2,7 @@ package com.songxinjing.flyfish.controller;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,7 +46,7 @@ public class WeightController extends BaseController {
 			platId = 1;
 		}
 
-		List<Weight> weights = platformService.find(platId).getWeights();
+		Set<Weight> weights = platformService.find(platId).getWeights();
 
 		model.addAttribute("weights", weights);
 
