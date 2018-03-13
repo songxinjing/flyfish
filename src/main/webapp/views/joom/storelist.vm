@@ -1,6 +1,6 @@
 <div class="row">
 	<div class="col-md-12">
-		<h3 class="page-header">Wish店铺列表</h3>
+		<h3 class="page-header">Joom店铺列表</h3>
 	</div>
 </div>
 
@@ -14,7 +14,7 @@
 	    	  <thead>
 			    <tr>
 			      <th>店铺名称</th>
-			      <th>商户ID</th>
+			      <th>授权状态</th>
             	  <th>操作</th>
 			    </tr>
 			  </thead>			  
@@ -22,14 +22,14 @@
 				 #foreach($rec in $!stores)
 			        <tr>
 			          <td>$!{rec.name}</td>
-			          <td>$!{rec.merchantId}</td>
+			          <td>$!{rec.name}</td>
 					  <td>
 					    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modifyModal" 
 					    data-id="$!rec.id" 
 					    data-name="$!rec.name" 
 					    >修改</button>
 					    <button type="button" class="btn btn-danger btn-sm" onclick="">重新授权</button>
-						<button type="button" class="btn btn-info btn-sm" onclick="window.location.href='${rc.contextPath}/wish/productlist.html?storeId=$!{rec.id}'">在线产品列表</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="window.location.href='${rc.contextPath}/joom/productlist.html?storeId=$!{rec.id}'">在线产品列表</button>
 					  </td>
 			        </tr>
 				#end
@@ -40,7 +40,43 @@
 </div>
 
 <!-- add Modal-->
-
+<div id="addModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">店铺授权</h4>
+      </div>
+      <div class="modal-body">
+         <form id="modifyForm" action="${rc.contextPath}/joom/storeadd.html" method="post">
+			<div class="form-group">
+                <label>店铺名称</label>
+                 <input class="form-control" name="name" maxlength="30" required>
+            </div>
+            <div class="form-group">
+                <label>客户端ID</label>
+                 <input class="form-control" name="clientId" minlength="16" maxlength="16" required>
+            </div>
+            <div class="form-group">
+                <label>客户端密钥</label>
+                 <input class="form-control" name="clientSecret" minlength="32" maxlength="32" required>
+            </div>
+            <div class="form-group">
+                <label>填写帮助</label>
+                <p class="form-control-static">
+                	<img width="400px" src="${rc.contextPath}/resources/image/help1.png"/>
+                	<img width="400px" src="${rc.contextPath}/resources/image/help2.png"/>
+                </p>
+            </div>
+	     </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="confirm-yes btn btn-primary" id="btnModify">开始授权</button>
+        <button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- modify Modal-->
 <div id="modifyModal" class="modal fade">

@@ -283,7 +283,7 @@ public class GoodsController extends BaseController {
 		goods.setModifyId(user.getUserId());
 		goods.setModifyer(user.getName());
 		goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
-
+		goods.setIsUpload(0);
 		goodsService.saveOrUpdate(goods);
 
 		String hql = "from Goods where parentSku = :parentSku";

@@ -38,21 +38,33 @@ public class JoomStore implements Serializable {
 	private String name;
 
 	/**
-	 * merchantId
+	 * 客户端ID
+	 */
+	@Column(length = 16)
+	private String clientId;
+
+	/**
+	 * 客户端密钥
 	 */
 	@Column(length = 32)
+	private String clientSecret;
+
+	/**
+	 * merchantId
+	 */
+	@Column(length = 64)
 	private String merchantId;
 
 	/**
 	 * accessToken
 	 */
-	@Column(length = 32)
+	@Column(length = 1024)
 	private String accessToken;
 
 	/**
 	 * refreshToken
 	 */
-	@Column(length = 32)
+	@Column(length = 1024)
 	private String refreshToken;
 
 	/**
@@ -60,25 +72,25 @@ public class JoomStore implements Serializable {
 	 */
 	@Column
 	private Timestamp expiryTime;
-	
+
 	/**
 	 * 同步状态 0：空闲；1：请求同步；2：正在同步
 	 */
 	@Column
 	private Integer state;
-	
+
 	/**
 	 * 请求同步任务时间
 	 */
 	@Column
 	private Timestamp applyJobTime;
-	
+
 	/**
 	 * 最后同步时间
 	 */
 	@Column
 	private Timestamp lastSyncTime;
-	
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "store")
 	private Set<JoomProduct> products;
 
@@ -96,6 +108,22 @@ public class JoomStore implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
+
+	public String getClientSecret() {
+		return clientSecret;
+	}
+
+	public void setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
 	}
 
 	public String getMerchantId() {
@@ -161,5 +189,5 @@ public class JoomStore implements Serializable {
 	public void setLastSyncTime(Timestamp lastSyncTime) {
 		this.lastSyncTime = lastSyncTime;
 	}
-	
+
 }

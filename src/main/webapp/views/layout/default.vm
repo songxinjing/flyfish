@@ -76,13 +76,16 @@
 						<li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i>在线产品<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
+                                <!--
                                 <li>
                                     <a href="${rc.contextPath}/wish/storelist.html">Wish店铺</a>
                                 </li>
+                                 -->
                                  <li>
                                     <a href="${rc.contextPath}/joom/storelist.html">Joom店铺</a>
                                 </li>
                             </ul>
+                           
                             <!-- /.nav-second-level -->
                         </li>
 						

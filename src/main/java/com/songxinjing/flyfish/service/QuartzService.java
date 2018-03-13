@@ -62,7 +62,7 @@ public class QuartzService {
 		Map<String, Object> paraMap = new HashMap<String, Object>();
 		paraMap.put("isUpload", 0);
 		@SuppressWarnings("unchecked")
-		List<String> list = (List<String>) goodsService.findPage(hql, 0, 300, paraMap, String.class);
+		List<String> list = (List<String>) goodsService.findPage(hql, 0, 1000, paraMap, String.class);
 		if (list.isEmpty()) {
 			logger.info("任务(" + hour + ") 没有需要上传的图片，任务结束");
 			return;
