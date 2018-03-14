@@ -123,11 +123,12 @@ public class ExcelUtil {
 		List<String> titles = new ArrayList<String>();
 		for (int i = 0; i < colNum; i++) {
 			cell = titleRow.getCell(i);
-			String cellVal = cell.getStringCellValue();
-			if (StringUtils.isEmpty(cellVal)) {
-				continue;
+			if(cell != null){
+				String cellVal = cell.getStringCellValue();
+				if (StringUtils.isNotEmpty(cellVal)) {
+					titles.add(i, cellVal);
+				}
 			}
-			titles.add(i, cellVal);
 		}
 		return titles;
 	}

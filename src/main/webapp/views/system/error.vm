@@ -1,1 +1,1 @@
-<div class="alert alert-danger" role="alert">系统繁忙，请稍后再试！！！</div>
+<div class="alert alert-danger" role="alert">#if(!$!errorMsg) $!errorMsg #else 系统繁忙，请稍后再试！！！#end </div>

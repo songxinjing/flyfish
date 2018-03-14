@@ -22,13 +22,13 @@
 				 #foreach($rec in $!stores)
 			        <tr>
 			          <td>$!{rec.name}</td>
-			          <td>$!{rec.name}</td>
+			          <td>#if ($!{rec.merchantId}) 已授权 #else 未授权 #end</td>
 					  <td>
 					    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modifyModal" 
 					    data-id="$!rec.id" 
 					    data-name="$!rec.name" 
 					    >修改</button>
-					    <button type="button" class="btn btn-danger btn-sm" onclick="">重新授权</button>
+					    <button type="button" class="btn btn-danger btn-sm" onclick="reauth('$!rec.id')">重新授权</button>
 						<button type="button" class="btn btn-info btn-sm" onclick="window.location.href='${rc.contextPath}/joom/productlist.html?storeId=$!{rec.id}'">在线产品列表</button>
 					  </td>
 			        </tr>
@@ -48,7 +48,7 @@
         <h4 class="modal-title">店铺授权</h4>
       </div>
       <div class="modal-body">
-         <form id="modifyForm" action="${rc.contextPath}/joom/storeadd.html" method="post">
+         <form id="addForm" action="${rc.contextPath}/joom/storeadd.html" method="post">
 			<div class="form-group">
                 <label>店铺名称</label>
                  <input class="form-control" name="name" maxlength="30" required>
@@ -71,7 +71,7 @@
 	     </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="confirm-yes btn btn-primary" id="btnModify">开始授权</button>
+        <button type="button" class="confirm-yes btn btn-primary" id="btnAdd">开始授权</button>
         <button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
       </div>
     </div>
@@ -87,7 +87,7 @@
         <h4 class="modal-title">修改店铺</h4>
       </div>
       <div class="modal-body">
-         <form id="modifyForm" action="${rc.contextPath}/wish/storemodify.html" method="post">
+         <form id="modifyForm" action="${rc.contextPath}/joom/storemodify.html" method="post">
 			<input name="id" type="hidden" id="id"> 
 			<div class="form-group">
                 <label>店铺名称</label>
@@ -105,11 +105,16 @@
 
 <script>
   $().ready(function() {
+  	$("#addForm").validate();
     $("#modifyForm").validate();
   });
   
   $("#btnModify").on("click", function () {
      $("#modifyForm").submit();
+  })
+  
+  $("#btnAdd").on("click", function () {
+     $("#addForm").submit();
   })
   
   $("#modifyModal").on("show.bs.modal", function (event) {
@@ -120,5 +125,9 @@
 	  modal.find("#id").val(id);
 	  modal.find("#name").val(name);
   })
+  
+  function reauth(id) {
+	 window.location.href="${rc.contextPath}/joom/reauth.html?id="+id;
+  }
 	
 </script>
