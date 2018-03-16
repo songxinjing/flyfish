@@ -28,14 +28,14 @@
 			    </tr>
 			  </thead>			  
 			  <tbody>
-				#if($!{store.products.size()} == 0)
+				#if(!$!{pageModel.recList} || $!{pageModel.recList.size()} == 0)
 				<tr>
 					<td colspan="11">
 						<h3>无数据</h3>
 					</td>
 				</tr>
 				#end 
-				#foreach($product in $!{store.products})
+				#foreach($product in $!{pageModel.recList})
 				<tr>
 					<td rowspan="$!{product.variants.size()}">
 					#if("$!{product.mainImage}" != "") 
@@ -68,6 +68,7 @@
 			 </tbody>
 			</table>
 		</div>
+		#parse("/base/page.vm")
 	</div>
 </div>
 

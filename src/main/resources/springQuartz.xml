@@ -56,8 +56,8 @@
 	</bean>
 	
 	
-	<!-- Wish同步任务 -->
-	<bean id="jobWishSync"
+	<!-- 店铺同步任务 -->
+	<bean id="jobStoreSync"
 		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<!-- 调用的类 -->
 		<property name="targetObject">
@@ -65,19 +65,19 @@
 		</property>
 		<!-- 调用类中的方法 -->
 		<property name="targetMethod">
-			<value>wishSync</value>
+			<value>storeSync</value>
 		</property>
 	</bean>
 	
-	<!-- 图片上传任务触发时间 -->
-	<bean id="triggerWishSync" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	<!-- 店铺同步任务触发时间 -->
+	<bean id="triggerStoreSync" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
 		<property name="jobDetail">
-			<ref bean="jobWishSync" />
+			<ref bean="jobStoreSync" />
 		</property>
 		<!-- cron表达式 -->
 		<property name="cronExpression">
-			<!-- 每1分钟执行一次 -->
-			<value>0 * * * * ?</value>
+			<!-- 每小时执行一次 -->
+			<value>0 0/5 * * * ?</value>
 		</property>
 	</bean>
 
@@ -88,7 +88,7 @@
 			<list>
 				<ref bean="triggerUploadImg" />
 				<ref bean="triggerRefreshCache" />
-				<ref bean="triggerWishSync" />
+				<ref bean="triggerStoreSync" />
 			</list>
 		</property>
 	</bean>

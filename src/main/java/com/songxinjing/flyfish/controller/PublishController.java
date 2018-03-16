@@ -19,6 +19,7 @@ import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.Store;
 import com.songxinjing.flyfish.domain.StoreGoods;
+import com.songxinjing.flyfish.exception.AppException;
 import com.songxinjing.flyfish.form.GoodsForm;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsService;
@@ -48,7 +49,7 @@ public class PublishController extends BaseController {
 	private StoreGoodsService storeGoodsService;
 
 	@RequestMapping(value = "publish/list")
-	public String list(Model model, Integer storeId, String batchNo, Boolean dataFlag) {
+	public String list(Model model, Integer storeId, String batchNo, Boolean dataFlag) throws AppException {
 
 		try {
 			logger.info("进入刊登店铺列表页面");
@@ -56,7 +57,16 @@ public class PublishController extends BaseController {
 				dataFlag = true;
 			}
 			Map<String, Object> paraMap = new HashMap<String, Object>();
-			Store store = storeService.find(storeId);
+			Store store = null;
+			if(storeId != null){
+				store = storeService.find(storeId);
+			}
+			if(store == null){
+				List<Store> list = storeService.find();
+				if(!list.isEmpty()){
+					store = list.get(0);
+				}
+			}
 			if (StringUtils.isEmpty(batchNo)) {
 				String hql = "select max(batchNo) from StoreGoods where store.id = :storeId ";
 				paraMap.clear();
@@ -136,13 +146,13 @@ public class PublishController extends BaseController {
 
 			return "publish/list";
 		} catch (Exception e) {
-			logger.error("系统错误！", e);
-			return "system/error";
+			logger.error("系统错误", e);
+			throw new AppException();
 		}
 	}
 
 	@RequestMapping(value = "publish/remove", method = RequestMethod.GET)
-	public String remove(Model model, Integer storeId, String sku, Boolean dataFlag) {
+	public String remove(Model model, Integer storeId, String sku, Boolean dataFlag) throws AppException {
 		logger.info("商品移除店铺");
 		String hql = "select sg from StoreGoods as sg left join sg.store as store left join sg.goods as goods where store.id = :storeId and goods.sku = :sku ";
 		Map<String, Object> paraMap = new HashMap<String, Object>();
@@ -159,7 +169,7 @@ public class PublishController extends BaseController {
 	}
 
 	@RequestMapping(value = "publish/removeall", method = RequestMethod.GET)
-	public String removeall(Model model, Integer storeId, String batchNo) {
+	public String removeall(Model model, Integer storeId, String batchNo) throws AppException {
 		logger.info("商品批量移除店铺");
 		String hql = "select sg from StoreGoods as sg left join sg.store as store where store.id = :storeId and sg.batchNo = :batchNo ";
 		Map<String, Object> paraMap = new HashMap<String, Object>();

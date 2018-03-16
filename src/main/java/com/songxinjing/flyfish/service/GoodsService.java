@@ -44,7 +44,7 @@ public class GoodsService extends BaseService<Goods, String> {
 	 * @return
 	 */
 	public BigDecimal getShippingPrice(Platform platform, Goods goods) {
-		logger.info("计算运费：" + platform.getName() + " " + goods.getSku());
+		logger.debug("计算运费：" + platform.getName() + " " + goods.getSku());
 		BigDecimal shippingPrice = null;
 		String weight = goods.getWeight();
 		if (StringUtils.isEmpty(weight)) {
@@ -72,7 +72,7 @@ public class GoodsService extends BaseService<Goods, String> {
 	 * @return
 	 */
 	public BigDecimal getPrice(Platform platform, Goods goods, BigDecimal shippingPrice) {
-		logger.info("计算售价：" + platform.getName() + " " + goods.getSku());
+		logger.debug("计算售价：" + platform.getName() + " " + goods.getSku());
 		if (shippingPrice == null) {
 			shippingPrice = new BigDecimal(0);
 		}

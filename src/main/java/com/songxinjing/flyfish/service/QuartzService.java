@@ -1,5 +1,7 @@
 package com.songxinjing.flyfish.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -18,11 +20,16 @@ import com.alibaba.fastjson.JSONObject;
 import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.domain.Goods;
 import com.songxinjing.flyfish.domain.GoodsImg;
+import com.songxinjing.flyfish.domain.JoomProduct;
+import com.songxinjing.flyfish.domain.JoomStore;
+import com.songxinjing.flyfish.domain.JoomVariant;
 import com.songxinjing.flyfish.domain.WishProduct;
 import com.songxinjing.flyfish.domain.WishStore;
 import com.songxinjing.flyfish.domain.WishVariant;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.plugin.cache.MapCache;
+import com.songxinjing.flyfish.plugin.joom.api.JoomProductApi;
+import com.songxinjing.flyfish.plugin.joom.exception.JoomException;
 import com.songxinjing.flyfish.plugin.wish.api.WishProductApi;
 import com.songxinjing.flyfish.plugin.wish.exception.WishException;
 import com.songxinjing.flyfish.util.ReflectionUtil;
@@ -50,9 +57,18 @@ public class QuartzService {
 
 	@Autowired
 	private WishProductService wishProductService;
-	
+
 	@Autowired
 	private WishVariantService wishVariantService;
+
+	@Autowired
+	private JoomStoreService joomStoreService;
+
+	@Autowired
+	private JoomProductService joomProductService;
+
+	@Autowired
+	private JoomVariantService joomVariantService;
 
 	public void uploadImg() {
 		Calendar now = Calendar.getInstance();
@@ -155,7 +171,7 @@ public class QuartzService {
 
 	}
 
-	public void wishSync() {
+	public void storeSync() {
 
 		logger.info("开始执行Wish同步任务");
 		String hql = "from WishStore where state = :state order by applyJobTime asc";
@@ -203,6 +219,57 @@ public class QuartzService {
 			paraMap.put("id", store.getId());
 			wishStoreService.updateHql(hql, paraMap);
 		}
+
+		logger.info("开始执行Joom同步任务");
+		hql = "from JoomStore where state = :state order by applyJobTime asc";
+		paraMap = new HashMap<String, Object>();
+		paraMap.clear();
+		paraMap.put("state", 1);
+		@SuppressWarnings("unchecked")
+		List<JoomStore> listJoom = (List<JoomStore>) joomStoreService.findPage(hql, 0, 1, paraMap, JoomStore.class);
+		if (!listJoom.isEmpty()) {
+			JoomStore store = listJoom.get(0);
+			hql = "update JoomStore set state = 2 where id = :id";
+			paraMap.clear();
+			paraMap.put("id", store.getId());
+			joomStoreService.updateHql(hql, paraMap);
+
+			int from = 0;
+			int size = 50;
+			boolean hasNext = true;
+			do {
+				try {
+					String result = JoomProductApi.multiGet(from, size, null, store.getAccessToken());
+					if(StringUtils.isEmpty(result)){
+						continue;
+					}
+					JSONObject json = JSON.parseObject(result);
+					JSONArray products = json.getJSONArray("data");
+					for (int i = 0; i < products.size(); i++) {
+						JSONObject product = products.getJSONObject(i).getJSONObject("Product");
+						saveProduct(store, product);
+					}
+					JSONObject paging = json.getJSONObject("paging");
+					String next = paging.getString("next");
+					if (StringUtils.isEmpty(next)) {
+						hasNext = false;
+					} else {
+						from = from + size;
+					}
+				} catch (JoomException e) {
+					logger.error("调用Joom List all Products 接口错误", e);
+					break;
+				}
+
+			} while (hasNext);
+
+			Timestamp syncTime = new Timestamp(System.currentTimeMillis());
+			hql = "update JoomStore set state = 0, lastSyncTime = :lastSyncTime where id = :id";
+			paraMap.clear();
+			paraMap.put("lastSyncTime", syncTime);
+			paraMap.put("id", store.getId());
+			joomStoreService.updateHql(hql, paraMap);
+		}
 	}
 
 	public void saveProduct(WishStore store, JSONObject product) {
@@ -229,9 +296,9 @@ public class QuartzService {
 		wishProduct.setLastUpdated(product.getString("last_updated"));
 		wishProduct.setDescription(product.getString("description"));
 		wishProduct.setVariants(null);
-		
+
 		wishProductService.saveOrUpdate(wishProduct);
-		
+
 		JSONArray variants = product.getJSONArray("variants");
 
 		for (int j = 0; j < variants.size(); j++) {
@@ -256,6 +323,59 @@ public class QuartzService {
 			wishVariant.setMsrp(variant.getString("msrp"));
 			wishVariant.setShippingTime(variant.getString("shipping_time"));
 			wishVariantService.saveOrUpdate(wishVariant);
+		}
+	}
+
+	public void saveProduct(JoomStore store, JSONObject product) {
+
+		String parentSku = product.getString("parent_sku");
+		JoomProduct joomProduct = null;
+		if (StringUtils.isNotEmpty(parentSku)) {
+			joomProduct = joomProductService.find(parentSku);
+		}
+		if (joomProduct == null) {
+			joomProduct = new JoomProduct();
+			joomProduct.setParentSku(parentSku);
+			joomProduct.setStore(store);
+		}
+		joomProduct.setJoomId(product.getString("id"));
+		joomProduct.setMainImage(product.getString("main_image"));
+		joomProduct.setIsPromoted(product.getString("is_promoted"));
+		joomProduct.setName(product.getString("name"));
+		// wishProduct.setTags(product.getString("tags"));
+		joomProduct.setReviewStatus(product.getString("review_status"));
+		joomProduct.setExtraImages(product.getString("extra_images"));
+		joomProduct.setNumberSaves(product.getString("number_saves"));
+		joomProduct.setNumberSold(product.getString("number_sold"));
+		joomProduct.setDescription(product.getString("description"));
+		joomProduct.setVariants(null);
+
+		joomProductService.saveOrUpdate(joomProduct);
+
+		JSONArray variants = product.getJSONArray("variants");
+
+		for (int j = 0; j < variants.size(); j++) {
+			JSONObject variant = variants.getJSONObject(j).getJSONObject("Variant");
+			String sku = variant.getString("sku");
+			JoomVariant joomVariant = null;
+			if (StringUtils.isNotEmpty(sku)) {
+				joomVariant = joomVariantService.find(sku);
+			}
+			if (joomVariant == null) {
+				joomVariant = new JoomVariant();
+				joomVariant.setSku(sku);
+				joomVariant.setProduct(joomProduct);
+			}
+			joomVariant.setJoomId(variant.getString("id"));
+			String strPrice = variant.getString("price");
+			BigDecimal price = new BigDecimal(strPrice).setScale(2, RoundingMode.HALF_UP);
+			joomVariant.setPrice(price.toString());
+			joomVariant.setEnabled(variant.getString("enabled"));
+			joomVariant.setShipping(variant.getString("shipping"));
+			joomVariant.setInventory(variant.getString("inventory"));
+			joomVariant.setSize(variant.getString("size"));
+			joomVariant.setShippingTime(variant.getString("shipping_time"));
+			joomVariantService.saveOrUpdate(joomVariant);
 		}
 	}
 

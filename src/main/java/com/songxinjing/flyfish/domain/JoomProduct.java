@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
- * WISH商品实体类
+ * Joom商品实体类
  * 
  * @author songxinjing
  *
@@ -26,7 +26,7 @@ public class JoomProduct implements Serializable {
 	@Column(length = 32)
 	private String parentSku;
 	
-	@Column(length = 32)
+	@Column(length = 64)
 	private String joomId;
 	
 	@Column(length = 256)
@@ -54,25 +54,10 @@ public class JoomProduct implements Serializable {
 	private String numberSold;
 	
 	@Column(length = 32)
-	private String lastUpdated;
-	
-	@Column(length = 32)
 	private String dateUploaded;
 	
 	@Column(length = 102400)
 	private String description;
-	
-	@Column(length = 32)
-	private String brand;
-	
-	@Column(length = 256)
-	private String landingPageUrl;
-	
-	@Column(length = 16)
-	private String upc;
-	
-	@Column(length = 8)
-	private String maxQuantity;
 	
 	@ManyToOne
 	@JoinColumn
@@ -161,14 +146,6 @@ public class JoomProduct implements Serializable {
 		this.numberSold = numberSold;
 	}
 
-	public String getLastUpdated() {
-		return lastUpdated;
-	}
-
-	public void setLastUpdated(String lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
-
 	public String getDateUploaded() {
 		return dateUploaded;
 	}
@@ -199,38 +176,6 @@ public class JoomProduct implements Serializable {
 
 	public void setStore(JoomStore store) {
 		this.store = store;
-	}
-
-	public String getBrand() {
-		return brand;
-	}
-
-	public void setBrand(String brand) {
-		this.brand = brand;
-	}
-
-	public String getLandingPageUrl() {
-		return landingPageUrl;
-	}
-
-	public void setLandingPageUrl(String landingPageUrl) {
-		this.landingPageUrl = landingPageUrl;
-	}
-
-	public String getUpc() {
-		return upc;
-	}
-
-	public void setUpc(String upc) {
-		this.upc = upc;
-	}
-
-	public String getMaxQuantity() {
-		return maxQuantity;
-	}
-
-	public void setMaxQuantity(String maxQuantity) {
-		this.maxQuantity = maxQuantity;
 	}
 
 }
