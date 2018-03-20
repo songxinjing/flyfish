@@ -36,11 +36,11 @@ public class LogisService extends BaseService<Logis, Integer> {
 		if (logis.getMethod() == 1 && logis.getParaA() != null && logis.getParaB() != null) {
 			price = logis.getParaA().multiply(weight).add(logis.getParaB()).setScale(2, RoundingMode.HALF_UP);
 		} else if (logis.getMethod() == 2 && logis.getParaC() != null && logis.getParaX() != null
-				&& logis.getParaD() != null) {
+				&& logis.getParaD() != null && logis.getParaD() != null) {
 			if (logis.getParaX().compareTo(weight) > 0) {
 				price = logis.getParaC();
 			} else {
-				price = logis.getParaD().multiply(weight).setScale(2, RoundingMode.HALF_UP);
+				price = logis.getParaD().multiply(weight).add(logis.getParaE()).setScale(2, RoundingMode.HALF_UP);
 			}
 		}
 		return price;

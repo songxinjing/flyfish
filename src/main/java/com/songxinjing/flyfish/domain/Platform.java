@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 /**
  * 平台信息表实体类
@@ -86,6 +87,7 @@ public class Platform implements Serializable {
 	 * 该平台店铺列表
 	 */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "platform")
+	@OrderBy(value = "id ASC")
 	private Set<Store> stores;
 
 	public Integer getId() {

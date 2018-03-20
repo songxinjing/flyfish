@@ -66,11 +66,9 @@
 						<li>
                             <a href="#"><i class="fa fa-wrench fa-fw"></i>刊登管理<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
-                                #foreach($store in  $!session_stores  )
-                                <li>
-                                    <a href="${rc.contextPath}/publish/list.html?storeId=$!{store.id}">$!{store.platform.name}-$!{store.name}</a>
+                            	<li>
+                                    <a href="${rc.contextPath}/store/list.html">虚拟店铺</a>
                                 </li>
-                                #end
                             </ul>
                         </li>
 						<li>
@@ -135,9 +133,6 @@
                                 </li>
 								<li>
                                     <a href="${rc.contextPath}/domain/list.html">域名管理</a>
-                                </li>
-								<li>
-                                    <a href="${rc.contextPath}/store/list.html">虚拟店铺管理</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
