@@ -54,7 +54,7 @@
             			        <tr>
             			          <td>$!{rec.country.name}</td>
             			          <td>#if($!{rec.method} == 1) 运费 = $!{rec.paraA} * 重量 + $!{rec.paraB} 
-            							#elseif($!{rec.method} == 2) 起步运费 = $!{rec.paraC}；重量 &gt;= $!{rec.paraX}克，运费 = $!{rec.paraD} * 重量
+            							#elseif($!{rec.method} == 2) 起步运费 = $!{rec.paraC}；重量 &gt;= $!{rec.paraX}克，运费 = $!{rec.paraD} * 重量 + $!{rec.paraE} 
             								#else 无费用说明 #end
             					  </td>
             			          <td>$!{rec.fee100}</td>
@@ -70,6 +70,7 @@
             					    data-parac="$!rec.paraC" 
             					    data-parax="$!rec.paraX" 
             					    data-parad="$!rec.paraD" 
+            					    data-parae="$!rec.paraE" 
             					    data-countryid="$!rec.country.id" 
             					    data-countryname="$!rec.country.name" 
             					    data-prodid="$!{prodForm.logisProd.id}"
@@ -129,7 +130,7 @@
                 </div>
 				<div class="radio">
                     <label>
-                        <input type="radio" name="method" value="2" onchange="methodChange('add')">模式2：起步运费 = C；重量 &gt;= X克，运费 = D * 重量</input>
+                        <input type="radio" name="method" value="2" onchange="methodChange('add')">模式2：起步运费 = C；重量 &gt;= X克，运费 = D * 重量 + E</input>
                     </label>
                 </div>
 				<div id="methodDiv-add2">
@@ -185,7 +186,7 @@
                     </label>
                 </div>
 				<div id="methodDiv-modify2">
-					起步运费 = <input id="paraC" name="paraC" class="form-control input-para" placeholder="C" number="true" maxlength="6">；重量 &gt;= <input id="paraX" name="paraX" class="form-control input-para" placeholder="X" number="true" maxlength="6">克，运费 = <input id="paraD" name="paraD" class="form-control input-para" placeholder="D" number="true" maxlength="6"> * 重量 
+					起步运费 = <input id="paraC" name="paraC" class="form-control input-para" placeholder="C" number="true" maxlength="6">；重量 &gt;= <input id="paraX" name="paraX" class="form-control input-para" placeholder="X" number="true" maxlength="6">克，运费 = <input id="paraD" name="paraD" class="form-control input-para" placeholder="D" number="true" maxlength="6"> * 重量 + <input id="paraE" name="paraE" class="form-control input-para" placeholder="E" number="true" maxlength="6"> 
                 </div>
             </div>
 	     </form>
@@ -239,6 +240,7 @@
        $("#methodDiv-"+oper+"2").find("#paraC").attr("required","false");
        $("#methodDiv-"+oper+"2").find("#paraX").attr("required","false");
        $("#methodDiv-"+oper+"2").find("#paraD").attr("required","false");
+       $("#methodDiv-"+oper+"2").find("#paraE").attr("required","false");
 	}else{
 	   $("#methodDiv-"+oper+"1").hide();
 	   $("#methodDiv-"+oper+"1").find("#paraA").attr("required","false");
@@ -247,6 +249,7 @@
 	   $("#methodDiv-"+oper+"2").find("#paraC").attr("required","true");
        $("#methodDiv-"+oper+"2").find("#paraX").attr("required","true");
        $("#methodDiv-"+oper+"2").find("#paraD").attr("required","true");
+       $("#methodDiv-"+oper+"2").find("#paraE").attr("required","true");
 	}
   }
   
@@ -258,6 +261,7 @@
   	$("#methodDiv-add2").find("#paraC").attr("required","false");
     $("#methodDiv-add2").find("#paraX").attr("required","false");
     $("#methodDiv-add2").find("#paraD").attr("required","false");
+    $("#methodDiv-add2").find("#paraE").attr("required","false");
   })
   
   $("#modifyModal").on("show.bs.modal", function (event) {
@@ -273,6 +277,7 @@
 	  var paraC = button.data("parac");
 	  var paraX = button.data("parax");
 	  var paraD = button.data("parad");
+	  var paraE = button.data("parae");
 	  var modal = $(this);
 	  modal.find("#id").val(id);
 	  modal.find("#prodId").val(prodId);
@@ -289,6 +294,7 @@
 	  	$("#methodDiv-modify2").find("#paraC").attr("required","false");
         $("#methodDiv-modify2").find("#paraX").attr("required","false");
         $("#methodDiv-modify2").find("#paraD").attr("required","false");
+        $("#methodDiv-modify2").find("#paraE").attr("required","false");
 	  } else if(method == 2){
 	    modal.find("#method-1").prop("checked",false);
 	  	modal.find("#method-2").prop("checked",true);
@@ -299,12 +305,14 @@
 	  	$("#methodDiv-modify2").find("#paraC").attr("required","true");
         $("#methodDiv-modify2").find("#paraX").attr("required","true");
         $("#methodDiv-modify2").find("#paraD").attr("required","true");
+        $("#methodDiv-modify2").find("#paraE").attr("required","true");
 	  } 
 	  modal.find("#paraA").val(paraA);
 	  modal.find("#paraB").val(paraB);
 	  modal.find("#paraC").val(paraC);
 	  modal.find("#paraX").val(paraX);
 	  modal.find("#paraD").val(paraD);
+	  modal.find("#paraE").val(paraE);
 	})
 	
 	function del(id,platId) {

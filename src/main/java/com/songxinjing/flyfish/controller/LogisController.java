@@ -105,7 +105,7 @@ public class LogisController extends BaseController {
 
 	@RequestMapping(value = "logis/add", method = RequestMethod.POST)
 	public String add(HttpServletRequest request, Model model, int prodId, int countryId, int method, BigDecimal paraA,
-			BigDecimal paraB, BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
+			BigDecimal paraB, BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, BigDecimal paraE, int platId) {
 		logger.info("新增物流方式");
 		if (method == 1) {
 			if (paraA == null) {
@@ -126,6 +126,9 @@ public class LogisController extends BaseController {
 			if (paraX == null) {
 				paraX = new BigDecimal(0);
 			}
+			if (paraE == null) {
+				paraE = new BigDecimal(0);
+			}
 		}
 
 		Logis logis = new Logis();
@@ -137,6 +140,7 @@ public class LogisController extends BaseController {
 		logis.setParaC(paraC);
 		logis.setParaX(paraX);
 		logis.setParaD(paraD);
+		logis.setParaD(paraE);
 		// 获取用户登录信息
 		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
 		logis.setModifyId(user.getUserId());
@@ -149,7 +153,7 @@ public class LogisController extends BaseController {
 
 	@RequestMapping(value = "logis/modify", method = RequestMethod.POST)
 	public String modify(HttpServletRequest request, Model model, int id, int prodId, int countryId, int method,
-			BigDecimal paraA, BigDecimal paraB, BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, int platId) {
+			BigDecimal paraA, BigDecimal paraB, BigDecimal paraC, BigDecimal paraX, BigDecimal paraD, BigDecimal paraE, int platId) {
 		logger.info("修改物流方式");
 		if (method == 1) {
 			if (paraA == null) {
@@ -170,6 +174,9 @@ public class LogisController extends BaseController {
 			if (paraX == null) {
 				paraX = new BigDecimal(0);
 			}
+			if (paraE == null) {
+				paraE = new BigDecimal(0);
+			}
 		}
 
 		Logis logis = logisService.find(id);
@@ -181,6 +188,7 @@ public class LogisController extends BaseController {
 		logis.setParaC(paraC);
 		logis.setParaX(paraX);
 		logis.setParaD(paraD);
+		logis.setParaD(paraE);
 		// 获取用户登录信息
 		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
 		logis.setModifyId(user.getUserId());

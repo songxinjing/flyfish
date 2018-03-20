@@ -47,7 +47,7 @@ public class Logis implements Serializable {
 	private LogisProd prod;
 
 	/**
-	 * 计费模式（1：=Ax+B；2：if x < X, =C else =Dx）
+	 * 计费模式（1：=Ax+B；2：if x < X, =C else =Dx+E）
 	 */
 	@Column
 	private Integer method;
@@ -81,6 +81,12 @@ public class Logis implements Serializable {
 	 */
 	@Column(precision = 6, scale = 4)
 	private BigDecimal paraD;
+	
+	/**
+	 * 计费模式参数E
+	 */
+	@Column(precision = 6, scale = 2)
+	private BigDecimal paraE;
 
 	/**
 	 * 最后修改人ID
@@ -182,6 +188,14 @@ public class Logis implements Serializable {
 
 	public void setParaD(BigDecimal paraD) {
 		this.paraD = paraD;
+	}
+
+	public BigDecimal getParaE() {
+		return paraE;
+	}
+
+	public void setParaE(BigDecimal paraE) {
+		this.paraE = paraE;
 	}
 
 	public String getModifyId() {
