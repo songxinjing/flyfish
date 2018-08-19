@@ -51,8 +51,8 @@ public class WeightController extends BaseController {
 		model.addAttribute("weights", weights);
 
 		model.addAttribute("countries", countryService.find());
-		model.addAttribute("platforms", platformService.find());
-
+		String hql = "from Platform where id > 0";
+		model.addAttribute("platforms", platformService.findHql(hql));
 		model.addAttribute("platId", platId);
 
 		return "weight/list";

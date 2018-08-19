@@ -104,7 +104,7 @@ public class GoodsController extends BaseController {
 			} else if (form.getStoreId() == -1) {
 				hql = "from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id is null ";
 			} else {
-				hql = "from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where (store.id is null or store.id != :storeId) ";
+				hql = "from Goods as goods where goods.sku not in (select g.sku from StoreGoods as sg left join sg.goods as g left join sg.store as store where store.id = :storeId) ";
 				paraMap.put("storeId", form.getStoreId());
 			}
 			if (form.getImpState() == 1) {

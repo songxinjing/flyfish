@@ -57,6 +57,16 @@ public class Constant {
 	 */
 	public static final String Joom = "Joom";
 	
+	/**
+	 * 平台名称：Shopee
+	 */
+	public static final String Shopee = "Shopee";
+	
+	/**
+	 * 平台名称：Commexp
+	 */
+	public static final String Commexp = "通用";
+	
 	// -------------------------- 缓存 ------------------------
 	
 	/**

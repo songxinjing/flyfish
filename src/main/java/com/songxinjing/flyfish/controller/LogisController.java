@@ -97,7 +97,8 @@ public class LogisController extends BaseController {
 
 		model.addAttribute("countries", countryService.find());
 		model.addAttribute("prods", logisProdService.find());
-		model.addAttribute("platforms", platformService.find());
+		String hql = "from Platform where id > 0";
+		model.addAttribute("platforms", platformService.findHql(hql));
 		model.addAttribute("platId", platId);
 
 		return "logis/list";
@@ -140,7 +141,7 @@ public class LogisController extends BaseController {
 		logis.setParaC(paraC);
 		logis.setParaX(paraX);
 		logis.setParaD(paraD);
-		logis.setParaD(paraE);
+		logis.setParaE(paraE);
 		// 获取用户登录信息
 		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
 		logis.setModifyId(user.getUserId());
@@ -188,7 +189,7 @@ public class LogisController extends BaseController {
 		logis.setParaC(paraC);
 		logis.setParaX(paraX);
 		logis.setParaD(paraD);
-		logis.setParaD(paraE);
+		logis.setParaE(paraE);
 		// 获取用户登录信息
 		User user = (User) request.getSession().getAttribute(Constant.SESSION_LOGIN_USER);
 		logis.setModifyId(user.getUserId());

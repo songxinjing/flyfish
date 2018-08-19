@@ -32,7 +32,8 @@ public class PlatformController extends BaseController {
 	@RequestMapping(value = "platform/list", method = RequestMethod.GET)
 	public String prodList(Model model) {
 		logger.info("进入平台列表页面");
-		List<Platform> recList = platformService.find();
+		String hql = "from Platform where id > 0";
+		List<?> recList = platformService.findHql(hql);
 		model.addAttribute("recList", recList);
 		model.addAttribute("prods", logisProdService.find());
 		return "platform/list";

@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +43,7 @@ import com.songxinjing.flyfish.excel.ExcelUtil;
 import com.songxinjing.flyfish.exception.AppException;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsService;
+import com.songxinjing.flyfish.service.PlatformService;
 import com.songxinjing.flyfish.service.StoreService;
 import com.songxinjing.flyfish.util.BaseUtil;
 import com.songxinjing.flyfish.util.ConfigUtil;
@@ -64,6 +66,9 @@ public class ExcelController extends BaseController {
 
 	@Autowired
 	private StoreService storeService;
+
+	@Autowired
+	private PlatformService platformService;
 
 	@RequestMapping(value = "excel/import/common", method = RequestMethod.POST)
 	public String load(HttpServletRequest request, MultipartFile file) throws AppException {
@@ -236,17 +241,25 @@ public class ExcelController extends BaseController {
 		return "redirect:/goods/list.html";
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "export", method = RequestMethod.GET)
-	public void export(HttpServletResponse response, Integer storeId, String batchNo) throws AppException {
+	public String export(HttpServletResponse response, Model model, Integer storeId, String batchNo)
+			throws AppException {
 		logger.info("导出刊登");
 		try {
 			Store store = storeService.find(storeId);
 			Platform platform = store.getPlatform();
+
+			if (!Constant.Wish.equals(platform.getName()) && !Constant.Joom.equals(platform.getName())
+					&& !Constant.Commexp.equals(platform.getName())) {
+				model.addAttribute("errorMsg", "暂不支持该平台导出功能!!!");
+				return "system/error";
+			}
+
 			String hql = "select goods from Goods as goods left join goods.storeGoodses as sg left join sg.store as store where store.id = :storeId and sg.batchNo = :batchNo ";
 			Map<String, Object> paraMap = new HashMap<String, Object>();
 			paraMap.put("storeId", storeId);
 			paraMap.put("batchNo", batchNo);
-			@SuppressWarnings("unchecked")
 			List<Goods> goodses = (List<Goods>) goodsService.findHql(hql, paraMap);
 			Map<String, String> tempFiledMap = ExcelTemp.PLATFORM_TEMP_FIELD.get(platform.getName());
 			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
@@ -281,7 +294,8 @@ public class ExcelController extends BaseController {
 					Map<String, String> map = new HashMap<String, String>();
 					for (String key : tempFiledMap.keySet()) {
 						if (!StringUtils.isEmpty(tempFiledMap.get(key))) {
-							if (goodsImg != null && (key.contains("image") || key.contains("Image"))) {
+							if (goodsImg != null && (key.contains("image") || key.contains("Image")
+									|| key.contains("主图") || key.contains("附图"))) {
 								String img = (String) ReflectionUtil.getFieldValue(goodsImg, tempFiledMap.get(key));
 								if (StringUtils.isNotEmpty(img)) {
 									map.put(key, "http://" + store.getDomainName() + "/" + img);
@@ -295,12 +309,16 @@ public class ExcelController extends BaseController {
 						}
 					}
 
-					BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
-					if (shippingPrice == null) {
-						shippingPrice = new BigDecimal(0);
+					BigDecimal price = new BigDecimal(0);
+					BigDecimal msrp = new BigDecimal(0);
+					if (store.getPlatform().getId() > 0) {
+						BigDecimal shippingPrice = goodsService.getShippingPrice(platform, goods);
+						if (shippingPrice == null) {
+							shippingPrice = new BigDecimal(0);
+						}
+						price = goodsService.getPrice(platform, goods, shippingPrice);
+						msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
 					}
-					BigDecimal price = goodsService.getPrice(platform, goods, shippingPrice);
-					BigDecimal msrp = price.multiply(new BigDecimal(10)).setScale(2, RoundingMode.HALF_UP);
 
 					if (Constant.Wish.equals(platform.getName())) {
 						if (StringUtils.isEmpty(map.get("*Quantity"))) {
@@ -336,33 +354,92 @@ public class ExcelController extends BaseController {
 						map.put("*Unique ID", listingSku);
 						map.put("Parent Unique ID", listingParentSku);
 						map.put("*Product Name", platformTitle);
+						String danKind = "notDangerous";
+						if ("1".equals(goods.getIsElectric())) {
+							danKind = "withBattery";
+						}
+						map.put("Dangerous Kind", danKind);
+					} else if (Constant.Commexp.equals(platform.getName())) {
+						map.put("虚拟SKU", listingSku);
+						map.put("虚拟商品编码", listingParentSku);
+						map.put("数量", "10000");
+
+						Map<String, BigDecimal> platformShipPrice = new HashMap<String, BigDecimal>();
+						hql = "from Platform where id > 0";
+						for (Platform pf : (List<Platform>) platformService.findHql(hql)) {
+							BigDecimal sPrice = goodsService.getShippingPrice(pf, goods);
+							platformShipPrice.put(pf.getName(), sPrice);
+						}
+						BigDecimal wishPrice = goodsService.getPrice(platformService.findByName(Constant.Wish), goods,
+								platformShipPrice.get(Constant.Wish));
+						map.put("Wish平台售价", wishPrice.toString());
+
+						BigDecimal smtPrice = goodsService.getPrice(platformService.findByName(Constant.AliExpress),
+								goods, platformShipPrice.get(Constant.AliExpress));
+						map.put("速卖通平台售价", smtPrice.toString());
+
+						BigDecimal joomPrice = goodsService.getPrice(platformService.findByName(Constant.Joom), goods,
+								platformShipPrice.get(Constant.Joom));
+						map.put("Joom平台售价", joomPrice.toString());
+
+						BigDecimal ebayPrice = goodsService.getPrice(platformService.findByName(Constant.Ebay), goods,
+								platformShipPrice.get(Constant.Ebay));
+						map.put("Ebay平台售价", ebayPrice.toString());
+
+						BigDecimal shopeePrice = goodsService.getPrice(platformService.findByName(Constant.Shopee),
+								goods, platformShipPrice.get(Constant.Shopee));
+						map.put("Shopee平台售价", shopeePrice.toString());
+
+						BigDecimal amazonPrice = goodsService.getPrice(platformService.findByName(Constant.Amazon),
+								goods, platformShipPrice.get(Constant.Amazon));
+						map.put("亚马逊平台售价", amazonPrice.toString());
 					}
 					data.add(map);
 				}
 			}
-			String file = ConfigUtil.getValue("/config.properties", "workDir")
-					+ ExcelTemp.PLATFORM_TEMP_FILE.get(platform.getName());
-			String[] headers = tempFiledMap.keySet().toArray(new String[] {});
-			File csvFile = ExcelUtil.writeCSV(file, data, headers);
-			try {
-				response.setContentType("multipart/form-data");
-				response.setHeader("Content-Disposition",
-						"attachment;filename=" + URLEncoder.encode(store.getName() + "-" + batchNo + ".csv", "UTF-8"));
-				OutputStream os = new BufferedOutputStream(response.getOutputStream());
-				BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
-				byte[] buff = new byte[2048];
-				while (true) {
-					int bytesRead;
-					if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
-						break;
-					os.write(buff, 0, bytesRead);
+
+			if (Constant.Wish.equals(platform.getName()) || Constant.Joom.equals(platform.getName())) {
+				String name = ExcelTemp.PLATFORM_TEMP_FILE.get(platform.getName());
+				String file = ConfigUtil.getValue("/config.properties", "workDir") + name;
+				String[] headers = tempFiledMap.keySet().toArray(new String[] {});
+				File csvFile = ExcelUtil.writeCSV(file, data, headers);
+				try {
+					response.setContentType("multipart/form-data");
+					response.setHeader("Content-Disposition", "attachment;filename="
+							+ URLEncoder.encode(store.getName() + "-" + batchNo + ".csv", "UTF-8"));
+					OutputStream os = new BufferedOutputStream(response.getOutputStream());
+					BufferedInputStream bis = new BufferedInputStream(new FileInputStream(csvFile));
+					byte[] buff = new byte[2048];
+					while (true) {
+						int bytesRead;
+						if (-1 == (bytesRead = bis.read(buff, 0, buff.length)))
+							break;
+						os.write(buff, 0, bytesRead);
+					}
+					bis.close();
+					os.flush();
+					os.close();
+				} catch (IOException e) {
+					logger.error("导出文件失败", e);
 				}
-				bis.close();
-				os.flush();
-				os.close();
-			} catch (IOException e) {
-				logger.error("导出文件失败", e);
+			} else if (Constant.Commexp.equals(platform.getName())) {
+				String name = ExcelTemp.PLATFORM_TEMP_FILE.get(platform.getName());
+				String file = ConfigUtil.getValue("/config.properties", "workDir") + name;
+
+				try {
+					Workbook workbook = ExcelUtil.writeExcel(new FileInputStream(file), data);
+					response.setContentType("multipart/form-data");
+					response.setHeader("Content-Disposition", "attachment;filename="
+							+ URLEncoder.encode(store.getName() + "-" + batchNo + ".xlsx", "UTF-8"));
+					OutputStream os = new BufferedOutputStream(response.getOutputStream());
+					workbook.write(os);
+					os.flush();
+					os.close();
+				} catch (IOException e) {
+					logger.error("导出文件失败", e);
+				}
 			}
+			return null;
 		} catch (Exception e) {
 			logger.error("系统错误", e);
 			throw new AppException();

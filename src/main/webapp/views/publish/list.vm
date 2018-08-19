@@ -20,7 +20,7 @@
 	            <div class="col-sm-7">
 	            	<button type="button" class="btn btn-danger" onclick="removeall('$!{store.id}','$!{batchNo}')">移除批次</button>
 					#if($!dataFlag == "true")
-						<button type="button" class="btn btn-info" onclick="window.open('${rc.contextPath}/export.html?storeId=$!{store.id}&batchNo=$!{batchNo}')">导出刊登</button>
+						<button type="button" class="btn btn-info" onclick="window.open('${rc.contextPath}/export.html?storeId=$!{store.id}&batchNo=$!{batchNo}')">$!{store.platform.name}导出</button>
 					 #end
 				</div>
 			</div>

@@ -39,8 +39,8 @@ public class StoreController extends BaseController {
 	public String list(Model model, Integer platId) {
 		logger.info("进入虚拟店铺列表页面");
 
-		if (platId == null || platId == 0) {
-			platId = 1;
+		if (platId == null) {
+			platId = 0;
 		}
 
 		Set<Store> stores = platformService.find(platId).getStores();

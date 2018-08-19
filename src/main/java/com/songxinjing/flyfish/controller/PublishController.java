@@ -58,13 +58,15 @@ public class PublishController extends BaseController {
 			}
 			Map<String, Object> paraMap = new HashMap<String, Object>();
 			Store store = null;
-			if(storeId != null){
+			if (storeId != null) {
 				store = storeService.find(storeId);
 			}
-			if(store == null){
+			if (store == null) {
 				List<Store> list = storeService.find();
-				if(!list.isEmpty()){
+				if (!list.isEmpty()) {
 					store = list.get(0);
+				} else {
+					return "redirect:/store/list.html";
 				}
 			}
 			if (StringUtils.isEmpty(batchNo)) {
@@ -101,12 +103,15 @@ public class PublishController extends BaseController {
 				if (StringUtils.isNotEmpty(goods.getParentSku())) {
 					goodsForm.setListingParentSku(BaseUtil.changeSku(goods.getParentSku(), store.getMove()));
 				}
-				BigDecimal shippingPrice = goodsService.getShippingPrice(store.getPlatform(), goods);
-				if (shippingPrice == null) {
-					shippingPrice = new BigDecimal(0);
+				if(store.getPlatform().getId() > 0){
+					BigDecimal shippingPrice = goodsService.getShippingPrice(store.getPlatform(), goods);
+					if (shippingPrice == null) {
+						shippingPrice = new BigDecimal(0);
+					}
+					BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
+					goodsForm.setPlatformPrice(price);
 				}
-				BigDecimal price = goodsService.getPrice(store.getPlatform(), goods, shippingPrice);
-				goodsForm.setPlatformPrice(price);
+				
 				if (store.getPlatform().getName().equals(Constant.Wish)) {
 					goodsForm.setPlatformTitle(goods.getTitle());
 					goodsForm.setTitleRed(false);

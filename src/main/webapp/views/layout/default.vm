@@ -13,7 +13,7 @@
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7+1/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7/css/sb-admin-2.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.min.css" rel="stylesheet">
 	<link href="https://cdn.bootcss.com/image-picker/0.3.0/image-picker.min.css" rel="stylesheet">
 	<link href="${rc.contextPath}/resources/base/css/base.css" rel="stylesheet" />
@@ -21,7 +21,7 @@
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.bootcss.com/metisMenu/2.7.0/metisMenu.min.js"></script>
-    <script src="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7+1/js/sb-admin-2.min.js"></script>
+    <script src="https://cdn.bootcss.com/startbootstrap-sb-admin-2/3.3.7/js/sb-admin-2.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery-validate/1.17.0/jquery.validate.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery-validate/1.17.0/localization/messages_zh.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.full.min.js"></script>

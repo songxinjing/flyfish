@@ -22,6 +22,11 @@ public class ExcelTemp {
 	 */
 	public static final String JOOM = "/excelTemp/joom.csv";
 	
+	/**
+	 * 综合导出模版文件
+	 */
+	public static final String COMMEXP = "/excelTemp/commexp.xlsx";
+	
 	
 	/**
 	 * 虚拟SKU模版文件
@@ -235,6 +240,50 @@ public class ExcelTemp {
 		JOOM_FIELD.put("Extra Image URL 8", "eImgUrl8");
 		JOOM_FIELD.put("Extra Image URL 9", "eImgUrl9");
 		JOOM_FIELD.put("Extra Image URL 10", "eImgUrl10");
+		JOOM_FIELD.put("Dangerous Kind", "");
+	}
+	
+	/**
+	 * 综合导出模版字段映射
+	 */
+	public static final Map<String, String> COMMEXP_FIELD = new LinkedHashMap<String, String>();
+
+	static {
+		COMMEXP_FIELD.put("Parent SKU", "parentSku");
+		COMMEXP_FIELD.put("sku", "sku");
+		COMMEXP_FIELD.put("虚拟商品编码", "");
+		COMMEXP_FIELD.put("虚拟SKU", "");
+		COMMEXP_FIELD.put("大类名称", "bigCataName");
+		COMMEXP_FIELD.put("小类名称", "smallCataName");
+		COMMEXP_FIELD.put("成本", "costPrice");
+		COMMEXP_FIELD.put("重量（g）", "weight");
+		COMMEXP_FIELD.put("款式", "style");
+		COMMEXP_FIELD.put("标题（Wish）", "title");
+		COMMEXP_FIELD.put("标题（Ebay）", "ebayTitle");
+		COMMEXP_FIELD.put("标题（其他）", "otherTitle");
+		COMMEXP_FIELD.put("标题可选词（逗号隔开）", "titleWords");
+		COMMEXP_FIELD.put("产品描述", "descp");
+		COMMEXP_FIELD.put("标签", "tags");
+		COMMEXP_FIELD.put("颜色", "color");
+		COMMEXP_FIELD.put("尺寸", "size");
+		COMMEXP_FIELD.put("数量", "allNum");
+		COMMEXP_FIELD.put("Wish平台售价", "");		
+		COMMEXP_FIELD.put("速卖通平台售价", "");
+		COMMEXP_FIELD.put("Joom平台售价", "");
+		COMMEXP_FIELD.put("Ebay平台售价", "");
+		COMMEXP_FIELD.put("Shopee平台售价", "");
+		COMMEXP_FIELD.put("亚马逊平台售价", "");
+		COMMEXP_FIELD.put("Listing主图", "mainImgUrl");
+		COMMEXP_FIELD.put("子sku主图", "vMainImgUrl");
+		COMMEXP_FIELD.put("附图1", "eImgUrl");
+		COMMEXP_FIELD.put("附图2", "eImgUrl1");
+		COMMEXP_FIELD.put("附图3", "eImgUrl2");
+		COMMEXP_FIELD.put("附图4", "eImgUrl3");
+		COMMEXP_FIELD.put("附图5", "eImgUrl4");
+		COMMEXP_FIELD.put("附图6", "eImgUrl5");
+		COMMEXP_FIELD.put("附图7", "eImgUrl6");
+		COMMEXP_FIELD.put("附图8", "eImgUrl7");
+		COMMEXP_FIELD.put("附图9", "eImgUrl8");
 	}
 
 	/**
@@ -248,6 +297,8 @@ public class ExcelTemp {
 		PLATFORM_TEMP_FIELD.put(Constant.AliExpress, null);
 		PLATFORM_TEMP_FIELD.put(Constant.Wish, WISH_FIELD);
 		PLATFORM_TEMP_FIELD.put(Constant.Joom, JOOM_FIELD);
+		PLATFORM_TEMP_FIELD.put(Constant.Shopee, null);
+		PLATFORM_TEMP_FIELD.put(Constant.Commexp, COMMEXP_FIELD);
 	}
 
 	/**
@@ -261,5 +312,7 @@ public class ExcelTemp {
 		PLATFORM_TEMP_FILE.put(Constant.AliExpress, "");
 		PLATFORM_TEMP_FILE.put(Constant.Wish, WISH);
 		PLATFORM_TEMP_FILE.put(Constant.Joom, JOOM);
+		PLATFORM_TEMP_FILE.put(Constant.Shopee, "");
+		PLATFORM_TEMP_FILE.put(Constant.Commexp, COMMEXP);
 	}
 }
