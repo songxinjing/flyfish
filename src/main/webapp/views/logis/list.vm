@@ -134,7 +134,7 @@
                     </label>
                 </div>
 				<div id="methodDiv-add2">
-					起步运费 = <input id="paraC" name="paraC" class="form-control input-para" placeholder="C" number="true" maxlength="6">；重量 &gt;= <input id="paraX" name="paraX" class="form-control input-para" placeholder="X" number="true" maxlength="6">克，运费 = <input id="paraD" name="paraD" class="form-control input-para" placeholder="D" number="true" maxlength="6"> * 重量 + <input id="paraE" name="paraE" class="form-control input-para" placeholder="E" number="true" maxlength="6"> 
+					起步运费 = <input id="paraC" name="paraC" class="form-control input-para" placeholder="C" number="true" maxlength="6">；重量 &gt;= <input id="paraX" name="paraX" class="form-control input-para" placeholder="X" number="true" maxlength="6">克，运费 = <input id="paraD" name="paraD" class="form-control input-para" placeholder="D" number="true" maxlength="6"> * 重量 
                 </div>
             </div>
             
@@ -182,7 +182,7 @@
                 </div>
 				<div class="radio">
                     <label>
-                        <input type="radio" name="method" value="2" id="method-2" onchange="methodChange('modify')">模式2：起步运费 = C；重量 &gt;= X克，运费 = D * 重量 + E</input>
+                        <input type="radio" name="method" value="2" id="method-2" onchange="methodChange('modify')">模式2：起步运费 = C；重量 &gt;= X克，运费 = D * 重量</input>
                     </label>
                 </div>
 				<div id="methodDiv-modify2">
