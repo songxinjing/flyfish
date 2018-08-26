@@ -3,6 +3,17 @@
 		width: 60px;
 		height: 60px;
 	}
+	
+	ul.ztree {
+		margin-top: 0px;
+		border: 1px solid #617775;
+		background: #f0f6e4;
+		width:600px;
+		height:360px;
+		overflow-y:scroll;
+		overflow-x:auto;
+	}
+	
 </style>
 
 <div class="row">
@@ -44,6 +55,14 @@
 					<label class="col-sm-2 control-label">业绩归属人2</label>
 					<div class="col-sm-2">
 						<input name="bussOwner2" class="form-control" value="$!{form.goods.bussOwner2}" maxlength="20">
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-sm-2 control-label">选择分类</label>
+					<div class="col-sm-10">
+						<input id="cataName" name ="cataFullName" class="form-control" readonly value="$!{form.goods.cataFullName}" onclick="showMenu()">
+						<input id="cataId" name="cataId" type="hidden" value="$!{form.goods.cataId}">
 					</div>
 				</div>
 				
@@ -586,12 +605,67 @@
 	</div>
 </div>
 
+<div id="menuContent" style="display:none; position: absolute;">
+	<ul id="treeDemo" class="ztree"></ul>
+</div>
+
 <script>
+
+	var setting = {
+		async: {
+			enable: true,
+			url:"${rc.contextPath}/goodscata/getnodes.html",
+			autoParam:["id"],
+			type:"get"
+		},
+		check: {
+			enable: true,
+			chkStyle: "radio",
+			radioType: "all"
+		},
+		view: {
+			dblClickExpand: false
+		},
+		callback: {
+			onClick: onClick,
+			onCheck: onCheck
+		}
+	};
+	
+	function onClick(e, treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		zTree.checkNode(treeNode, !treeNode.checked, null, true);
+		return false;
+	}
+
+	function onCheck(e, treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		var nodes = zTree.getCheckedNodes(true);
+		$("#cataName").attr("value", nodes[0].fullName);
+		$("#cataId").attr("value", nodes[0].id);
+	}
+
+	function showMenu() {
+		var cataOffset = $("#cataName").offset();
+		$("#menuContent").css({left:cataOffset.left + "px", top:cataOffset.top + $("#cataName").outerHeight() + "px"}).slideDown("fast");
+		$("body").bind("mousedown", onBodyDown);
+	}
+	
+	function hideMenu() {
+		$("#menuContent").fadeOut("fast");
+		$("body").unbind("mousedown", onBodyDown);
+	}
+	function onBodyDown(event) {
+		if (!(event.target.id == "cataName" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length>0)) {
+			hideMenu();
+		}
+	}
 
 	$().ready(function () {
 		$("#editForm").validate();
 		$("#uploadImgForm").validate();
 		$("#mainImgSelect").imagepicker();
+		$.fn.zTree.init($("#treeDemo"), setting);
 	});
 
 	$("#btnSave").on("click", function () {

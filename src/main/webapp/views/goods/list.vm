@@ -26,8 +26,18 @@
 	}
 
 	#div-overflow-front {
-		width: 1925px;
+		width: 2400px;
 		position: relative;
+	}
+	
+	ul.ztree {
+		margin-top: 0px;
+		border: 1px solid #617775;
+		background: #f0f6e4;
+		width:600px;
+		height:360px;
+		overflow-y:scroll;
+		overflow-x:auto;
 	}
 </style>
 
@@ -42,14 +52,21 @@
 		<div class="col-md-12">
 			<form class="form-horizontal" action="${rc.contextPath}/goods/list.html?isQuery=true" method="post">
 				<div class="form-group">
-					<div class="col-sm-6">
-						<button type="submit" class="btn btn-info">查询</button>
-						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#joinStoreModal'>加入店铺</button>
-						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#importModal'>普源导入</button>
-						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#wishImportModal'>Wish导入</button>
-						<button type="button" class="btn btn-danger" onclick="delall('$!pageSize','$!page')">删除</button>
-						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#addModal'>新增</button>
+					<div class="col-sm-12">
+						<div class="col-sm-2">
+    						<select name="cataState" class="form-control">
+								<option value="0" #if($!{queryForm.cataState}=='0') selected#end>全部数据</option>
+								<option value="1" #if($!{queryForm.cataState}=='1') selected#end>无分类数据</option>
+								<option value="2" #if($!{queryForm.cataState}=='2') selected#end>查询特定分类</option>
+    		            	</select>
+    					</div>
+    					<div class="col-sm-10">
+							<input id="cataName" name ="cataFullName" class="form-control" readonly value="$!{queryForm.cataFullName}" placeholder="查询特定分类时点击选择" onclick="showMenu()">
+							<input id="cataId" name="cataId" type="hidden" value="$!{queryForm.cataId}">
+						</div>
 					</div>
+				</div>
+				<div class="form-group">
 					<div class="col-sm-6">
 						<div class="col-sm-4">
     						<select name="impState" class="form-control">
@@ -57,7 +74,6 @@
 								<option value="1" #if($!{queryForm.impState}=='1') selected#end>Wish已导入</option>
     		            	</select>
     					</div>
-    					
     					<div class="col-sm-4">
     						<select name="storeId" class="form-control">
     		                <option value="0" #if($!{queryForm.storeId}=='0') selected#end>不排除店铺</option>
@@ -78,8 +94,6 @@
 			            	</select>
 						</div>
 					</div>
-				</div>
-				<div class="form-group">
 					<div class="col-md-6">
 						<label class="col-sm-3 control-label">是否停售：</label>
 						<div class="col-sm-3">
@@ -98,24 +112,6 @@
 			            </select>
 						</div>
 					</div>
-					<div class="col-md-6">
-						<div class="col-sm-6">
-							<select id="bigCataName" name="bigCataName" class="form-control">
-							<option value="">所有大类</option>
-        	                #foreach($bigCataName in $!bigCataNames)
-        						<option value="$!bigCataName" #if($!bigCataName==$!{queryForm.bigCataName}) selected#end>$!bigCataName</option>
-        					#end
-        	            	</select>
-						</div>
-						<div class="col-sm-6">
-							<select id="smallCataName" name="smallCataName" class="form-control">
-							<option value="">所有小类</option>
-        	                #foreach($smallCataName in $!smallCataNames)
-        						<option value="$!smallCataName" #if($!smallCataName==$!{queryForm.smallCataName}) selected#end>$!smallCataName</option>
-        					#end
-        	            	</select>
-						</div>
-					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-sm-6">
@@ -127,7 +123,7 @@
 							<p class="form-control-static">到</p>
     					</div>
 						<div class="col-sm-4">
-							<input id="dateEnd" class="form-control" name="createTmEnd" type="text" value="$!{queryForm.createTmEnd}">
+							<input id="dateEnd" class="form-control"  name="createTmEnd" type="text" value="$!{queryForm.createTmEnd}">
     					</div>
 					</div>
 					<div class="col-sm-2">
@@ -177,6 +173,17 @@
 						<input id="skus" type="text" class="form-control" name="virtSkus" value="$!{queryForm.virtSkus}" placeholder="虚拟SKU：多个请用,隔开">
 					</div>
 				</div>
+				<div class="form-group">
+					<div class="col-sm-12">
+						<button type="submit" class="btn btn-info">查询</button>
+						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#joinStoreModal'>加入店铺</button>
+						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#importModal'>普源导入</button>
+						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#wishImportModal'>Wish导入</button>
+						<button type="button" class="btn btn-info" data-toggle='modal' data-target='#cataImportModal'>分类导入</button>
+						<button type="button" class="btn btn-danger" onclick="delall('$!pageSize','$!page')">删除</button>
+						<button type="button" class="btn btn-success" data-toggle='modal' data-target='#addModal'>新增</button>
+					</div>
+				</div>
 			</form>
 		</div>
 		<div class="clearfix"></div>
@@ -197,9 +204,8 @@
 						<th width="60px">SKU</th>
 						<th width="60px">商品<br>编码</th>
 						<th width="100px">商品<br>名称</th>
+						<th width="400px">分类</th>
 						<th width="100px">款式</th>	
-						<th width="60px">大类<br>名称</th>
-						<th width="60px">小类<br>名称</th>
 						<th width="50px">是否<br>停售</th>
 						<th width="50px">是否<br>带电</th>
 						<th width="60px">重量<br>（G）</th>
@@ -210,8 +216,8 @@
 						<th width="50px">所有<br>库存</th>
 						<th width="150px">供应商</th>
 						<th >标题</th>
-						<th width="90px">创建时间</th>
-						<th width="90px">更新时间</th>
+						<th width="120px">创建时间</th>
+						<th width="120px">更新时间</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -241,9 +247,8 @@
 						<td>$!{rec.goods.sku}</td>
 						<td>$!{rec.goods.parentSku}</td>
 						<td>$!{rec.goods.name}</td>
+						<td>$!{rec.goods.cataFullName}</td>
 						<td>$!{rec.goods.style}</td>
-						<td>$!{rec.goods.bigCataName}</td>
-						<td>$!{rec.goods.smallCataName}</td>
 						<td>$!{rec.goods.state}</td>
 						<td>$!{rec.goods.isElectric}</td>
 						<td>$!{rec.goods.weight}</td>
@@ -283,6 +288,10 @@
 						<label>请选择待导入的文件</label>
 						<input type="file" name="file">
 					</div>
+					<div class="form-group">
+                        <label>模版下载</label>
+                        <p class="form-control-static"><a href="http://www.bentain.site/temp/puyuan.xls">点击下载普源导入模版</a></p>
+                    </div>
 				</form>
 			</div>
 			<div class="modal-footer">
@@ -307,10 +316,42 @@
 						<label>请选择待导入的文件</label>
 						<input type="file" name="file">
 					</div>
+					<div class="form-group">
+                        <label>模版下载</label>
+                        <p class="form-control-static"><a href="#">点击下载Wish导入模版</a></p>
+                    </div>
 				</form>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="confirm-yes btn btn-primary" id="btnWishImport">提交</button>
+				<button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- cata import Modal-->
+<div id="cataImportModal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">导入分类数据</h4>
+			</div>
+			<div class="modal-body">
+				<form id="cataImportForm" action="${rc.contextPath}/excel/import/cata.html" enctype="multipart/form-data" method="post">
+					<div class="form-group">
+						<label>请选择待导入的文件</label>
+						<input type="file" name="file">
+					</div>
+					<div class="form-group">
+                        <label>模版下载</label>
+                        <p class="form-control-static"><a href="http://www.bentain.site/temp/cata.xlsx">点击下载分类导入模版</a></p>
+                    </div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="confirm-yes btn btn-primary" id="btnCataImport">提交</button>
 				<button type="button" class="confirm-no btn btn-danger" data-dismiss="modal">取消</button>
 			</div>
 		</div>
@@ -373,10 +414,63 @@
 		</div>
 	</div>
 </div>
-
+<div id="menuContent" style="display:none; position: absolute;">
+	<ul id="treeDemo" class="ztree"></ul>
+</div>
 <script>
+	var setting = {
+		async: {
+			enable: true,
+			url:"${rc.contextPath}/goodscata/getnodes.html",
+			autoParam:["id"],
+			type:"get"
+		},
+		check: {
+			enable: true,
+			chkStyle: "radio",
+			radioType: "all"
+		},
+		view: {
+			dblClickExpand: false
+		},
+		callback: {
+			onClick: onClick,
+			onCheck: onCheck
+		}
+	};
+	
+	function onClick(e, treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		zTree.checkNode(treeNode, !treeNode.checked, null, true);
+		return false;
+	}
+
+	function onCheck(e, treeId, treeNode) {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+		var nodes = zTree.getCheckedNodes(true);
+		$("#cataName").attr("value", nodes[0].fullName);
+		$("#cataId").attr("value", nodes[0].id);
+	}
+
+	function showMenu() {
+		var cataOffset = $("#cataName").offset();
+		$("#menuContent").css({left:cataOffset.left + "px", top:cataOffset.top + $("#cataName").outerHeight() + "px"}).slideDown("fast");
+		$("body").bind("mousedown", onBodyDown);
+	}
+	
+	function hideMenu() {
+		$("#menuContent").fadeOut("fast");
+		$("body").unbind("mousedown", onBodyDown);
+	}
+	function onBodyDown(event) {
+		if (!(event.target.id == "cataName" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length>0)) {
+			hideMenu();
+		}
+	}
+
 	$().ready(function() {
         $("#addForm").validate();
+        $.fn.zTree.init($("#treeDemo"), setting);
       });
 
 	$(function () {
@@ -453,6 +547,10 @@
 
 	$("#btnWishImport").on("click", function () {
 		$("#wishImportForm").submit();
+	})
+	
+	$("#btnCataImport").on("click", function () {
+		$("#cataImportForm").submit();
 	})
 	
 	$("#btnJoinStore").on("click", function () {

@@ -90,6 +90,21 @@ public class GoodsQueryForm implements Serializable {
 	 * 导入状态
 	 */
 	private int impState;
+	
+	/**
+	 * 分类查询状态
+	 */
+	private int cataState;
+	
+	/**
+	 * 分类ID
+	 */
+	private Long cataId;
+	
+	/**
+	 * 分类全路径名称
+	 */
+	private String cataFullName;
 
 	public String getSkus() {
 		return skus;
@@ -225,6 +240,30 @@ public class GoodsQueryForm implements Serializable {
 
 	public void setImpState(int impState) {
 		this.impState = impState;
+	}
+
+	public int getCataState() {
+		return cataState;
+	}
+
+	public void setCataState(int cataState) {
+		this.cataState = cataState;
+	}
+
+	public Long getCataId() {
+		return cataId;
+	}
+
+	public void setCataId(Long cataId) {
+		this.cataId = cataId;
+	}
+
+	public String getCataFullName() {
+		return cataFullName;
+	}
+
+	public void setCataFullName(String cataFullName) {
+		this.cataFullName = cataFullName;
 	}
 
 }

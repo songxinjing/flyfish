@@ -477,6 +477,18 @@ public class Goods implements Serializable {
 	 */
 	@Column
 	private Integer isUpload;
+	
+	/**
+	 * 分类ID
+	 */
+	@Column
+	private Long cataId;
+	
+	/**
+	 * 分类全路径名称
+	 */
+	@Column(length = 1024)
+	private String cataFullName;
 
 	public String getSku() {
 		return sku;
@@ -1084,6 +1096,22 @@ public class Goods implements Serializable {
 
 	public void setIsUpload(Integer isUpload) {
 		this.isUpload = isUpload;
+	}
+
+	public Long getCataId() {
+		return cataId;
+	}
+
+	public void setCataId(Long cataId) {
+		this.cataId = cataId;
+	}
+
+	public String getCataFullName() {
+		return cataFullName;
+	}
+
+	public void setCataFullName(String cataFullName) {
+		this.cataFullName = cataFullName;
 	}
 	
 }

@@ -60,6 +60,9 @@ public class GoodsController extends BaseController {
 
 	@Autowired
 	private GoodsImgService goodsImgService;
+	
+	//@Autowired
+	//private GoodsCataService goodsCataService;
 
 	@Autowired
 	private PlatformService platformService;
@@ -110,6 +113,12 @@ public class GoodsController extends BaseController {
 			if (form.getImpState() == 1) {
 				hql = hql + "and length(goods.title) > 0 ";
 			}
+			if (form.getCataState() == 1) {
+				hql = hql + "and length(goods.cataFullName) = 0 ";
+			} else if (form.getCataState() == 2 && form.getCataId() != null) {
+				hql = hql + "and goods.cataId = :cataId ";
+				paraMap.put("cataId", form.getCataId());
+			}
 			if (StringUtils.isNotEmpty(form.getName())) {
 				hql = hql + "and goods.name like :name ";
 				paraMap.put("name", "%" + form.getName().trim() + "%");
@@ -118,14 +127,14 @@ public class GoodsController extends BaseController {
 				hql = hql + "and goods.sku like :sku ";
 				paraMap.put("sku", "%" + form.getSku().trim() + "%");
 			}
-			if (StringUtils.isNotEmpty(form.getBigCataName())) {
-				hql = hql + "and goods.bigCataName = :bigCataName ";
-				paraMap.put("bigCataName", form.getBigCataName());
-			}
-			if (StringUtils.isNotEmpty(form.getSmallCataName())) {
-				hql = hql + "and goods.smallCataName = :smallCataName ";
-				paraMap.put("smallCataName", form.getSmallCataName());
-			}
+			//if (StringUtils.isNotEmpty(form.getBigCataName())) {
+			//	hql = hql + "and goods.bigCataName = :bigCataName ";
+			//	paraMap.put("bigCataName", form.getBigCataName());
+			//}
+			//if (StringUtils.isNotEmpty(form.getSmallCataName())) {
+			//	hql = hql + "and goods.smallCataName = :smallCataName ";
+			//	paraMap.put("smallCataName", form.getSmallCataName());
+			//}
 			if (StringUtils.isNotEmpty(form.getBussOwner1())) {
 				hql = hql + "and goods.bussOwner1 = :bussOwner1 ";
 				paraMap.put("bussOwner1", form.getBussOwner1());

@@ -306,7 +306,6 @@ public class ExcelTemp {
 	 */
 	public static final Map<String, String> PLATFORM_TEMP_FILE = new LinkedHashMap<String, String>();
 	static {
-		PLATFORM_TEMP_FILE.put("Common", COMMON);
 		PLATFORM_TEMP_FILE.put(Constant.Ebay, "");
 		PLATFORM_TEMP_FILE.put(Constant.Amazon, "");
 		PLATFORM_TEMP_FILE.put(Constant.AliExpress, "");

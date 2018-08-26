@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.songxinjing.flyfish.constant.Constant;
 import com.songxinjing.flyfish.controller.base.BaseController;
 import com.songxinjing.flyfish.domain.Goods;
+import com.songxinjing.flyfish.domain.GoodsCata;
 import com.songxinjing.flyfish.domain.GoodsImg;
 import com.songxinjing.flyfish.domain.Platform;
 import com.songxinjing.flyfish.domain.Store;
@@ -41,6 +42,7 @@ import com.songxinjing.flyfish.domain.User;
 import com.songxinjing.flyfish.excel.ExcelTemp;
 import com.songxinjing.flyfish.excel.ExcelUtil;
 import com.songxinjing.flyfish.exception.AppException;
+import com.songxinjing.flyfish.service.GoodsCataService;
 import com.songxinjing.flyfish.service.GoodsImgService;
 import com.songxinjing.flyfish.service.GoodsService;
 import com.songxinjing.flyfish.service.PlatformService;
@@ -63,6 +65,9 @@ public class ExcelController extends BaseController {
 
 	@Autowired
 	private GoodsImgService goodsImgService;
+	
+	@Autowired
+	private GoodsCataService goodsCataService;
 
 	@Autowired
 	private StoreService storeService;
@@ -101,6 +106,7 @@ public class ExcelController extends BaseController {
 							goods.setModifyer(user.getName());
 							goods.setModifyTm(new Timestamp(System.currentTimeMillis()));
 							if (goodsService.find(sku) == null) {
+								goods.setCreateTm(new Timestamp(System.currentTimeMillis()).toString());
 								goodsService.save(goods);
 							} else {
 								goodsService.update(goods);
@@ -483,6 +489,51 @@ public class ExcelController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = "excel/import/cata", method = RequestMethod.POST)
+	public String loadCata(HttpServletRequest request, MultipartFile file) {
+		logger.info("导入分类数据");
+		if (!file.isEmpty()) {
+			try {
+				List<Map<String, String>> data = ExcelUtil.readExcel(file.getInputStream());
+				for (Map<String, String> obj : data) {
+					String cataIdStr = obj.get("产品类型");
+					String skus = obj.get("商家编码");
+					if (StringUtils.isNotEmpty(cataIdStr) && StringUtils.isNotEmpty(skus)) {
+						Long cataId = Long.parseLong(cataIdStr);
+						GoodsCata cata = goodsCataService.find(cataId);
+						String cataFullName = "";
+						if(cata != null){
+							cataFullName = cata.getFullName();
+						}
+						String sku = skus.split(",")[0];
+						if (sku.contains("\\")) {
+							sku = sku.split("\\\\")[0];
+						}
+						if (sku.contains("*")) {
+							sku = sku.split("\\*")[0];
+						}
+						Goods goods = goodsService.find(sku);
+						if(goods != null){
+							String hql = "from Goods where parentSku = :parentSku";
+							Map<String, Object> paraMap = new HashMap<String, Object>();
+							paraMap.put("parentSku", goods.getParentSku());
+							@SuppressWarnings("unchecked")
+							List<Goods> list = (List<Goods>) goodsService.findHql(hql, paraMap);
+							for (Goods g : list) {
+								g.setCataId(cataId);
+								g.setCataFullName(cataFullName);
+								goodsService.update(goods);
+							}
+						}
+					}
+				}
+			} catch (IOException e) {
+				logger.error("读取文件失败", e);
+			}
+		}
+		return "redirect:/goods/list.html";
+	}
+	
 	@RequestMapping(value = "excel/import/relasku", method = RequestMethod.POST)
 	public String loadRelaSku(HttpServletRequest request, MultipartFile file) {
 		logger.info("导入关联SKU列表");
