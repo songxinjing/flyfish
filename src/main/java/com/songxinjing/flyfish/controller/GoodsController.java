@@ -114,7 +114,7 @@ public class GoodsController extends BaseController {
 				hql = hql + "and length(goods.title) > 0 ";
 			}
 			if (form.getCataState() == 1) {
-				hql = hql + "and length(goods.cataFullName) = 0 ";
+				hql = hql + "and goods.cataId is null ";
 			} else if (form.getCataState() == 2 && form.getCataId() != null) {
 				hql = hql + "and goods.cataId = :cataId ";
 				paraMap.put("cataId", form.getCataId());
